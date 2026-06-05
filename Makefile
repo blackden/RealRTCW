@@ -308,6 +308,8 @@ STEAMSHIMDIR=$(MOUNT_DIR)/steamshim
 CDIR=$(MOUNT_DIR)/client
 SDIR=$(MOUNT_DIR)/server
 RDIR=$(MOUNT_DIR)/renderer
+RVDIR=$(MOUNT_DIR)/renderervk
+RCDIR=$(MOUNT_DIR)/renderercommon
 CMDIR=$(MOUNT_DIR)/qcommon
 SDLDIR=$(MOUNT_DIR)/sdl
 ASMDIR=$(MOUNT_DIR)/asm
@@ -510,6 +512,13 @@ ifeq ($(PLATFORM),darwin)
   FFMPEG_LIBS   := $(shell $(PKG_CONFIG) --silence-errors --libs   libavcodec libavformat libavutil libswscale libswresample)
   BASE_CFLAGS += $(FFMPEG_CFLAGS)
   LIBS        += $(FFMPEG_LIBS)
+
+  # Vulkan via Homebrew (vulkan-loader + vulkan-headers; MoltenVK supplies the ICD)
+  ifeq ($(BUILD_RENDERER_VULKAN),1)
+    VULKAN_CFLAGS := $(shell $(PKG_CONFIG) --silence-errors --cflags vulkan)
+    VULKAN_LIBS   := $(shell $(PKG_CONFIG) --silence-errors --libs   vulkan)
+    BASE_CFLAGS  += $(VULKAN_CFLAGS) -DUSE_VULKAN_API
+  endif
 
   # Default minimum Mac OS X version
   ifeq ($(MACOSX_VERSION_MIN),)
@@ -1170,6 +1179,9 @@ endif
 ifneq ($(BUILD_CLIENT),0)
   ifneq ($(USE_RENDERER_DLOPEN),0)
     TARGETS += $(B)/$(CLIENTBIN)$(FULLBINEXT) $(B)/renderer_sp_opengl1_$(SHLIBNAME)
+    ifeq ($(BUILD_RENDERER_VULKAN),1)
+      TARGETS += $(B)/renderer_sp_vulkan_$(SHLIBNAME)
+    endif
   else
     TARGETS += $(B)/$(CLIENTBIN)$(FULLBINEXT)
   endif
@@ -1643,6 +1655,7 @@ makedirs:
 	@$(MKDIR) $(B)/client/opus
 	@$(MKDIR) $(B)/client/vorbis
 	@$(MKDIR) $(B)/renderer
+	@$(MKDIR) $(B)/rendv
 	@$(MKDIR) $(B)/ded
 	@$(MKDIR) $(B)/bspc
 	@$(MKDIR) $(B)/$(BASEGAME)/cgame
@@ -2103,6 +2116,53 @@ ifneq ($(USE_RENDERER_DLOPEN), 0)
     $(B)/renderer/tr_subs.o
 endif
 
+#############################################################################
+# Vulkan renderer (renderervk) — ported from ec-/Quake3e for macOS/MoltenVK
+#############################################################################
+Q3VKOBJ = \
+  $(B)/rendv/tr_animation.o \
+  $(B)/rendv/tr_backend.o \
+  $(B)/rendv/tr_bsp.o \
+  $(B)/rendv/tr_cmds.o \
+  $(B)/rendv/tr_curve.o \
+  $(B)/rendv/tr_font.o \
+  $(B)/rendv/tr_image.o \
+  $(B)/rendv/tr_image_bmp.o \
+  $(B)/rendv/tr_image_jpg.o \
+  $(B)/rendv/tr_image_pcx.o \
+  $(B)/rendv/tr_image_png.o \
+  $(B)/rendv/tr_image_tga.o \
+  $(B)/rendv/tr_init.o \
+  $(B)/rendv/tr_light.o \
+  $(B)/rendv/tr_main.o \
+  $(B)/rendv/tr_marks.o \
+  $(B)/rendv/tr_mesh.o \
+  $(B)/rendv/tr_model.o \
+  $(B)/rendv/tr_model_iqm.o \
+  $(B)/rendv/tr_noise.o \
+  $(B)/rendv/tr_scene.o \
+  $(B)/rendv/tr_shade.o \
+  $(B)/rendv/tr_shade_calc.o \
+  $(B)/rendv/tr_shader.o \
+  $(B)/rendv/tr_shadows.o \
+  $(B)/rendv/tr_sky.o \
+  $(B)/rendv/tr_surface.o \
+  $(B)/rendv/tr_world.o \
+  $(B)/rendv/vk.o \
+  $(B)/rendv/vk_flares.o \
+  $(B)/rendv/vk_vbo.o
+
+  Q3VKOBJ += $(B)/rendv/sdl_gamma.o
+  Q3VKOBJ += $(B)/rendv/sdl_glimp.o
+
+ifneq ($(USE_RENDERER_DLOPEN), 0)
+  Q3VKOBJ += \
+    $(B)/rendv/q_shared.o \
+    $(B)/rendv/puff.o \
+    $(B)/rendv/q_math.o \
+    $(B)/rendv/tr_subs.o
+endif
+
 ifneq ($(USE_INTERNAL_JPEG),0)
   JPGOBJ = \
     $(B)/renderer/jaricom.o \
@@ -2458,6 +2518,11 @@ $(B)/renderer_sp_opengl1_$(SHLIBNAME): $(Q3ROBJ) $(JPGOBJ) $(FTOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3ROBJ) $(JPGOBJ) $(FTOBJ) \
 		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(LIBS)
+
+$(B)/renderer_sp_vulkan_$(SHLIBNAME): $(Q3VKOBJ) $(JPGOBJ) $(FTOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3VKOBJ) $(JPGOBJ) $(FTOBJ) \
+		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(VULKAN_LIBS) $(LIBS)
 
 else
 $(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(Q3ROBJ) $(JPGOBJ) $(FTOBJ) $(LIBSDLMAIN)
@@ -2963,6 +3028,22 @@ $(B)/renderer/%.o: $(FTDIR)/src/type42/%.c
 	$(DO_REF_CC)
 
 $(B)/renderer/%.o: $(FTDIR)/src/winfonts/%.c
+	$(DO_REF_CC)
+
+# Vulkan renderer compile rules (renderervk + renderercommon + reused glue)
+$(B)/rendv/%.o: $(RVDIR)/%.c
+	$(DO_REF_CC)
+
+$(B)/rendv/%.o: $(RCDIR)/%.c
+	$(DO_REF_CC)
+
+$(B)/rendv/%.o: $(RDIR)/%.c
+	$(DO_REF_CC)
+
+$(B)/rendv/%.o: $(CMDIR)/%.c
+	$(DO_REF_CC)
+
+$(B)/rendv/%.o: $(SDLDIR)/%.c
 	$(DO_REF_CC)
 
 $(B)/ded/%.o: $(ASMDIR)/%.s
