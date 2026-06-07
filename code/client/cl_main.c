@@ -3390,6 +3390,14 @@ void CL_InitRef( void ) {
 	char			dllName[MAX_OSPATH];
 #endif
 
+	/* Zero-init so any refimport_t slot NOT explicitly assigned below stays
+	 * NULL (instead of stack garbage). Critical when building against
+	 * renderercommon/tr_public.h (Vulkan path) where the struct has more
+	 * fields than the engine populates. Vendored renderervk must not call
+	 * unpopulated slots at runtime — if it crashes, M5 will surface which
+	 * slot needs a real engine wire-up. */
+	Com_Memset( &ri, 0, sizeof( ri ) );
+
 	Com_Printf( "----- Initializing Renderer ----\n" );
 
 #ifdef USE_RENDERER_DLOPEN
