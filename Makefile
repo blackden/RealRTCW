@@ -1409,6 +1409,15 @@ $(echo_cmd) "REF_CC $<"
 $(Q)$(CC) $(SHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -o $@ -c $<
 endef
 
+# Vulkan renderer sources (renderervk + renderercommon) need the RealRTCW
+# shim header injected before each TU to resolve ABI drift vs. Quake3e.
+RENDERVK_CFLAGS = -include $(MOUNT_DIR)/renderervk/realrtcw_shims.h
+
+define DO_RENDERVK_CC
+$(echo_cmd) "RENDERVK_CC $<"
+$(Q)$(CC) $(SHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(RENDERVK_CFLAGS) $(OPTIMIZE) -o $@ -c $<
+endef
+
 define DO_REF_CC_ALTIVEC
 $(echo_cmd) "REF_CC $<"
 $(Q)$(CC) $(SHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) $(ALTIVEC_CFLAGS) -o $@ -c $<
@@ -3031,11 +3040,12 @@ $(B)/renderer/%.o: $(FTDIR)/src/winfonts/%.c
 	$(DO_REF_CC)
 
 # Vulkan renderer compile rules (renderervk + renderercommon + reused glue)
+# Use DO_RENDERVK_CC for vendored Quake3e sources so the shim header is injected.
 $(B)/rendv/%.o: $(RVDIR)/%.c
-	$(DO_REF_CC)
+	$(DO_RENDERVK_CC)
 
 $(B)/rendv/%.o: $(RCDIR)/%.c
-	$(DO_REF_CC)
+	$(DO_RENDERVK_CC)
 
 $(B)/rendv/%.o: $(RDIR)/%.c
 	$(DO_REF_CC)
