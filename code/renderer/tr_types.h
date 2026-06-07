@@ -26,6 +26,15 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+/* Two tr_types.h files exist in this tree:
+ *   code/renderer/tr_types.h      — original RealRTCW engine version
+ *   code/renderercommon/tr_types.h — vendored Quake3e version (superset)
+ * Both historically used the __TR_TYPES_H guard. When a renderervk TU
+ * includes cm_public.h (which hardcodes ../renderer/tr_types.h) AFTER
+ * renderercommon/tr_types.h, the guard prevents the engine version from
+ * re-defining conflicting types. When a pure-engine TU includes only this
+ * file, the renderercommon version is not present and we must define all
+ * types ourselves. Either way, one guard covers both cases. */
 #ifndef __TR_TYPES_H
 #define __TR_TYPES_H
 
@@ -148,7 +157,20 @@ typedef struct {
 	qhandle_t customShader;         // use one image for the entire thing
 
 	// misc
-	byte shaderRGBA[4];             // colors used by rgbgen entity shaders
+	/* Quake3e renderervk reads entity tint as a color4ub_t union with
+	 * .rgba[] and .u32 accessors; RealRTCW's engine code (cgame, ui)
+	 * historically writes byte shaderRGBA[4]. Anonymous union below lets
+	 * both access styles share the same 4 bytes — no engine-side rewrite
+	 * needed, vendored renderervk compiles against the same struct.
+	 * color4ub_t typedef'd inline so engine TUs that don't pull the
+	 * realrtcw_shims.h still see it. */
+	union {
+		byte shaderRGBA[4];
+		union {
+			byte rgba[4];
+			uint32_t u32;
+		} shader;
+	};
 	float shaderTexCoord[2];        // texture coordinates used by tcMod entity modifiers
 	float shaderTime;               // subtracted from refdef time to control effect start times
 

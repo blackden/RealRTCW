@@ -31,8 +31,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // RealRTCW q_shared.h does not declare color4ub_t (it's renderer-local in
 // renderer/tr_local.h). Upstream Quake3e tr_types.h consumes it directly, so
-// publish the typedef here.
+// publish the typedef here. Now guarded — q_shared.h provides the proper
+// union form (COLOR4UB_T_DEFINED) first via the renderervk -include shim chain.
+#ifndef COLOR4UB_T_DEFINED
+#define COLOR4UB_T_DEFINED
 typedef byte color4ub_t[4];
+#endif
 
 #define MAX_VIDEO_HANDLES	16
 

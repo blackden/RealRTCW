@@ -34,6 +34,12 @@ If you have questions concerning this license or the applicable additional terms
 // This file must be identical in the quake and utils directories
 //
 
+/* color4ub_t (union) is defined in q_shared.h. Include it if not yet pulled in,
+ * so drawVert_t.color compiles correctly in any translation unit. */
+#ifndef COLOR4UB_T_DEFINED
+#include "q_shared.h"
+#endif
+
 //Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #ifndef __attribute__
@@ -689,7 +695,7 @@ typedef struct {
 	float st[2];
 	float lightmap[2];
 	vec3_t normal;
-	byte color[4];
+	color4ub_t color;
 } drawVert_t;
 
 #define drawVert_t_cleared(x) drawVert_t (x) = {{0, 0, 0}, {0, 0}, {0, 0}, {0, 0, 0}, {0, 0, 0, 0}}

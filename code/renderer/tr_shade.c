@@ -46,7 +46,7 @@ This is just for OpenGL conformance testing, it should never be the fastest
 */
 #ifndef USE_OPENGLES
 static void APIENTRY R_ArrayElementDiscrete( GLint index ) {
-	qglColor4ubv( tess.svars.colors[ index ] );
+	qglColor4ubv( tess.svars.colors[ index ].rgba );
 	if ( glState.currenttmu ) {
 		qglMultiTexCoord2fARB( 0, tess.svars.texcoords[ 0 ][ index ][0], tess.svars.texcoords[ 0 ][ index ][1] );
 		qglMultiTexCoord2fARB( 1, tess.svars.texcoords[ 1 ][ index ][0], tess.svars.texcoords[ 1 ][ index ][1] );
@@ -777,7 +777,7 @@ static void ComputeColors( shaderStage_t *pStage ) {
 		break;
 	case CGEN_CONST:
 		for ( i = 0; i < tess.numVertexes; i++ ) {
-			*(int *)tess.svars.colors[i] = *(int *)pStage->constantColor;
+			tess.svars.colors[i].u32 = *(int *)pStage->constantColor;
 		}
 		break;
 	case CGEN_VERTEX:
@@ -787,10 +787,10 @@ static void ComputeColors( shaderStage_t *pStage ) {
 		{
 			for ( i = 0; i < tess.numVertexes; i++ )
 			{
-				tess.svars.colors[i][0] = tess.vertexColors[i][0] * tr.identityLight;
-				tess.svars.colors[i][1] = tess.vertexColors[i][1] * tr.identityLight;
-				tess.svars.colors[i][2] = tess.vertexColors[i][2] * tr.identityLight;
-				tess.svars.colors[i][3] = tess.vertexColors[i][3];
+				tess.svars.colors[i].rgba[0] = tess.vertexColors[i].rgba[0] * tr.identityLight;
+				tess.svars.colors[i].rgba[1] = tess.vertexColors[i].rgba[1] * tr.identityLight;
+				tess.svars.colors[i].rgba[2] = tess.vertexColors[i].rgba[2] * tr.identityLight;
+				tess.svars.colors[i].rgba[3] = tess.vertexColors[i].rgba[3];
 			}
 		}
 		break;
@@ -798,17 +798,17 @@ static void ComputeColors( shaderStage_t *pStage ) {
 		if ( tr.identityLight == 1 ) {
 			for ( i = 0; i < tess.numVertexes; i++ )
 			{
-				tess.svars.colors[i][0] = 255 - tess.vertexColors[i][0];
-				tess.svars.colors[i][1] = 255 - tess.vertexColors[i][1];
-				tess.svars.colors[i][2] = 255 - tess.vertexColors[i][2];
+				tess.svars.colors[i].rgba[0] = 255 - tess.vertexColors[i].rgba[0];
+				tess.svars.colors[i].rgba[1] = 255 - tess.vertexColors[i].rgba[1];
+				tess.svars.colors[i].rgba[2] = 255 - tess.vertexColors[i].rgba[2];
 			}
 		} else
 		{
 			for ( i = 0; i < tess.numVertexes; i++ )
 			{
-				tess.svars.colors[i][0] = ( 255 - tess.vertexColors[i][0] ) * tr.identityLight;
-				tess.svars.colors[i][1] = ( 255 - tess.vertexColors[i][1] ) * tr.identityLight;
-				tess.svars.colors[i][2] = ( 255 - tess.vertexColors[i][2] ) * tr.identityLight;
+				tess.svars.colors[i].rgba[0] = ( 255 - tess.vertexColors[i].rgba[0] ) * tr.identityLight;
+				tess.svars.colors[i].rgba[1] = ( 255 - tess.vertexColors[i].rgba[1] ) * tr.identityLight;
+				tess.svars.colors[i].rgba[2] = ( 255 - tess.vertexColors[i].rgba[2] ) * tr.identityLight;
 			}
 		}
 		break;
@@ -846,7 +846,7 @@ static void ComputeColors( shaderStage_t *pStage ) {
 			if ( ( pStage->rgbGen == CGEN_VERTEX && tr.identityLight != 1 ) ||
 				 pStage->rgbGen != CGEN_VERTEX ) {
 				for ( i = 0; i < tess.numVertexes; i++ ) {
-					tess.svars.colors[i][3] = 0xff;
+					tess.svars.colors[i].rgba[3] = 0xff;
 				}
 			}
 		}
@@ -854,7 +854,7 @@ static void ComputeColors( shaderStage_t *pStage ) {
 	case AGEN_CONST:
 		if ( pStage->rgbGen != CGEN_CONST ) {
 			for ( i = 0; i < tess.numVertexes; i++ ) {
-				tess.svars.colors[i][3] = pStage->constantColor[3];
+				tess.svars.colors[i].rgba[3] = pStage->constantColor[3];
 			}
 		}
 		break;
@@ -909,7 +909,7 @@ static void ComputeColors( shaderStage_t *pStage ) {
 				} else if ( alpha < 0.0 ) {
 					alpha = 0.0;
 				}
-				tess.svars.colors[i][3] = (byte)( alpha );
+				tess.svars.colors[i].rgba[3] = (byte)( alpha );
 				continue;
 			}
 
@@ -931,12 +931,12 @@ static void ComputeColors( shaderStage_t *pStage ) {
 						alpha *= (float)backEnd.currentEntity->e.shaderRGBA[3] / 255.0;
 					}
 
-					tess.svars.colors[i][3] = (byte)( alpha );
+					tess.svars.colors[i].rgba[3] = (byte)( alpha );
 				} else {
-					tess.svars.colors[i][3] = 0;
+					tess.svars.colors[i].rgba[3] = 0;
 				}
 			} else {
-				tess.svars.colors[i][3] = 0;
+				tess.svars.colors[i].rgba[3] = 0;
 			}
 		}
 	}
@@ -944,14 +944,14 @@ static void ComputeColors( shaderStage_t *pStage ) {
 	case AGEN_VERTEX:
 		if ( pStage->rgbGen != CGEN_VERTEX ) {
 			for ( i = 0; i < tess.numVertexes; i++ ) {
-				tess.svars.colors[i][3] = tess.vertexColors[i][3];
+				tess.svars.colors[i].rgba[3] = tess.vertexColors[i].rgba[3];
 			}
 		}
 		break;
 	case AGEN_ONE_MINUS_VERTEX:
 		for ( i = 0; i < tess.numVertexes; i++ )
 		{
-			tess.svars.colors[i][3] = 255 - tess.vertexColors[i][3];
+			tess.svars.colors[i].rgba[3] = 255 - tess.vertexColors[i].rgba[3];
 		}
 		break;
 	case AGEN_PORTAL:
@@ -977,7 +977,7 @@ static void ComputeColors( shaderStage_t *pStage ) {
 				alpha = len * 0xff;
 			}
 
-			tess.svars.colors[i][3] = alpha;
+			tess.svars.colors[i].rgba[3] = alpha;
 		}
 	}
 	break;
@@ -1012,13 +1012,13 @@ static void ComputeColors( shaderStage_t *pStage ) {
 
 		if ( gothicMode || gsActive ) {
 			for ( i = 0; i < tess.numVertexes; i++ ) {
-				byte r0 = tess.svars.colors[i][0];
-				byte g0 = tess.svars.colors[i][1];
-				byte b0 = tess.svars.colors[i][2];
+				byte r0 = tess.svars.colors[i].rgba[0];
+				byte g0 = tess.svars.colors[i].rgba[1];
+				byte b0 = tess.svars.colors[i].rgba[2];
 
 				if ( gothicMode && IsRedDominant( r0, g0, b0 ) ) {
 					// Red survives (pure/original)
-					ApplyNoirRed( &tess.svars.colors[i][0], &tess.svars.colors[i][1], &tess.svars.colors[i][2],
+					ApplyNoirRed( &tess.svars.colors[i].rgba[0], &tess.svars.colors[i].rgba[1], &tess.svars.colors[i].rgba[2],
 					              r0, g0, b0, gothicMode );
 				} else {
 					// Non-red path: grayscale baseline
@@ -1026,15 +1026,15 @@ static void ComputeColors( shaderStage_t *pStage ) {
 
 					if ( gsActive ) {
 						if ( gsInt ) {
-							tess.svars.colors[i][0] = tess.svars.colors[i][1] = tess.svars.colors[i][2] = (byte)luma;
+							tess.svars.colors[i].rgba[0] = tess.svars.colors[i].rgba[1] = tess.svars.colors[i].rgba[2] = (byte)luma;
 						} else {
-							tess.svars.colors[i][0] = LERP( r0, luma, gsValue );
-							tess.svars.colors[i][1] = LERP( g0, luma, gsValue );
-							tess.svars.colors[i][2] = LERP( b0, luma, gsValue );
+							tess.svars.colors[i].rgba[0] = LERP( r0, luma, gsValue );
+							tess.svars.colors[i].rgba[1] = LERP( g0, luma, gsValue );
+							tess.svars.colors[i].rgba[2] = LERP( b0, luma, gsValue );
 						}
 					} else if ( gothicMode ) {
 						// Gothic alone → full luma baseline
-						tess.svars.colors[i][0] = tess.svars.colors[i][1] = tess.svars.colors[i][2] = (byte)luma;
+						tess.svars.colors[i].rgba[0] = tess.svars.colors[i].rgba[1] = tess.svars.colors[i].rgba[2] = (byte)luma;
 					}
 					// else: neither gothic nor greyscale → leave color as computed above
 				}
@@ -1047,9 +1047,9 @@ static void ComputeColors( shaderStage_t *pStage ) {
 	//
 	if ( R_UseSoftwareGamma() ) {
 		for ( i = 0; i < tess.numVertexes; i++ ) {
-			tess.svars.colors[i][0] = R_GammaByte( tess.svars.colors[i][0] );
-			tess.svars.colors[i][1] = R_GammaByte( tess.svars.colors[i][1] );
-			tess.svars.colors[i][2] = R_GammaByte( tess.svars.colors[i][2] );
+			tess.svars.colors[i].rgba[0] = R_GammaByte( tess.svars.colors[i].rgba[0] );
+			tess.svars.colors[i].rgba[1] = R_GammaByte( tess.svars.colors[i].rgba[1] );
+			tess.svars.colors[i].rgba[2] = R_GammaByte( tess.svars.colors[i].rgba[2] );
 		}
 	}
 }
@@ -1287,10 +1287,10 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input ) {
 					GL_Cull( CT_FRONT_SIDED );
 					// modulate the alpha component of each vertex in the render list
 					for ( i = 0; i < tess.numVertexes; i++ ) {
-						tess.svars.colors[i][0] *= alphaval;
-						tess.svars.colors[i][1] *= alphaval;
-						tess.svars.colors[i][2] *= alphaval;
-						tess.svars.colors[i][3] *= alphaval;
+						tess.svars.colors[i].rgba[0] *= alphaval;
+						tess.svars.colors[i].rgba[1] *= alphaval;
+						tess.svars.colors[i].rgba[2] *= alphaval;
+						tess.svars.colors[i].rgba[3] *= alphaval;
 					}
 				}
 			} else {

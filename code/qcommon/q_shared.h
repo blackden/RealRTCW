@@ -234,6 +234,21 @@ typedef union {
 	unsigned int ui;
 } floatint_t;
 
+/* Shared by engine renderer (code/renderer/), vendored Quake3e renderervk
+ * (code/renderervk/) and qfiles.h drawVert_t. RealRTCW historically used
+ * `typedef byte color4ub_t[4]` locally in tr_local.h / renderercommon —
+ * incompatible with vendored Quake3e source that reads `.rgba[]` and
+ * `.u32`. Union form supports both indexed-byte and packed-uint access
+ * while keeping size = 4 bytes. Guarded so legacy `typedef byte ...[4]`
+ * sites become no-ops via #ifndef. */
+#ifndef COLOR4UB_T_DEFINED
+#define COLOR4UB_T_DEFINED
+typedef union {
+	byte     rgba[4];
+	uint32_t u32;
+} color4ub_t;
+#endif
+
 typedef int qhandle_t;
 typedef int sfxHandle_t;
 typedef int fileHandle_t;

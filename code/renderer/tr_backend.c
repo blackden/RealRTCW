@@ -734,7 +734,7 @@ void RB_ZombieFXShowFleshHits( trZombieFleshHitverts_t *fleshHitVerts, int oldNu
 	unsigned short *vertHits;
 	int i;
 
-	vertColors = tess.vertexColors[oldNumVerts];
+	vertColors = tess.vertexColors[oldNumVerts].rgba;
 	vertHits = fleshHitVerts->vertHits;
 
 	// for each hit entry, adjust that verts alpha component
@@ -753,7 +753,7 @@ void RB_ZombieFXDecompose( int oldNumVerts, int numSurfVerts, float deltaTimeSca
 	int i;
 	float alpha;
 
-	vertColors = tess.vertexColors[oldNumVerts];
+	vertColors = tess.vertexColors[oldNumVerts].rgba;
 	xyz = tess.xyz[oldNumVerts];
 	norm = tess.normal[oldNumVerts];
 
@@ -777,7 +777,7 @@ void RB_ZombieFXFullAlpha( int oldNumVerts, int numSurfVerts ) {
 	byte *vertColors;
 	int i;
 
-	vertColors = tess.vertexColors[oldNumVerts];
+	vertColors = tess.vertexColors[oldNumVerts].rgba;
 
 	for ( i = 0; i < numSurfVerts; i++, vertColors += 4 ) {
 		vertColors[3] = 255;
@@ -1315,10 +1315,10 @@ const void *RB_StretchPic( const void *data ) {
 	tess.indexes[ numIndexes + 4 ] = numVerts + 0;
 	tess.indexes[ numIndexes + 5 ] = numVerts + 1;
 
-	*(int *)tess.vertexColors[ numVerts ] =
-		*(int *)tess.vertexColors[ numVerts + 1 ] =
-			*(int *)tess.vertexColors[ numVerts + 2 ] =
-				*(int *)tess.vertexColors[ numVerts + 3 ] = *(int *)backEnd.color2D;
+	tess.vertexColors[ numVerts ].u32 =
+		tess.vertexColors[ numVerts + 1 ].u32 =
+			tess.vertexColors[ numVerts + 2 ].u32 =
+				tess.vertexColors[ numVerts + 3 ].u32 = *(unsigned *)backEnd.color2D;
 
 	tess.xyz[ numVerts ][0] = cmd->x;
 	tess.xyz[ numVerts ][1] = cmd->y;
@@ -1395,11 +1395,11 @@ const void *RB_StretchPicGradient( const void *data ) {
 //		*(int *)tess.vertexColors[ numVerts + 2 ] =
 //		*(int *)tess.vertexColors[ numVerts + 3 ] = *(int *)backEnd.color2D;
 
-	*(int *)tess.vertexColors[ numVerts ] =
-		*(int *)tess.vertexColors[ numVerts + 1 ] = *(int *)backEnd.color2D;
+	tess.vertexColors[ numVerts ].u32 =
+		tess.vertexColors[ numVerts + 1 ].u32 = *(unsigned *)backEnd.color2D;
 
-	*(int *)tess.vertexColors[ numVerts + 2 ] =
-		*(int *)tess.vertexColors[ numVerts + 3 ] = *(int *)cmd->gradientColor;
+	tess.vertexColors[ numVerts + 2 ].u32 =
+		tess.vertexColors[ numVerts + 3 ].u32 = *(unsigned *)cmd->gradientColor;
 
 	tess.xyz[ numVerts ][0] = cmd->x;
 	tess.xyz[ numVerts ][1] = cmd->y;

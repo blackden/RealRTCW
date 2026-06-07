@@ -625,7 +625,8 @@ typedef struct drawSurf_s {
 #define MAX_PATCH_SIZE      32          // max dimensions of a patch mesh in map file
 #define MAX_GRID_SIZE       65          // max dimensions of a grid mesh in memory
 
-typedef byte color4ub_t[4];;
+/* color4ub_t is defined as a union in code/qcommon/q_shared.h (COLOR4UB_T_DEFINED).
+ * This header always includes q_shared.h first, so no fallback needed. */
 
 // when cgame directly specifies a polygon, it becomes a srfPoly_t
 // as soon as it is called
@@ -1637,7 +1638,7 @@ TESSELATOR/SHADER DECLARATIONS
 
 ====================================================================
 */
-typedef byte color4ub_t[4];
+/* color4ub_t already defined as union in q_shared.h (COLOR4UB_T_DEFINED) */
 
 typedef struct stageVars
 {

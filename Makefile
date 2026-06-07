@@ -611,7 +611,13 @@ ifeq ($(PLATFORM),darwin)
 
   ifeq ($(USE_OPENAL),1)
     ifneq ($(USE_LOCAL_HEADERS),1)
-      CLIENT_CFLAGS += -I/System/Library/Frameworks/OpenAL.framework/Headers
+      # Prefer openal-soft (Homebrew) headers; fall back to system framework
+      OPENAL_SOFT_PREFIX := $(shell brew --prefix openal-soft 2>/dev/null)
+      ifneq ($(OPENAL_SOFT_PREFIX),)
+        CLIENT_CFLAGS += -I$(OPENAL_SOFT_PREFIX)/include
+      else
+        CLIENT_CFLAGS += -I/System/Library/Frameworks/OpenAL.framework/Headers
+      endif
     endif
     ifneq ($(USE_OPENAL_DLOPEN),1)
       ifneq ($(USE_INTERNAL_LIBS),1)

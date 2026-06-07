@@ -437,7 +437,7 @@ static void ParseFace( dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int 
 			cv->points[i][3 + j] = LittleFloat( verts[i].st[j] );
 			cv->points[i][5 + j] = LittleFloat( verts[i].lightmap[j] );
 		}
-		R_ColorShiftLightingBytes( verts[i].color, (byte *)&cv->points[i][7] );
+		R_ColorShiftLightingBytes( verts[i].color.rgba, (byte *)&cv->points[i][7] );
 	}
 
 	indexes += LittleLong( ds->firstIndex );
@@ -504,7 +504,7 @@ static void ParseMesh( dsurface_t *ds, drawVert_t *verts, msurface_t *surf ) {
 			points[i].st[j] = LittleFloat( verts[i].st[j] );
 			points[i].lightmap[j] = LittleFloat( verts[i].lightmap[j] );
 		}
-		R_ColorShiftLightingBytes( verts[i].color, points[i].color );
+		R_ColorShiftLightingBytes( verts[i].color.rgba, points[i].color.rgba );
 	}
 
 	// pre-tesseleate
@@ -573,7 +573,7 @@ static void ParseTriSurf( dsurface_t *ds, drawVert_t *verts, msurface_t *surf, i
 			tri->verts[i].lightmap[j] = LittleFloat( verts[i].lightmap[j] );
 		}
 
-		R_ColorShiftLightingBytes( verts[i].color, tri->verts[i].color );
+		R_ColorShiftLightingBytes( verts[i].color.rgba, tri->verts[i].color.rgba );
 	}
 
 	// copy indexes
@@ -706,7 +706,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 		AddPointToBounds(boundsTranslated[1], foliage->bounds[0], foliage->bounds[1]);
 
 		// copy color
-		R_ColorShiftLightingBytes(verts[i].color, foliage->instances[i].color);
+		R_ColorShiftLightingBytes(verts[i].color.rgba, foliage->instances[i].color);
 	}
 
 	// finish surface

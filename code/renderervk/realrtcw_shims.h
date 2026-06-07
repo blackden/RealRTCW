@@ -90,28 +90,54 @@
 #define VIS_HEADER 8
 #endif
 
-/* IMGFLAG_CLAMPTOEDGE / LIGHTMAP_2D: defined in RealRTCW renderer-private
- * headers (tr_local.h and tr_shader.c respectively) but needed by
- * renderercommon/tr_font.c which cannot include those private headers in
- * the renderervk build context. Values duplicated verbatim from source. */
-#ifndef IMGFLAG_CLAMPTOEDGE
-#define IMGFLAG_CLAMPTOEDGE 0x0040
-#endif
+/* LIGHTMAP_2D: sentinel value used in tr_font.c and tr_shader.c */
 #ifndef LIGHTMAP_2D
 #define LIGHTMAP_2D (-4)
 #endif
+/* NOTE: IMGFLAG_CLAMPTOEDGE is NOT defined here — tr_common.h provides it
+ * as an enum member (0x0004). A macro here would shadow the enum and break
+ * the tr_common.h enum definition with "expected identifier". */
 
 /* Typedef / enum shims — see abi-diff doc Section 2. */
 
-/* color4ub_t: Quake3e changed byte shaderRGBA[4] in refEntity_t to a
- * tagged union providing both .rgba[] byte access and .u32 word access.
- * Vendored renderervk reads both members throughout (tr_shade_calc.c,
- * tr_surface.c, vk.c, etc.). Engine-side struct translation happens in
- * realrtcw_engine_glue.c (Task 2.5). Layout: rgba[0]=R … rgba[3]=A. */
-typedef union {
-    byte     rgba[4];
-    uint32_t u32;
-} color4ub_t;
+/* color4ub_t: now defined as a proper union in code/qcommon/q_shared.h
+ * (guard COLOR4UB_T_DEFINED). q_shared.h is included above so the typedef
+ * is already visible to vendored .c files via this shim. Legacy
+ * `typedef byte color4ub_t[4]` sites in tr_local.h / renderercommon are
+ * guarded with the same macro and become no-ops. */
+
+/* SURF_DUST: Quake3e surface flag for dust trails; commented out in Q3 source
+ * (tr_shader.c:126) but still referenced in infoParms[] table. Map to a
+ * harmless unused bit so the table entry compiles without effect. */
+#ifndef SURF_DUST
+#define SURF_DUST 0x200000  /* unused in RealRTCW surfaceflags.h */
+#endif
+
+/* Com_Error: q_shared.h/qcommon.h declare Com_Error(int,...) but vendored
+ * tr_init.c defines it as Com_Error(errorParm_t,...). In C, enum != int at
+ * the type-system level even though ABI is identical. Remap errorParm_t to
+ * int for vendored renderervk TUs so the definition matches the declaration.
+ * The cast inside the body (ri.Error(code,...)) still works — int is
+ * implicitly convertible to errorParm_t at the call site. */
+#define errorParm_t int
+
+/* SURF_FLESH / SURF_METALSTEPS: Quake3e surface flags absent from RealRTCW
+ * surfaceflags.h (RTCW replaced them with SURF_CERAMIC / SURF_METAL).
+ * Map to nearest RTCW equivalents so vendored tr_shader.c surface-name table
+ * compiles. Runtime behaviour is shader-name lookup only; no flag mismatch
+ * at BSP parse time because RTCW maps store RTCW flags, not Q3 flags. */
+#ifndef SURF_FLESH
+#define SURF_FLESH      0x40    /* RTCW: SURF_CERAMIC — same bit */
+#endif
+#ifndef SURF_METALSTEPS
+#define SURF_METALSTEPS 0x1000  /* RTCW: SURF_METAL — same bit */
+#endif
+
+/* MAX_UINT: Quake3e q_shared.h defines this; RealRTCW does not.
+ * Used in tr_backend.c for unsigned saturation arithmetic. */
+#ifndef MAX_UINT
+#define MAX_UINT ((unsigned)(~0))
+#endif
 
 /* CV_FLOAT / CV_INTEGER: Quake3e cvarValidator_t enum values. RealRTCW's
  * cvarValidator_t is opaque (void *) per renderercommon/tr_public.h. Cast
@@ -258,5 +284,14 @@ static inline char *realrtcw_COM_ParseComplex(const char **data_p, qboolean allo
 /* Vtable adapter types — Quake3e-style refimport_t typedef that
  * realrtcw_engine_glue.c populates from RealRTCW functions. */
 /* (filled in Task 2.4) */
+
+/* renderercommon/tr_font.c uses renderer-private symbols declared in
+ * renderervk/tr_common.h. Pull in tr_common.h here so all renderervk TUs
+ * (including renderercommon/tr_font.c compiled in the renderervk build)
+ * see the full image_t forward-decl, R_CreateImage, RE_RegisterShaderFromImage,
+ * and imgFlags_t enum (including IMGFLAG_CLAMPTOEDGE). */
+#include "tr_common.h"
+/* r_saveFontData cvar is defined in tr_init.c but used in tr_font.c */
+extern cvar_t *r_saveFontData;
 
 #endif /* REALRTCW_RENDERERVK_SHIMS_H */
