@@ -1,7 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
-Copyright (C) 2010-2011 OpenMoHAA team (iortcw lineage)
+Copyright (C) 2010-2014 iortcw contributors
 Copyright (C) 2026 RealRTCW contributors
 
 This file contains a verbatim port of r_vidModes[] and R_GetModeInfo from
