@@ -2175,8 +2175,12 @@ ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3VKOBJ += \
     $(B)/rendv/q_shared.o \
     $(B)/rendv/puff.o \
-    $(B)/rendv/q_math.o \
-    $(B)/rendv/tr_subs.o
+    $(B)/rendv/q_math.o
+  # NOTE: do NOT add code/renderer/tr_subs.o here — vendored Quake3e
+  # renderervk/tr_init.c already provides Com_Printf/Com_Error under
+  # USE_RENDERER_DLOPEN (see code/renderervk/tr_init.c:254-275).
+  # The OpenGL DLL link path (Q3ROBJ) still uses tr_subs.o because the
+  # engine-side renderer/tr_init.c does not provide those wrappers.
 endif
 
 ifneq ($(USE_INTERNAL_JPEG),0)
