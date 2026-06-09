@@ -35,6 +35,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
+#ifdef BUILD_RENDERER_VULKAN
+/* Populates the renderer-side cvar globals + R_GetModeInfo this TU expects
+ * when linked into renderer_sp_vulkan_<arch>.dylib. Guard is set per-target
+ * in Makefile (see "$(B)/rendv/sdl_glimp.o: CFLAGS += ..."). */
+#include "../renderervk/realrtcw_vk_window_bridge.h"
+#endif
+
 #ifdef USE_OPENGLES
 #ifdef USE_LOCAL_HEADERS
 #	include "EGL/egl.h"
@@ -1209,6 +1216,10 @@ of OpenGL
 */
 void GLimp_Init( qboolean fixedFunction )
 {
+#ifdef BUILD_RENDERER_VULKAN
+	RealRTCW_VkBridgeInit();
+#endif
+
 	ri.Printf( PRINT_DEVELOPER, "Glimp_Init( )\n" );
 
 	r_allowSoftwareGL = ri.Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );

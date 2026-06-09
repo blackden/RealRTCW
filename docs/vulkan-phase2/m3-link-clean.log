@@ -1,0 +1,111 @@
+
+Building in build/release-darwin-arm64-nosteam:
+  PLATFORM: darwin
+  ARCH: arm64
+  FILE_ARCH: arm64
+  VERSION: 5.4
+  COMPILE_PLATFORM: darwin
+  COMPILE_ARCH: arm64
+  HAVE_VM_COMPILED: false
+  PKG_CONFIG: pkg-config
+  CC: cc
+  CXX: c++
+
+  CFLAGS:
+    -I/opt/homebrew/Cellar/ffmpeg/8.1.1/include
+    -I/opt/homebrew/Cellar/vulkan-loader/1.4.350.0/../../../opt/vulkan-headers/include
+    -DUSE_VULKAN_API -mmacosx-version-min=11.0
+    -DMAC_OS_X_VERSION_MIN_REQUIRED=1100 -arch arm64 -fno-strict-aliasing
+    -fno-common -pipe -D_THREAD_SAFE=1 -I/opt/homebrew/include -DNO_VM_COMPILED
+    -I/opt/homebrew/opt/jpeg-turbo/include -DBUILD_FREETYPE
+    -I/opt/homebrew/opt/freetype/include/freetype2
+    -I/opt/homebrew/opt/libpng/include/libpng16 -DPRODUCT_VERSION="5.4"
+    -Wformat=2 -Wformat-security -Wno-format-nonliteral -Wstrict-aliasing=2
+    -Wmissing-format-attribute -Wdisabled-optimization -MMD -DNDEBUG -O3
+    -ffast-math
+
+  CLIENT_CFLAGS:
+    -I/opt/homebrew/opt/openal-soft/include -DUSE_OPENAL -DUSE_OPENAL_DLOPEN
+    -DUSE_VOIP -DUSE_CODEC_OPUS
+    -I/opt/homebrew/Cellar/opusfile/0.12_1/include/opus
+    -I/opt/homebrew/Cellar/libogg/1.3.6/include
+    -I/opt/homebrew/Cellar/opus/1.6.1/include/opus -DUSE_CODEC_VORBIS
+    -I/opt/homebrew/Cellar/libvorbis/1.3.7/include
+    -I/opt/homebrew/Cellar/libogg/1.3.6/include
+    -I/opt/homebrew/Cellar/libogg/1.3.6/include -DUSE_RENDERER_DLOPEN
+    -DUSE_MUMBLE -DUSE_BLOOM
+
+  SERVER_CFLAGS:
+    -DUSE_VOIP
+
+  TOOLS_CFLAGS:
+    -g -Wall -fno-strict-aliasing -DTEMPDIR="/tmp" -DSYSTEM=""
+    -Icode/tools/lcc/src -Icode/tools/lcc/lburg -MMD
+
+  LDFLAGS:
+    -mmacosx-version-min=11.0
+
+  CLIENT_LDFLAGS:
+    
+
+  SERVER_LDFLAGS:
+    
+
+  TOOLS_LDFLAGS:
+    
+
+  LIBS:
+    -framework Cocoa -L/opt/homebrew/Cellar/ffmpeg/8.1.1/lib -lavformat
+    -lavcodec -lswscale -lswresample -lavutil -lz
+
+  CLIENT_LIBS:
+    -framework IOKit -L/opt/homebrew/lib -Wl,-rpath,/opt/homebrew/lib -lSDL3
+    -L/opt/homebrew/Cellar/opusfile/0.12_1/lib -lopusfile
+    -L/opt/homebrew/Cellar/opus/1.6.1/lib -lopus
+    -L/opt/homebrew/Cellar/libvorbis/1.3.7/lib -lvorbisfile -lvorbis
+    -L/opt/homebrew/Cellar/libogg/1.3.6/lib -logg
+
+  RENDERER_LIBS:
+    -framework OpenGL -L/opt/homebrew/lib -Wl,-rpath,/opt/homebrew/lib -lSDL3
+    -L/opt/homebrew/opt/jpeg-turbo/lib -ljpeg -L/opt/homebrew/opt/freetype/lib
+    -lfreetype
+
+  TOOLS_LIBS:
+    
+
+  SERVER_LIBS:
+    
+
+  Output:
+    RealRTCW.arm64
+    renderer_sp_opengl1_arm64.dylib
+    renderer_sp_vulkan_arm64.dylib
+    main/cgame.sp.arm64.dylib
+    main/qagame.sp.arm64.dylib
+    main/ui.sp.arm64.dylib
+
+make[2]: `build/release-darwin-arm64-nosteam/RealRTCW.arm64' is up to date.
+make[2]: `build/release-darwin-arm64-nosteam/main/cgame.sp.arm64.dylib' is up to date.
+REF_CC code/sdl/sdl_glimp.c
+REF_CC code/sdl/sdl_glimp.c
+make[2]: `build/release-darwin-arm64-nosteam/main/qagame.sp.arm64.dylib' is up to date.
+make[2]: `build/release-darwin-arm64-nosteam/main/ui.sp.arm64.dylib' is up to date.
+LD build/release-darwin-arm64-nosteam/renderer_sp_opengl1_arm64.dylib
+LD build/release-darwin-arm64-nosteam/renderer_sp_vulkan_arm64.dylib
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/sdl3/lib/libSDL3.0.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/jpeg-turbo/lib/libjpeg.8.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/sdl3/lib/libSDL3.0.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/jpeg-turbo/lib/libjpeg.8.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/freetype/lib/libfreetype.6.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libavformat.62.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libavcodec.62.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libswscale.9.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libswresample.6.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libavutil.60.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/freetype/lib/libfreetype.6.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libavformat.62.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libavcodec.62.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libswscale.9.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libswresample.6.dylib' which was built for newer version 26.0
+ld: warning: building for macOS-11.0, but linking with dylib '/opt/homebrew/opt/ffmpeg/lib/libavutil.60.dylib' which was built for newer version 26.0
