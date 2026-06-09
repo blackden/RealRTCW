@@ -2165,7 +2165,8 @@ Q3VKOBJ = \
   $(B)/rendv/tr_world.o \
   $(B)/rendv/vk.o \
   $(B)/rendv/vk_flares.o \
-  $(B)/rendv/vk_vbo.o
+  $(B)/rendv/vk_vbo.o \
+  $(B)/rendv/realrtcw_vk_window_bridge.o
 
   Q3VKOBJ += $(B)/rendv/sdl_gamma.o
   Q3VKOBJ += $(B)/rendv/sdl_glimp.o
