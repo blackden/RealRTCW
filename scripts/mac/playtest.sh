@@ -2,7 +2,17 @@
 # RealRTCW playtest launcher with ASAN/UBSAN capture.
 #
 # Запускает текущий arm64 билд, ловит любые ASAN/UBSAN reports в /tmp,
-# и в конце выводит чеклист, что проверять для 4 фиксов на этой ветке.
+# и в конце выводит итоговый exit-код + summary санитайзеров.
+#
+# Флаги:
+#   --vulkan     запустить под Vulkan-рендерером (+set cl_renderer vulkan).
+#                По умолчанию OpenGL (cl_renderer=opengl1).
+#   --auto       автотест: после старта +wait 600 (≈10s @ 60fps) +quit.
+#                Нужен для headless-capture Vulkan validation триажа.
+#   --           всё после — passthrough в RealRTCW.arm64.
+#   <extra>      любые другие args (не --vulkan/--auto/--) тоже passthrough,
+#                идут в командной строке ПЕРЕД +wait/+quit чтобы --auto не
+#                съел их раньше времени.
 #
 # Если билд собран с -fsanitize (наличие Makefile.local с -fsanitize=...),
 # инструментация активна — играй спокойно, при любом UAF/UB будет вопль
@@ -77,7 +87,7 @@ if [ "$AUTO_MODE" = "1" ]; then
   echo "Auto mode:     boot, 10s, quit"
 fi
 
-"$BIN" "${RENDERER_ARGS[@]+"${RENDERER_ARGS[@]}"}" "${AUTO_ARGS[@]+"${AUTO_ARGS[@]}"}" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}" < /dev/null
+"$BIN" "${RENDERER_ARGS[@]+"${RENDERER_ARGS[@]}"}" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}" "${AUTO_ARGS[@]+"${AUTO_ARGS[@]}"}" < /dev/null
 GAME_EXIT=$?
 
 echo ""
