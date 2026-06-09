@@ -113,9 +113,9 @@ PLAYTEST="scripts/mac/playtest.sh"
 
 if [ -n "$PLAYTEST" ]; then
   echo "delegating to $PLAYTEST"
-  ARGS=()
+  ARGS=("--vulkan")  # vk-capture is Vulkan-only — force the right renderer
   [ "$AUTO" = "1" ] && ARGS+=("--auto")
-  [ -n "$MAP" ] && ARGS+=("--map" "$MAP")
+  [ -n "$MAP" ] && ARGS+=("+map" "$MAP")
   ARGS+=("${PASSTHRU[@]+"${PASSTHRU[@]}"}")
   "$PLAYTEST" "${ARGS[@]}" 2> >(tee -a "$LOG" >&2)
 else
