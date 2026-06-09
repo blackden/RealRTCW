@@ -19,8 +19,8 @@ with RealRTCW source code; if not, write to the Free Software Foundation,
 Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-#ifndef CL_REFVULKAN_H
-#define CL_REFVULKAN_H
+#ifndef __CL_REFVULKAN_H__
+#define __CL_REFVULKAN_H__
 
 /*
  * cl_refvulkan.h — public surface of the engine↔Vulkan-renderer
@@ -43,4 +43,4 @@ Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 void *CL_BuildVulkanRefImport( void );
 
-#endif /* CL_REFVULKAN_H */
+#endif /* __CL_REFVULKAN_H__ */
