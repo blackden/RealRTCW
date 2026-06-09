@@ -2077,6 +2077,11 @@ else
     $(B)/client/con_tty.o
 endif
 
+ifeq ($(BUILD_RENDERER_VULKAN),1)
+  Q3OBJ += \
+    $(B)/client/cl_refvulkan.o
+endif
+
 Q3ROBJ = \
   $(B)/renderer/tr_altivec.o \
   $(B)/renderer/tr_animation.o \
