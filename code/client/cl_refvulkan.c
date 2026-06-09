@@ -64,12 +64,36 @@ static qboolean     vk_ri_built = qfalse;
 static int64_t   vk_Microseconds( void );
 static void     *vk_Malloc( size_t bytes );
 static void      vk_FreeAll( void );
+static void     *vk_Hunk_Alloc( size_t size, ha_pref preference );
+#ifdef HUNK_DEBUG
+static void     *vk_Hunk_AllocDebug( size_t size, ha_pref preference, const char *label, const char *file, int line );
+#endif
+static void     *vk_Hunk_AllocateTempMemory( size_t size );
+static int       vk_FS_ReadFile( const char *qpath, void **buffer );
 
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
 static void     *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name );
 static void      vk_VKimp_Init( glconfig_t *config );
 static void      vk_VKimp_Shutdown( qboolean unloadDLL );
+
+/* ====================================================================
+ * Local tagged-allocation tracker for vk_Malloc / vk_FreeAll.
+ *
+ * Engine's Z_TagMalloc / Z_FreeTags are dead code (common.c:832-873
+ * is wrapped in #if 0). Z_Malloc is a bare malloc() with no tag
+ * tracking, so we cannot route Q3e's tagged Malloc/FreeAll through it.
+ * Instead we keep a private array of every pointer vk_Malloc returns
+ * and free them all in vk_FreeAll.
+ *
+ * Sized for a few hundred renderer-owned allocations per init cycle;
+ * fatal if exceeded so we notice early rather than silently leak.
+ * ==================================================================== */
+
+#define VK_RI_MAX_ALLOCS 4096
+
+static void *vk_ri_allocs[VK_RI_MAX_ALLOCS];
+static int   vk_ri_n_allocs = 0;
 
 /* ====================================================================
  * Builder -- fills vk_ri and returns its address.
@@ -91,13 +115,13 @@ void *CL_BuildVulkanRefImport( void ) {
      *     - Cmd_AddCommand: engine takes xcommand_t (typedef of the
      *       same shape as Q3e's void(*)(void)) -- silent cast OK,
      *       made explicit.
-     *     - Hunk_Alloc / Hunk_AllocateTempMemory / Malloc: engine uses
-     *       int sizes, Q3e uses size_t. Pointer-to-function cast
-     *       silences -Wincompatible-pointer-types; values fit unless
-     *       a >2GiB allocation happens (won't on a Q3 renderer).
-     *     - FS_ReadFile: engine returns long, Q3e returns int. Same
-     *       caveat; will warn on negative sentinel? FS_ReadFile only
-     *       returns -1 / length, both representable.
+     *     - Hunk_Alloc / Hunk_AllocateTempMemory / Hunk_AllocDebug:
+     *       handled via vk_Hunk_* wrappers below — size_t→int
+     *       narrowing made explicit (function-pointer cast worked by
+     *       arm64 AAPCS accident, but it's UB by the C standard).
+     *     - FS_ReadFile: handled via vk_FS_ReadFile wrapper —
+     *       engine returns long, Q3e returns int; explicit (int)
+     *       cast makes the narrowing visible.
      *     - CIN_PlayCinematic: engine and Q3e signatures match.
      *     - Cmd_ExecuteText: Q3e uses cbufExec_t (an enum), engine
      *       uses int -- compatible.
@@ -115,13 +139,13 @@ void *CL_BuildVulkanRefImport( void ) {
      * tr_public.h mirrors the same toggle on the slot name. Match both
      * sides to whichever variant is active in this build. */
 #ifdef HUNK_DEBUG
-    vk_ri.Hunk_AllocDebug           = (void *(*)( size_t, ha_pref, const char *, const char *, int ))Hunk_AllocDebug;
+    vk_ri.Hunk_AllocDebug           = vk_Hunk_AllocDebug;
 #else
-    vk_ri.Hunk_Alloc                = (void *(*)( size_t, ha_pref ))Hunk_Alloc;
+    vk_ri.Hunk_Alloc                = vk_Hunk_Alloc;
 #endif
-    vk_ri.Hunk_AllocateTempMemory   = (void *(*)( size_t ))Hunk_AllocateTempMemory;
+    vk_ri.Hunk_AllocateTempMemory   = vk_Hunk_AllocateTempMemory;
     vk_ri.Hunk_FreeTempMemory       = Hunk_FreeTempMemory;
-    vk_ri.FS_ReadFile               = (int (*)( const char *, void ** ))FS_ReadFile;
+    vk_ri.FS_ReadFile               = vk_FS_ReadFile;
     vk_ri.FS_FreeFile               = FS_FreeFile;
     vk_ri.FS_WriteFile              = FS_WriteFile;
     vk_ri.FS_FreeFileList           = FS_FreeFileList;
@@ -205,6 +229,11 @@ void *CL_BuildVulkanRefImport( void ) {
 
 /* ====================================================================
  * WRAPPERS -- Q3e signature != engine signature.
+ *
+ * vk_Malloc / vk_FreeAll use a local tracker (see above) because
+ * Z_TagMalloc / Z_FreeTags in common.c are #if 0'd dead code.
+ * vk_Hunk_* and vk_FS_ReadFile make size_t→int / long→int narrowings
+ * explicit so the calling convention doesn't silently drop bits.
  * ==================================================================== */
 
 /* Q3e wants microseconds as int64_t; engine has Sys_Milliseconds
@@ -214,19 +243,56 @@ static int64_t vk_Microseconds( void ) {
     return (int64_t)Sys_Milliseconds() * 1000;
 }
 
-/* Q3e Malloc takes size_t; engine's Z_Malloc takes int. Narrow with a
- * cast -- a >2GiB single allocation from a Q3 renderer would already
- * be a bug. */
 static void *vk_Malloc( size_t bytes ) {
-    return Z_Malloc( (int)bytes );
+    void *ptr = malloc( bytes );
+    if ( !ptr ) {
+        Com_Error( ERR_FATAL, "vk_Malloc: out of memory (requested %zu bytes)", bytes );
+        return NULL;
+    }
+    Com_Memset( ptr, 0, bytes );
+
+    if ( vk_ri_n_allocs >= VK_RI_MAX_ALLOCS ) {
+        Com_Error( ERR_FATAL, "vk_Malloc: tracker full (>%d allocs) -- bump VK_RI_MAX_ALLOCS or audit renderervk for runaway allocations", VK_RI_MAX_ALLOCS );
+        return NULL;
+    }
+    vk_ri_allocs[vk_ri_n_allocs++] = ptr;
+    return ptr;
 }
 
-/* Q3e FreeAll = "release every tagged allocation owned by the renderer".
- * Engine's Z_FreeTags is the equivalent. TAG_RENDERER exists in the
- * engine's memtag_t enum (see qcommon.h:948), so use it directly --
- * tighter than TAG_GENERAL and matches the renderer's ownership. */
 static void vk_FreeAll( void ) {
-    Z_FreeTags( TAG_RENDERER );
+    int i;
+    for ( i = 0; i < vk_ri_n_allocs; i++ ) {
+        free( vk_ri_allocs[i] );
+        vk_ri_allocs[i] = NULL;
+    }
+    vk_ri_n_allocs = 0;
+}
+
+/* Q3e Hunk_Alloc family takes size_t; engine takes int. Narrow with an
+ * explicit cast so the truncation is visible and the calling convention
+ * doesn't quietly drop the upper 32 bits. */
+static void *vk_Hunk_Alloc( size_t size, ha_pref preference ) {
+    return Hunk_Alloc( (int)size, preference );
+}
+
+#ifdef HUNK_DEBUG
+static void *vk_Hunk_AllocDebug( size_t size, ha_pref preference, const char *label, const char *file, int line ) {
+    /* Engine takes char*; Q3e slot passes const char*. Cast away const --
+     * Hunk_AllocDebug only reads the strings (label/file are __FILE__-shape
+     * literals in normal use). */
+    return Hunk_AllocDebug( (int)size, preference, (char *)label, (char *)file, line );
+}
+#endif
+
+static void *vk_Hunk_AllocateTempMemory( size_t size ) {
+    return Hunk_AllocateTempMemory( (int)size );
+}
+
+/* Engine returns long; Q3e slot wants int. Explicit cast makes the
+ * truncation visible -- files >2GiB or any future widening would
+ * silently break, and we want the cast to flag that. */
+static int vk_FS_ReadFile( const char *qpath, void **buffer ) {
+    return (int)FS_ReadFile( qpath, buffer );
 }
 
 /* ====================================================================
