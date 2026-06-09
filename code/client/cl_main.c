@@ -29,6 +29,9 @@ If you have questions concerning this license or the applicable additional terms
 // cl_main.c  -- client main loop
 
 #include "client.h"
+#ifdef BUILD_RENDERER_VULKAN
+#include "cl_refvulkan.h"
+#endif
 #include <limits.h>
 
 #include "../sys/sys_local.h"
@@ -3481,7 +3484,23 @@ void CL_InitRef( void ) {
 	ri.Sys_GLimpInit = Sys_GLimpInit;
 	ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;
 
+#ifdef BUILD_RENDERER_VULKAN
+	{
+		/* Hand the vendored Vulkan renderer the BIG (Quake3e-shaped)
+		 * refImport_t, built by the translator in cl_refvulkan.c. The
+		 * small `ri` populated above is only used as a checkpoint --
+		 * the translator builds its own struct from engine globals
+		 * directly, not by copying from `ri`.
+		 *
+		 * The cast through void* hides the size mismatch from this
+		 * TU's view of refimport_t (small) -- the renderer DLL's view
+		 * (big) is what matters at the ABI boundary. */
+		void *vk_ri_ptr = CL_BuildVulkanRefImport();
+		ret = GetRefAPI( REF_API_VERSION, (refimport_t *)vk_ri_ptr );
+	}
+#else
 	ret = GetRefAPI( REF_API_VERSION, &ri );
+#endif
 
 	if ( !ret ) {
 		Com_Error( ERR_FATAL, "Couldn't initialize refresh" );

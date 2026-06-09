@@ -3079,8 +3079,26 @@ $(B)/rendv/%.o: $(SDLDIR)/%.c
 # call wired from sdl_glimp.c). BUILD_RENDERER_VULKAN is set here on the
 # rendv/ SDL objects only, leaving the OpenGL renderer/sdl_glimp.o build
 # unchanged.
-$(B)/rendv/sdl_glimp.o: CFLAGS += -DBUILD_RENDERER_VULKAN
-$(B)/rendv/sdl_gamma.o: CFLAGS += -DBUILD_RENDERER_VULKAN
+# `override` is load-bearing: the `release:` / `debug:` targets re-invoke
+# $(MAKE) with CFLAGS="..." as a command-line override, which by default
+# voids any subsequent target-specific `CFLAGS +=` Makefile assignment.
+# `override` reasserts the append even against the command-line CFLAGS
+# the submake was launched with. Without it, -DBUILD_RENDERER_VULKAN
+# never reaches these compilation units and the #ifdef-guarded code
+# compiles out silently. Latent bug discovered during M3.5; pre-existed
+# in M3 but only mattered once the engine-side call site was added.
+$(B)/rendv/sdl_glimp.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
+$(B)/rendv/sdl_gamma.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
+# Engine-side TU that branches on BUILD_RENDERER_VULKAN to swap the
+# small engine-native refImport_t for the translator-built big
+# Quake3e-shaped one (CL_InitRef -> GetRefAPI handoff). MUST be gated
+# on BUILD_RENDERER_VULKAN=1 because $(B)/client/cl_main.o is always
+# built (both OpenGL-only and Vulkan engine binaries); activating the
+# call site in an OpenGL-only build would reference CL_BuildVulkanRefImport
+# which is only compiled when cl_refvulkan.o joins Q3OBJ (line 2080).
+ifeq ($(BUILD_RENDERER_VULKAN),1)
+$(B)/client/cl_main.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
+endif
 
 $(B)/ded/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
