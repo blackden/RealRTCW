@@ -41,6 +41,18 @@ Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../sys/sys_local.h"
 #include "cl_refvulkan.h"
 
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
+/* <vulkan/vulkan.h> is already transitively included via renderercommon/tr_public.h */
+
+/* Engine-side SDL window pointer. Defined by sdl_input.c (code/sdl/sdl_input.c:60)
+ * in the engine binary; populated by IN_Init when the renderer hands us its
+ * window pointer via ri.IN_Init(). The renderer DLL has its own private copy
+ * in sdl_glimp.c -- that one is not visible here.
+ * Forward-declared (rather than via a shared header) because there is only
+ * one consumer in the engine binary today (this TU). */
+extern SDL_Window *SDL_window;
+
 /* Forward declarations for client-side symbols normally exposed via
  * client.h. We avoid including client.h so the small refimport_t
  * doesn't pollute this TU. */
@@ -296,27 +308,68 @@ static int vk_FS_ReadFile( const char *qpath, void **buffer ) {
 }
 
 /* ====================================================================
- * VULKAN WINDOW SYSTEM -- placeholder stubs.
- * Task 5 will fill these with real SDL3/Vulkan code. For now they
- * Com_Error so we get an explicit panic if the renderer reaches them
- * before Task 5 lands.
+ * VULKAN WINDOW SYSTEM -- SDL3-backed implementations.
+ *
+ * The engine's shared SDL window is created by sdl_glimp.c:GLimp_Init
+ * before the renderer DLL is loaded. The Vulkan-renderer side just
+ * grabs the loader entry point and creates a VkSurfaceKHR for that
+ * already-existing window on demand.
  * ==================================================================== */
 
 static qboolean vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface ) {
-    (void)instance; (void)pSurface;
-    Com_Error( ERR_FATAL, "vk_VK_CreateSurface: stub -- Task 5 not yet landed" );
-    return qfalse;
+    /* Creates a VkSurfaceKHR for the engine's SDL window. The renderer
+     * passes its VkInstance handle (opaque to engine) and a pointer to
+     * where the VkSurfaceKHR handle should land.
+     *
+     * SDL3's SDL_Vulkan_CreateSurface does the platform-specific work
+     * (Metal layer wrap on macOS via MoltenVK). */
+    if ( !SDL_window ) {
+        Com_Printf( S_COLOR_RED "vk_VK_CreateSurface: SDL_window is NULL -- was GLimp/VKimp init called?\n" );
+        return qfalse;
+    }
+
+    if ( !SDL_Vulkan_CreateSurface( SDL_window, instance, NULL /* allocator */, pSurface ) ) {
+        Com_Printf( S_COLOR_RED "SDL_Vulkan_CreateSurface failed: %s\n", SDL_GetError() );
+        return qfalse;
+    }
+    return qtrue;
 }
 
 static void *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name ) {
-    (void)instance; (void)name;
-    Com_Error( ERR_FATAL, "vk_VK_GetInstanceProcAddr: stub -- Task 5 not yet landed" );
-    return NULL;
+    /* Returns address of a Vulkan function from the Vulkan loader.
+     * Used by the renderer to resolve vkCreateInstance, vkGetDeviceProcAddr,
+     * and the global instance-level entry points.
+     *
+     * SDL3 exposes the loader's vkGetInstanceProcAddr via this getter,
+     * which wraps the platform-native loader from libvulkan.dylib. */
+    static PFN_vkGetInstanceProcAddr loader = NULL;
+    if ( !loader ) {
+        loader = (PFN_vkGetInstanceProcAddr)SDL_Vulkan_GetVkGetInstanceProcAddr();
+        if ( !loader ) {
+            Com_Error( ERR_FATAL, "SDL_Vulkan_GetVkGetInstanceProcAddr: %s", SDL_GetError() );
+            return NULL;
+        }
+    }
+    /* When name is NULL, Q3e callers want the loader entry itself (rare
+     * convention but seen in the wild). Most calls pass a real function
+     * name. Pass `instance` and `name` straight through. */
+    return (void *)loader( instance, name );
 }
 
 static void vk_VKimp_Init( glconfig_t *config ) {
+    /* The shared engine SDL window was already created by GLimp_Init
+     * (sdl_glimp.c) before the renderer DLL was loaded. The Vulkan
+     * renderer just needs the window to exist; surface creation
+     * happens later via vk_VK_CreateSurface.
+     *
+     * config: Q3e renderer's view of glconfig. The engine doesn't
+     * populate this directly here -- if the renderer reads fields,
+     * M4 triage will surface NULL/garbage and we can fill them then. */
     (void)config;
-    Com_Error( ERR_FATAL, "vk_VKimp_Init: stub -- Task 5 not yet landed" );
+    if ( !SDL_window ) {
+        Com_Error( ERR_FATAL, "vk_VKimp_Init: SDL_window not initialized -- engine startup order is broken" );
+    }
+    Com_Printf( "vk_VKimp_Init: SDL window present, deferring surface creation to vk_VK_CreateSurface\n" );
 }
 
 static void vk_VKimp_Shutdown( qboolean unloadDLL ) {

@@ -57,7 +57,7 @@ static int vidRestartTime = 0;
 
 static int in_eventTime = 0;
 
-static SDL_Window *SDL_window = NULL;
+SDL_Window *SDL_window = NULL;  /* Exposed externally for cl_refvulkan.c (M3.5 — Vulkan adapter). Populated by IN_Init when renderer hands us its window pointer. */
 
 #define CTRL(a) ((a)-'a'+1)
 
