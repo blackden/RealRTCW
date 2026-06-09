@@ -88,6 +88,16 @@ static void     *vk_Hunk_AllocDebug( size_t size, ha_pref preference, const char
 static void     *vk_Hunk_AllocateTempMemory( size_t size );
 static int       vk_FS_ReadFile( const char *qpath, void **buffer );
 
+/* No-op stubs for Q3e cvar API extensions not present in RealRTCW engine.
+ * Description / validator / group metadata is non-load-bearing for rendering
+ * — the renderer registers cvars and reads their values via Cvar_Get/Set;
+ * dropping the metadata is functionally equivalent to never having set it. */
+static void      vk_Cvar_SetDescription( cvar_t *cv, const char *description );
+static void      vk_Cvar_CheckRange( cvar_t *cv, const char *minVal, const char *maxVal, cvarValidator_t type );
+static void      vk_Cvar_SetGroup( cvar_t *var, cvarGroup_t group );
+static int       vk_Cvar_CheckGroup( cvarGroup_t group );
+static void      vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFlags );
+
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
 static void     *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name );
@@ -191,6 +201,16 @@ void *CL_BuildVulkanRefImport( void ) {
     vk_ri.Malloc                    = vk_Malloc;
     vk_ri.FreeAll                   = vk_FreeAll;
 
+    /* --- NO-OP STUBS: Q3e cvar metadata extensions (descriptions, ranges,
+     *     groups) — engine has no equivalent storage but the renderer's
+     *     R_Register calls them on every cvar, so they must be non-NULL.
+     *     Functionally inert. */
+    vk_ri.Cvar_SetDescription       = vk_Cvar_SetDescription;
+    vk_ri.Cvar_CheckRange           = vk_Cvar_CheckRange;
+    vk_ri.Cvar_SetGroup             = vk_Cvar_SetGroup;
+    vk_ri.Cvar_CheckGroup           = vk_Cvar_CheckGroup;
+    vk_ri.Cvar_ResetGroup           = vk_Cvar_ResetGroup;
+
     /* --- VULKAN WINDOW SYSTEM: code that doesn't exist on engine side.
      *     Defined further down. */
     vk_ri.VK_CreateSurface          = vk_VK_CreateSurface;
@@ -216,15 +236,6 @@ void *CL_BuildVulkanRefImport( void ) {
      *                              for now -- AVI capture not in M4.
      *       CM_ClusterPVS        -- not exported via qcommon.h
      *       CM_DrawDebugSurface  -- not exported via qcommon.h
-     *       Cvar_CheckGroup      -- Q3e cvar group system not in engine
-     *       Cvar_CheckRange      -- signature mismatch (engine: float
-     *                              minVal/maxVal/qboolean; Q3e: const
-     *                              char* minVal/maxVal/cvarValidator_t)
-     *                              -- needs a real wrapper if renderer
-     *                              calls it; defer to M4 triage.
-     *       Cvar_ResetGroup      -- Q3e cvar group system not in engine
-     *       Cvar_SetDescription  -- not present in RealRTCW engine
-     *       Cvar_SetGroup        -- Q3e cvar group system not in engine
      *       Free                 -- engine has no Z_Free that takes a
      *                              raw pointer the renderer would own;
      *                              renderer typically pairs Malloc with
@@ -288,6 +299,31 @@ static void vk_FreeAll( void ) {
         vk_ri_allocs[i] = NULL;
     }
     vk_ri_n_allocs = 0;
+}
+
+/* Q3e cvar metadata API — no engine storage exists. Each is a no-op:
+ * descriptions are documentation, validators are accepted-without-enforce,
+ * groups are not tracked. The renderer doesn't read these back, so
+ * dropping the writes is observationally indistinguishable. */
+static void vk_Cvar_SetDescription( cvar_t *cv, const char *description ) {
+    (void)cv; (void)description;
+}
+
+static void vk_Cvar_CheckRange( cvar_t *cv, const char *minVal, const char *maxVal, cvarValidator_t type ) {
+    (void)cv; (void)minVal; (void)maxVal; (void)type;
+}
+
+static void vk_Cvar_SetGroup( cvar_t *var, cvarGroup_t group ) {
+    (void)var; (void)group;
+}
+
+static int vk_Cvar_CheckGroup( cvarGroup_t group ) {
+    (void)group;
+    return 0;
+}
+
+static void vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFlags ) {
+    (void)group; (void)resetModifiedFlags;
 }
 
 /* Q3e Hunk_Alloc family takes size_t; engine takes int. Narrow with an
