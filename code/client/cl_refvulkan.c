@@ -61,6 +61,11 @@ int      CIN_PlayCinematic( const char *arg0, int xpos, int ypos,
 e_status CIN_RunCinematic( int handle );
 void     CIN_UploadCinematic( int handle );
 
+/* Engine's print adapter shared with the OpenGL renderer path
+ * (cl_main.c:3276). Format-string + level handling lives there as the
+ * single source of truth; both renderers route through it. */
+void QDECL CL_RefPrintf( int print_level, const char *fmt, ... );
+
 /* The big refImport_t lives here as static storage. Filled lazily on
  * first call to CL_BuildVulkanRefImport; subsequent calls return the
  * same pointer. */
@@ -122,8 +127,13 @@ void *CL_BuildVulkanRefImport( void ) {
      *     existing engine function 1:1 (modulo a narrow cast).
      *
      *     Casts on the RHS are deliberately explicit and narrow:
-     *     - Printf/Error: engine uses int for printLevel/errorLevel,
-     *       Q3e uses typed enums (printParm_t/errorParm_t).
+     *     - Printf: Q3e expects (printParm_t, fmt, ...) — same signature
+     *       as the engine's existing CL_RefPrintf adapter (cl_main.c).
+     *       We do NOT cast Com_Printf directly: it has signature
+     *       (fmt, ...) and the first arg slot would be misread as the
+     *       format string, NULL-deref'ing vsnprintf at PRINT_ALL=0.
+     *     - Error: engine's Com_Error already takes (int, fmt, ...);
+     *       enum→int cast is signature-equivalent.
      *     - Cmd_AddCommand: engine takes xcommand_t (typedef of the
      *       same shape as Q3e's void(*)(void)) -- silent cast OK,
      *       made explicit.
@@ -139,7 +149,7 @@ void *CL_BuildVulkanRefImport( void ) {
      *       uses int -- compatible.
      *     - Cvar_VariableString: engine returns `char *`, Q3e wants
      *       `const char *`. Same data; cast is safe. */
-    vk_ri.Printf                    = (void (QDECL *)( printParm_t, const char *, ... ))Com_Printf;
+    vk_ri.Printf                    = (void (QDECL *)( printParm_t, const char *, ... ))CL_RefPrintf;
     vk_ri.Error                     = (void (QDECL *)( errorParm_t, const char *, ... ))Com_Error;
     vk_ri.Milliseconds              = Sys_Milliseconds;
     vk_ri.Cmd_AddCommand            = (void (*)( const char *, void (*)( void ) ))Cmd_AddCommand;
