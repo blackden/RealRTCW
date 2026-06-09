@@ -30,17 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
-#ifdef BUILD_RENDERER_VULKAN
-/* Vendored Quake3e renderervk consumes refimport_t from renderercommon.
- * Engine populates the larger struct so the vendored side reads matching
- * offsets. See docs/superpowers/plans/2026-06-07-vulkan-phase2-playable-campaign.md
- * Task 2.4 — Vulkan-Phase2-M2.4 trade-off: avoids a separate vtable
- * adapter; engine populates only the fields it has equivalents for, the
- * rest stay NULL via zero-init. */
-#include "../renderercommon/tr_public.h"
-#else
 #include "../renderer/tr_public.h"
-#endif
 #include "../ui/ui_public.h"
 #include "keys.h"
 #include "snd_public.h"
