@@ -36,6 +36,15 @@
 - **`refimport_t` adapter — conditional include в `code/client/client.h:33`.**
   При `BUILD_RENDERER_VULKAN=1` engine подтягивает renderercommon/tr_public.h (большая struct), при OpenGL — renderer/tr_public.h (маленькая). `cl_main.c:CL_InitRef` зерофицирует `ri` через `Com_Memset` чтобы непопулированные слоты были NULL не stack-garbage. Pragmatic shortcut вместо full vtable adapter (~12 строк vs ~400). Decision: [[m2.4-vtable-adapter-shortcut]].
 
+- **Renderer-side cvar bridge — `code/renderervk/realrtcw_vk_window_bridge.c`.**
+  Симметрия к refimport_t adapter, но на другой стороне vtable. Shared `code/sdl/sdl_glimp.c` ждёт 11 renderer-side externs (`r_mode`, `r_fullscreen`, `r_noborder`, `r_colorbits/depthbits/stencilbits`, `r_stereoEnabled`, `r_swapInterval`, `displayAspect`, `haveClampToEdge`, `R_GetModeInfo`) — vendored Quake3e `renderervk/tr_init.c` их выкинул в пользу `ri.Cvar_VariableString` lookup'ов. Bridge определяет эти 11 символов tentative globals + `R_GetModeInfo` portированный из iortcw SP `tr_init.c:346-416`, latch'ит cvar pointers через `ri.Cvar_Get` в `RealRTCW_VkBridgeInit()` (вызов первой строкой `GLimp_Init` под `#ifdef BUILD_RENDERER_VULKAN`). Линкуется только в `Q3VKOBJ`. Decision: [[m3-renderer-side-cvar-bridge]].
+
+- **`tr_subs.o` нельзя в `Q3VKOBJ` — duplicate symbol с renderervk/tr_init.c.**
+  `code/renderer/tr_subs.c:26-48` определяет `Com_Printf`/`Com_Error` безусловно; vendored `code/renderervk/tr_init.c:254-275` тоже под `#ifdef USE_RENDERER_DLOPEN`. Linking both into Vulkan DLL → ld duplicate symbol. Pre-M3 vendoring miss — surface'ит только на clean rebuild (между inkremental сборками .o-файлы оставались stale). OpenGL Q3ROBJ оставлен с `tr_subs.o` потому что engine `code/renderer/tr_init.c` НЕ определяет эти функции. Учтено в `Makefile:2174-2185` комментом-warning'ом. История: M3 closure 2026-06-09. Decision: [[m3-renderer-side-cvar-bridge]] (раздел «Pre-M3 vendoring landmine»).
+
+- **Vulkan-DLL-only guard pattern — target-specific CFLAGS append.**
+  `-DUSE_VULKAN_API` сидит в `BASE_CFLAGS` (см. `Makefile:520`) и льётся в ОБА билда: `renderer/sdl_glimp.o` (для OpenGL DLL) и `rendv/sdl_glimp.o` (для Vulkan DLL). Поэтому НЕ годится как preprocessor guard для кода, который должен жить только в одном DLL'е. Решение в `Makefile:3070-3079` — GNU Make target-specific append: `$(B)/rendv/sdl_glimp.o: CFLAGS += -DBUILD_RENDERER_VULKAN`. Когда нужен ещё один Vulkan-only define на другом rendv/ файле — добавлять такой же per-target append. Decision: [[m3-renderer-side-cvar-bridge]].
+
 ## Build / packaging
 
 - **`USE_INTERNAL_LIBS=0` обязателен на macOS.**
@@ -56,3 +65,4 @@
 - [[color4ub-single-source]] → `notes/decisions/2026-06-08-color4ub-single-source.md`
 - [[refentity-shader-anon-union]] → `notes/decisions/2026-06-08-refentity-shader-anon-union.md`
 - [[vendor-prefix-convention]] → `notes/decisions/2026-06-08-vendor-prefix-convention.md`
+- [[m3-renderer-side-cvar-bridge]] → `notes/decisions/2026-06-09-m3-renderer-side-cvar-bridge.md`
