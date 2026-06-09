@@ -3067,6 +3067,16 @@ $(B)/rendv/%.o: $(CMDIR)/%.c
 $(B)/rendv/%.o: $(SDLDIR)/%.c
 	$(DO_REF_CC)
 
+# Per-target define so sdl_glimp.c / sdl_gamma.c can branch on the Vulkan
+# DLL build path. -DUSE_VULKAN_API is in BASE_CFLAGS and reaches BOTH
+# renderer/ and rendv/ object compiles, so it cannot be used as a guard
+# for code that must only appear in the Vulkan DLL (e.g. the bridge init
+# call wired from sdl_glimp.c). BUILD_RENDERER_VULKAN is set here on the
+# rendv/ SDL objects only, leaving the OpenGL renderer/sdl_glimp.o build
+# unchanged.
+$(B)/rendv/sdl_glimp.o: CFLAGS += -DBUILD_RENDERER_VULKAN
+$(B)/rendv/sdl_gamma.o: CFLAGS += -DBUILD_RENDERER_VULKAN
+
 $(B)/ded/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
 
