@@ -300,7 +300,8 @@ static void InitOpenGL( void ) {
 		 * the SDL window and GL context; this populates the renderer
 		 * state that depends on a current GL context. */
 		if ( !GLimp_RendererInit( qtrue ) ) {
-			ri.Error( ERR_FATAL, "GLimp_RendererInit failed" );
+			ri.Error( ERR_FATAL,
+				"GLimp_RendererInit failed -- qgl* probe or software-rasterizer rejection; see console log for the specific cause" );
 		}
 
 		// OpenGL driver constants

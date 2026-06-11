@@ -39,6 +39,17 @@ If you have questions concerning this license or the applicable additional terms
  * Entry points GLimp_RendererInit / GLimp_RendererShutdown are invoked
  * from R_Init / R_Shutdown after engine-side GLimp_Init creates the SDL
  * window + GL context.
+ *
+ * NOTE on software-rasterizer fallback: pre-gamma' sdl_glimp.c detected
+ * software rasterizer inside the SDL_GL_CONTEXT_PROFILE_CORE attempt
+ * loop and retried with a non-core context before giving up. Post-gamma'
+ * Task 2a, by the time GLimp_RendererInit runs the context is already
+ * committed and the only response to software is ERR_FATAL. This is
+ * intentional for the target platform (Apple Silicon Metal-GL is
+ * hardware-only) and the entanglement-removal it enables is worth it.
+ * On Intel macOS with broken drivers or Linux with
+ * LIBGL_ALWAYS_SOFTWARE=1, behavior degrades from graceful fallback to
+ * a hard fatal. Acceptable for our ship target.
  */
 
 #ifdef USE_LOCAL_HEADERS
