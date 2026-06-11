@@ -3488,7 +3488,7 @@ void CL_InitRef( void ) {
 	 * code/sdl/sdl_glimp.c. Wire the slots so the OpenGL renderer DLL
 	 * calls into the engine via ri.GLimp_*. */
 	{
-		extern void GLimp_Init( qboolean fixedFunction );
+		extern void GLimp_Init( glconfig_t *config, qboolean fixedFunction );
 		extern void GLimp_Shutdown( void );
 		extern void GLimp_EndFrame( void );
 		extern void GLimp_Minimize( void );

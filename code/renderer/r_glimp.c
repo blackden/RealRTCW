@@ -619,7 +619,7 @@ renderer DLL. Keep a renderer-internal stub so the existing call sites
 in tr_backend.c / tr_shade.c / tr_scene.c link.
 ===============
 */
-void GLimp_LogComment( char *comment )
+void GLimp_LogComment( const char *comment )
 {
 	(void)comment;
 }

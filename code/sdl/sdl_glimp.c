@@ -878,7 +878,7 @@ This routine is responsible for initializing the OS specific portions
 of OpenGL
 ===============
 */
-void GLimp_Init( qboolean fixedFunction )
+void GLimp_Init( glconfig_t *config, qboolean fixedFunction )
 {
 	Com_DPrintf("Glimp_Init( )\n" );
 
@@ -938,6 +938,24 @@ success:
 	 * GLimp_InitExtensions) moved to code/renderer/r_glimp.c (gamma'
 	 * Task 2a). Renderer's R_Init calls GLimp_RendererInit() after this
 	 * function returns. */
+
+	/* gamma' Task 2 fixup (code-review C1): copy populated fields out to
+	 * the caller's glconfig_t. Mirrors VKimp_Init's out-param contract.
+	 * Without this, the OpenGL renderer DLL's `glConfig.vidWidth`
+	 * (etc.) remain zero after `ri.GLimp_Init` returns and downstream
+	 * code (NPOT sizing, screenshots, viewport setup) breaks. */
+	config->vidWidth            = glConfig.vidWidth;
+	config->vidHeight           = glConfig.vidHeight;
+	config->windowAspect        = glConfig.windowAspect;
+	config->colorBits           = glConfig.colorBits;
+	config->depthBits           = glConfig.depthBits;
+	config->stencilBits         = glConfig.stencilBits;
+	config->isFullscreen        = glConfig.isFullscreen;
+	config->displayFrequency    = glConfig.displayFrequency;
+	config->stereoEnabled       = glConfig.stereoEnabled;
+	config->deviceSupportsGamma = glConfig.deviceSupportsGamma;
+	config->driverType          = glConfig.driverType;
+	config->hardwareType        = glConfig.hardwareType;
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
 	IN_Init();

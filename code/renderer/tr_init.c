@@ -292,7 +292,7 @@ static void InitOpenGL( void ) {
 	if ( glConfig.vidWidth == 0 ) {
 		GLint temp;
 
-		ri.GLimp_Init( qtrue );
+		ri.GLimp_Init( &glConfig, qtrue );
 
 		/* gamma' Task 2a: renderer-internal GL probing (qgl* function
 		 * pointer load, software-rasterizer rejection, glConfig string
