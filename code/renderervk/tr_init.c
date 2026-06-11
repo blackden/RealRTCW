@@ -23,17 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "tr_local.h"
 
-#ifdef USE_VULKAN
-/* θ': window-init functions live in code/sdl/sdl_glimp.c, linked into
- * this DLL via Makefile per-target rules. We call them directly so the
- * window-creation lifecycle stays inside the DLL (symmetric with the
- * OpenGL GLimp_Init handoff). See notes/decisions/
- * 2026-06-10-m4-window-ownership-model.md §3 for the architectural
- * rationale. */
-extern void VKimp_Init( glconfig_t *config );
-extern void VKimp_Shutdown( qboolean unloadDLL );
-#endif
-
 glconfig_t	glConfig;
 
 qboolean	textureFilterAnisotropic;
@@ -537,9 +526,13 @@ static void InitOpenGL( void )
 	if ( glConfig.vidWidth == 0 )
 	{
 #ifdef USE_VULKAN
-		// θ': call the renderer-DLL-local VKimp_Init directly. No vtable
-		// hop needed since the function lives in this DLL's sdl_glimp.c.
-		VKimp_Init( &glConfig );
+		if ( !ri.VKimp_Init )
+		{
+			ri.Error( ERR_FATAL, "Vulkan interface is not initialized" );
+		}
+
+		// This function is responsible for initializing a valid Vulkan subsystem.
+		ri.VKimp_Init( &glConfig );
 
 		gls.windowWidth = glConfig.vidWidth;
 		gls.windowHeight = glConfig.vidHeight;
@@ -1988,8 +1981,9 @@ static void RE_Shutdown( refShutdownCode_t code ) {
 		Com_Memset( &glState, 0, sizeof( glState ) );
 
 		if ( code != REF_KEEP_WINDOW ) {
-			// θ': direct call to renderer-DLL-local VKimp_Shutdown.
-			VKimp_Shutdown( code == REF_UNLOAD_DLL ? qtrue : qfalse );
+			if ( ri.VKimp_Shutdown ) {
+				ri.VKimp_Shutdown( code == REF_UNLOAD_DLL ? qtrue : qfalse );
+			}
 			Com_Memset( &glConfig, 0, sizeof( glConfig ) );
 		}
 #else
