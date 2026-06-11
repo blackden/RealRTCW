@@ -130,6 +130,27 @@ Per the architecture map (§3.3 of `docs/vulkan-phase2/2026-06-10-m4-window-init
 
 ## §5 — Future ideal: platform layer (Phase 5+ aspiration, NOT a near-term plan)
 
+## §5a — OpenGL renderer sunset policy (γ'-landed addition)
+
+With γ' landed, the OpenGL path remains functional but its lifetime is
+explicitly time-boxed. Conditions for removal:
+
+1. Vulkan renderer reaches RTCW feature parity (all maps render, fog,
+   HUD, vid_restart cycle, gamma, brightness).
+2. ASAN + validation-layer clean on the Vulkan path.
+3. At least one full campaign playthrough on Vulkan without regressions.
+
+Once these conditions are met, the OpenGL slot is removed:
+- `code/renderer/` directory deleted.
+- `Q3ROBJ` Makefile object list removed.
+- `BUILD_RENDERER_OPENGL` macro turned permanently off (or eliminated).
+- `code/sdl/sdl_glimp.c` `if ( !vulkan )` branches deleted.
+- Engine binary no longer carries dual-backend dispatch logic.
+
+This is part of [[project_portfolio_vision]] Phase 3 modernization.
+
+---
+
 If we were greenfield in 2026 (Bevy / Godot / O3DE style), the right answer is **neither θ' nor γ'** — it is a **separate platform layer**:
 
 ```

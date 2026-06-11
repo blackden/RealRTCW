@@ -651,6 +651,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 		if ( !vulkan )
 		{
+			/* OpenGL path — deprecated, see GLimp_Init banner above. */
 #ifdef USE_OPENGLES
 			SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1 );
 #endif
@@ -872,10 +873,23 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 /*
 ===============
-GLimp_Init
+GLimp_Init  [DEPRECATED — slated for removal after Vulkan parity]
+
+DEPRECATED: The OpenGL renderer is preserved as a safety net while the
+Vulkan backend reaches feature parity with RTCW. Once Vulkan is feature-
+complete and stable (per the project portfolio roadmap), this function
+and its supporting OpenGL DLL will be removed in favor of a Vulkan-only
+build.
+
+Until then, this is the engine-side entry point for OpenGL renderer
+window+context init. Sister function: VKimp_Init.
+
+Tracked: project_portfolio_vision (Phase 3+ sunset). See also
+notes/decisions/2026-06-10-m4-window-ownership-model.md §5a for the
+sunset policy and removal checklist.
 
 This routine is responsible for initializing the OS specific portions
-of OpenGL
+of OpenGL.
 ===============
 */
 void GLimp_Init( glconfig_t *config, qboolean fixedFunction )
