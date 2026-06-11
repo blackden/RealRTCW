@@ -96,6 +96,98 @@ static void vk_re_wrap_UploadCinematic( int w, int h, int cols, int rows,
     vk_re_thunk_UploadCinematic( w, h, cols, rows, data, client, dirty );
 }
 
+/* ====================================================================
+ * Group C — RTCW-only refexport slots (no BIG counterpart).
+ *
+ * Each is a tripwire stub: silent on subsequent calls, prints once on
+ * first call. M5 use: drive a smoke run, scrape the log for which of
+ * these actually fire during boot+menu+first-level-load, prioritize
+ * follow-up routing accordingly.
+ *
+ * Signatures and behaviors are SMALL (engine view). When a renderer
+ * counterpart is wired in a follow-up commit, replace the stub body
+ * with the routing logic and remove the tripwire.
+ * ==================================================================== */
+
+#define VK_RE_TRIPWIRE(name) \
+    static qboolean vk_re_C_fired_##name = qfalse; \
+    static void vk_re_C_log_##name( void ) { \
+        if ( !vk_re_C_fired_##name ) { \
+            Com_Printf( S_COLOR_YELLOW "[M5/C] re." #name " called — RTCW-only slot, no-op stub\n" ); \
+            vk_re_C_fired_##name = qtrue; \
+        } \
+    }
+
+VK_RE_TRIPWIRE(RegisterSmartSkin)
+VK_RE_TRIPWIRE(GetSkinModel)
+VK_RE_TRIPWIRE(GetShaderFromModel)
+VK_RE_TRIPWIRE(AddPolysToScene)
+VK_RE_TRIPWIRE(AddCoronaToScene)
+VK_RE_TRIPWIRE(SetFog)
+VK_RE_TRIPWIRE(DrawStretchPicGradient)
+VK_RE_TRIPWIRE(ZombieFXAddNewHit)
+
+#undef VK_RE_TRIPWIRE
+
+static qhandle_t vk_re_C_RegisterSmartSkin( const char *n, const char *m, qboolean u ) {
+    (void)n; (void)m; (void)u;
+    vk_re_C_log_RegisterSmartSkin();
+    return 0;
+}
+
+static qboolean vk_re_C_GetSkinModel( qhandle_t skinid, const char *type, char *name ) {
+    (void)skinid; (void)type; (void)name;
+    vk_re_C_log_GetSkinModel();
+    return qfalse;
+}
+
+static qhandle_t vk_re_C_GetShaderFromModel( qhandle_t modelid, int surfnum, int withlightmap ) {
+    (void)modelid; (void)surfnum; (void)withlightmap;
+    vk_re_C_log_GetShaderFromModel();
+    return 0;
+}
+
+static void vk_re_C_AddPolysToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys ) {
+    (void)hShader; (void)numVerts; (void)verts; (void)numPolys;
+    vk_re_C_log_AddPolysToScene();
+    /* TODO M5-followup: loop over numPolys, call vk_re_small.AddPolyToScene
+     * for each. Trivial routing — deferred until smoke confirms it fires. */
+}
+
+static void vk_re_C_AddCoronaToScene( const vec3_t org, float r, float g, float b, float scale, int id, int flags ) {
+    (void)org; (void)r; (void)g; (void)b; (void)scale; (void)id; (void)flags;
+    vk_re_C_log_AddCoronaToScene();
+    /* TODO M5-followup: approximate as small dynamic light via vk_re_small.AddLightToScene. */
+}
+
+static void vk_re_C_SetFog( int fogvar, int var1, int var2, float r, float g, float b, float density ) {
+    (void)fogvar; (void)var1; (void)var2; (void)r; (void)g; (void)b; (void)density;
+    vk_re_C_log_SetFog();
+    /* TODO M5-followup: routing to renderervk fog system depends on
+     * whether Q3e fog API is rich enough — investigate after smoke. */
+}
+
+static void vk_re_C_DrawStretchPicGradient( float x, float y, float w, float h,
+                                            float s1, float t1, float s2, float t2,
+                                            qhandle_t hShader, const float *gradientColor,
+                                            int gradientType ) {
+    vk_re_C_log_DrawStretchPicGradient();
+    /* Fallback: gradientless DrawStretchPic — loses the gradient effect
+     * but the pic still draws (HUD won't look wrong, just slightly off). */
+    (void)gradientColor; (void)gradientType;
+    if ( vk_re_small.DrawStretchPic ) {
+        vk_re_small.DrawStretchPic( x, y, w, h, s1, t1, s2, t2, hShader );
+    }
+}
+
+static void vk_re_C_ZombieFXAddNewHit( int entityNum, const vec3_t hitPos, const vec3_t hitDir ) {
+    (void)entityNum; (void)hitPos; (void)hitDir;
+    vk_re_C_log_ZombieFXAddNewHit();
+    /* RealRTCW-specific zombie blood/spark FX. No Q3e equivalent. No-op
+     * is observationally inert — the zombies will lack hit-spark VFX
+     * but combat is functional. */
+}
+
 void *CL_BuildVulkanRefExport( void *big_export ) {
     if ( vk_re_built ) {
         return &vk_re_small;
@@ -143,6 +235,16 @@ void *CL_BuildVulkanRefExport( void *big_export ) {
     vk_re_small.RemapShader         = (void (*)( const char *, const char *, const char * ))vk_re_get_RemapShader();
     vk_re_small.GetEntityToken      = (qboolean (*)( char *, int ))vk_re_get_GetEntityToken();
     vk_re_small.TakeVideoFrame      = (void (*)( int, int, byte *, byte *, qboolean ))vk_re_get_TakeVideoFrame();
+
+    /* Group C — RTCW-only stubs */
+    vk_re_small.RegisterSmartSkin     = vk_re_C_RegisterSmartSkin;
+    vk_re_small.GetSkinModel          = vk_re_C_GetSkinModel;
+    vk_re_small.GetShaderFromModel    = vk_re_C_GetShaderFromModel;
+    vk_re_small.AddPolysToScene       = vk_re_C_AddPolysToScene;
+    vk_re_small.AddCoronaToScene      = vk_re_C_AddCoronaToScene;
+    vk_re_small.SetFog                = vk_re_C_SetFog;
+    vk_re_small.DrawStretchPicGradient = vk_re_C_DrawStretchPicGradient;
+    vk_re_small.ZombieFXAddNewHit     = vk_re_C_ZombieFXAddNewHit;
 
     vk_re_built = qtrue;
     return &vk_re_small;
