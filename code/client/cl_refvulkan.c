@@ -104,6 +104,7 @@ static void      vk_Cvar_CheckRange( cvar_t *cv, const char *minVal, const char 
 static void      vk_Cvar_SetGroup( cvar_t *var, cvarGroup_t group );
 static int       vk_Cvar_CheckGroup( cvarGroup_t group );
 static void      vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFlags );
+static void      vk_CL_SetScaling( float factor, int captureWidth, int captureHeight );
 
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
@@ -216,6 +217,12 @@ void *CL_BuildVulkanRefImport( void ) {
     vk_ri.Cvar_CheckGroup           = vk_Cvar_CheckGroup;
     vk_ri.Cvar_ResetGroup           = vk_Cvar_ResetGroup;
 
+    /* --- NO-OP STUB: Q3e renderer→engine scaling notification. RealRTCW
+     *     engine has no equivalent plumbing (HUD assumes 1:1 with window).
+     *     Safe no-op for boot; revisit if HUD coordinates drift. Called
+     *     from code/renderervk/tr_init.c:543,556,562 right after VKimp_Init. */
+    vk_ri.CL_SetScaling             = vk_CL_SetScaling;
+
     /* --- VULKAN WINDOW SYSTEM: code that doesn't exist on engine side.
      *     Defined further down. */
     vk_ri.VK_CreateSurface          = vk_VK_CreateSurface;
@@ -234,7 +241,6 @@ void *CL_BuildVulkanRefImport( void ) {
      *       CL_LoadJPG           -- not present in RealRTCW engine
      *       CL_SaveJPG           -- not present in RealRTCW engine
      *       CL_SaveJPGToBuffer   -- not present in RealRTCW engine
-     *       CL_SetScaling        -- not present in RealRTCW engine
      *       CL_WriteAVIVideoFrame-- engine sig (const byte*,int) vs
      *                              Q3e sig matches; could wire if
      *                              renderer triages it. Leave NULL
@@ -329,6 +335,16 @@ static int vk_Cvar_CheckGroup( cvarGroup_t group ) {
 
 static void vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFlags ) {
     (void)group; (void)resetModifiedFlags;
+}
+
+/* CL_SetScaling: Q3e renderer tells engine the render→display scale
+ * factor and capture dimensions. Used for HUD/mouse coordinate
+ * scaling in the Q3e client. RealRTCW engine has no equivalent
+ * plumbing -- HUD assumes 1:1 with window. Safe no-op for boot;
+ * revisit if HUD coordinates drift in Phase 3+. Called from
+ * code/renderervk/tr_init.c:543, 556, 562 right after VKimp_Init. */
+static void vk_CL_SetScaling( float factor, int captureWidth, int captureHeight ) {
+    (void)factor; (void)captureWidth; (void)captureHeight;
 }
 
 /* Q3e Hunk_Alloc family takes size_t; engine takes int. Narrow with an
