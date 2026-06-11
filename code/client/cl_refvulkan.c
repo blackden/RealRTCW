@@ -101,8 +101,6 @@ static void      vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFl
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
 static void     *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name );
-static void      vk_VKimp_Init( glconfig_t *config );
-static void      vk_VKimp_Shutdown( qboolean unloadDLL );
 
 /* ====================================================================
  * Local tagged-allocation tracker for vk_Malloc / vk_FreeAll.
@@ -211,12 +209,12 @@ void *CL_BuildVulkanRefImport( void ) {
     vk_ri.Cvar_CheckGroup           = vk_Cvar_CheckGroup;
     vk_ri.Cvar_ResetGroup           = vk_Cvar_ResetGroup;
 
-    /* --- VULKAN WINDOW SYSTEM: code that doesn't exist on engine side.
-     *     Defined further down. */
+    /* --- VULKAN WINDOW SYSTEM: surface + proc-addr live engine-side
+     *     because they need post-window-creation hooks. Defined further
+     *     down. VKimp_Init / VKimp_Shutdown are intentionally NULL -- see
+     *     the NULL-slot list below. */
     vk_ri.VK_CreateSurface          = vk_VK_CreateSurface;
     vk_ri.VK_GetInstanceProcAddr    = vk_VK_GetInstanceProcAddr;
-    vk_ri.VKimp_Init                = vk_VKimp_Init;
-    vk_ri.VKimp_Shutdown            = vk_VKimp_Shutdown;
 
     /* --- INTENTIONALLY NULL: Q3e-only slots the RTCW engine has no
      *     equivalent for. Com_Memset above zeroed all slots; NULL
@@ -248,6 +246,11 @@ void *CL_BuildVulkanRefImport( void ) {
      *       GLimp_Shutdown       -- OpenGL window slot, not Vulkan
      *       GL_GetProcAddress    -- OpenGL window slot, not Vulkan
      *       Sys_SetClipboardBitmap -- not present in RealRTCW engine
+     *       VKimp_Init           -- θ' option: renderer-DLL owns Vulkan
+     *                              window creation in its own sdl_glimp.c.
+     *                              See notes/decisions/
+     *                              2026-06-10-m4-window-ownership-model.md.
+     *       VKimp_Shutdown       -- same as VKimp_Init.
      *
      *     The refexport_t slots (AddAdditiveLightToScene,
      *     AddLinearLightToScene, FinishBloom, ThrottleBackend,
@@ -402,23 +405,3 @@ static void *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name ) 
     return (void *)loader( instance, name );
 }
 
-static void vk_VKimp_Init( glconfig_t *config ) {
-    /* The shared engine SDL window was already created by GLimp_Init
-     * (sdl_glimp.c) before the renderer DLL was loaded. The Vulkan
-     * renderer just needs the window to exist; surface creation
-     * happens later via vk_VK_CreateSurface.
-     *
-     * config: Q3e renderer's view of glconfig. The engine doesn't
-     * populate this directly here -- if the renderer reads fields,
-     * M4 triage will surface NULL/garbage and we can fill them then. */
-    (void)config;
-    if ( !SDL_window ) {
-        Com_Error( ERR_FATAL, "vk_VKimp_Init: SDL_window not initialized -- engine startup order is broken" );
-    }
-    Com_Printf( "vk_VKimp_Init: SDL window present, deferring surface creation to vk_VK_CreateSurface\n" );
-}
-
-static void vk_VKimp_Shutdown( qboolean unloadDLL ) {
-    (void)unloadDLL;
-    /* idempotent stub -- safe to no-op on shutdown */
-}
