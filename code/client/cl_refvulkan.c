@@ -110,6 +110,7 @@ static void      vk_Free( void *ptr );
 static void      vk_GLimp_InitGamma( glconfig_t *config );
 static void      vk_GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] );
 static qboolean  vk_CL_IsMinimized( void );
+static void      vk_CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height );
 
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
@@ -243,6 +244,14 @@ void *CL_BuildVulkanRefImport( void ) {
      *     wire to actual engine state when we add multi-window/visibility. */
     vk_ri.CL_IsMinimized            = vk_CL_IsMinimized;
 
+    /* --- NO-OP STUB: JPG image loader. RealRTCW engine has no libjpeg
+     *     integration. The image loader loop in R_LoadImage tries each
+     *     extension; if vk_CL_LoadJPG returns *pic=NULL the fallback
+     *     to TGA/PNG continues. JPG textures effectively unsupported on
+     *     Vulkan path for now -- iter 10 fix. Add real decode later if
+     *     game content actually ships JPG textures. */
+    vk_ri.CL_LoadJPG                = vk_CL_LoadJPG;
+
     /* --- DIRECT WIRE: engine CM_ClusterPVS used by renderervk's BSP
      *     visibility code (tr_world.c). Signature matches. */
     vk_ri.CM_ClusterPVS             = CM_ClusterPVS;
@@ -261,7 +270,6 @@ void *CL_BuildVulkanRefImport( void ) {
      *     diagnose in M4 logs.
      *
      *     Listed for grep-discoverability (alphabetical):
-     *       CL_LoadJPG           -- not present in RealRTCW engine
      *       CL_SaveJPG           -- not present in RealRTCW engine
      *       CL_SaveJPGToBuffer   -- not present in RealRTCW engine
      *       CL_WriteAVIVideoFrame-- engine sig (const byte*,int) vs
@@ -369,6 +377,17 @@ static void vk_GLimp_SetGamma( unsigned char red[256], unsigned char green[256],
  * wire to engine state if/when we add visibility tracking. */
 static qboolean vk_CL_IsMinimized( void ) {
     return qfalse;
+}
+
+/* JPG loader stub. Leaves *pic NULL so the renderer's R_LoadImage
+ * format-search-loop falls through to the next extension (TGA, PNG).
+ * Game content for stock RTCW SP doesn't ship JPG textures, so this
+ * is observationally inert. Wire to real libjpeg if/when needed. */
+static void vk_CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height ) {
+    (void)filename;
+    if ( pic ) *pic = NULL;
+    if ( width ) *width = 0;
+    if ( height ) *height = 0;
 }
 
 /* Q3e cvar metadata API — no engine storage exists. Each is a no-op:
