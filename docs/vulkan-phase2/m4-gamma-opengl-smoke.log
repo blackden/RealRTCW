@@ -1,0 +1,140 @@
+═══ RealRTCW release build (без sanitizer'а) ═══
+Лог-префиксы:  /tmp/rtcw-asan.<pid>.log   /tmp/rtcw-ubsan.<pid>.log
+Бинарник:      /Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam/RealRTCW.arm64
+
+Renderer:      OpenGL (cl_renderer=opengl1, default)
+tty console mode disabled
+RealRTCW 5.4 macosx-arm64 Jun 11 2026
+----- FS_Startup -----
+Current search path:
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zzzsurvival.pk3 (410 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zzrealrtcw_scripts.pk3 (280 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui_hd.pk3 (90 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui.pk3 (692 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zperson.pk3 (50 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures_hd.pk3 (1674 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures.pk3 (704 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds_hd.pk3 (203 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds.pk3 (758 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_weapons.pk3 (772 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_hd.pk3 (393 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters_hd.pk3 (815 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters.pk3 (575 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models.pk3 (715 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps_re.pk3 (27 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps.pk3 (63 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_localization.pk3 (306 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak4.pk3 (21 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak3.pk3 (14 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak2.pk3 (232 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak1.pk3 (1342 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/pak0.pk3 (4775 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main
+/Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam/main
+
+----------------------
+14911 files in pk3 files
+execing realrtcwdefault.cfg
+execing realrtcw_binds.cfg
+execing realrtcw_cvars.cfg
+execing autoexec.cfg
+couldn't exec dlc1.cfg
+couldn't exec ee_dlc.cfg
+Hunk_Clear: reset the hunk ok
+Bypassing CD checks
+----- Client Initialization -----
+Cmd_AddCommand: map_restart already defined
+----- Initializing Renderer ----
+Trying to load "renderer_sp_opengl1_arm64.dylib" from "/Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam"...
+---- Renderer Initialization Complete ----
+RTCWKEY found.
+----- Client Initialization Complete -----
+----- R_Init -----
+SDL using driver "cocoa"
+Initializing OpenGL display
+Display aspect: 1.600
+...setting mode -2: 1680 1050
+Using 24 color bits, 32 depth, 8 stencil display.
+Available modes: '840x525 1024x640 1152x720 1280x800 1440x900 1680x1050 2048x1280 2560x1600 825x525 1650x1050 800x600 1024x768'
+GL_RENDERER: Apple M1
+Initializing OpenGL extensions
+...ignoring GL_EXT_texture_compression_s3tc
+...GL_S3_s3tc not found
+...using GL_EXT_texture_env_add
+...using GL_ARB_multitexture
+...GL_EXT_compiled_vertex_array not found
+...using GL_EXT_texture_filter_anisotropic (max: 16)
+...using GL_SGIS_texture_edge_clamp
+Initializing Shaders
+^3WARNING: In shader file scripts/common.shader...Shader "textures/sfx/portal3a_back2" on line 842 is missing closing brace^3.
+^3WARNING: In shader file scripts/models_mapobjects_et.shader...Shader "models/mapobjects/flag/flag_dam" on line 1347 is missing closing brace^3.
+^3WARNING: In shader file scripts/ui_wolf.shader...Invalid shader name "}" on line 1849.
+
+GL_VENDOR: Apple
+GL_RENDERER: Apple M1
+GL_VERSION: 2.1 Metal - 90.5
+GL_EXTENSIONS: GL_ARB_color_buffer_float GL_ARB_depth_buffer_float GL_ARB_depth_clamp GL_ARB_depth_texture GL_ARB_draw_buffers GL_ARB_draw_elements_base_vertex GL_ARB_draw_instanced GL_ARB_fragment_program GL_ARB_fragment_program_shadow GL_ARB_fragment_shader GL_ARB_framebuffer_object GL_ARB_framebuffer_sRGB GL_ARB_half_float_pixel GL_ARB_half_float_vertex GL_ARB_imaging GL_ARB_instanced_arrays GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_pixel_buffer_object GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_provoking_vertex GL_ARB_seamless_cube_map GL_ARB_shader_objects GL_ARB_shader_texture_lod GL_ARB_shading_language_100 GL_ARB_shadow GL_ARB_shadow_ambient GL_ARB_sync GL_ARB_texture_border_clamp GL_ARB_texture_compression GL_ARB_texture_compression_rgtc GL_ARB_texture_cube_map GL_ARB_texture_env_add GL_ARB_texture_env_combine GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 GL_ARB_texture_float GL_ARB_texture_mirrored_repeat GL_ARB_texture_non_power_of_two GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_transpose_matrix GL_ARB_vertex_array_bgra GL_ARB_vertex_blend GL_ARB_vertex_buffer_object GL_ARB_vertex_program GL_ARB_vertex_shader GL_ARB_window_pos GL_EXT_abgr GL_EXT_bgra GL_EXT_bindable_uniform GL_EXT_blend_color GL_EXT_blend_equation_separate GL_EXT_blend_func_separate GL_EXT_blend_minmax GL_EXT_blend_subtract GL_EXT_clip_volume_hint GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_draw_buffers2 GL_EXT_draw_range_elements GL_EXT_fog_coord GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample GL_EXT_framebuffer_multisample_blit_scaled GL_EXT_framebuffer_object GL_EXT_framebuffer_sRGB GL_EXT_geometry_shader4 GL_EXT_gpu_program_parameters GL_EXT_gpu_shader4 GL_EXT_multi_draw_arrays GL_EXT_packed_depth_stencil GL_EXT_packed_float GL_EXT_provoking_vertex GL_EXT_rescale_normal GL_EXT_secondary_color GL_EXT_separate_specular_color GL_EXT_shadow_funcs GL_EXT_stencil_two_side GL_EXT_stencil_wrap GL_EXT_texture_array GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_s3tc GL_EXT_texture_env_add GL_EXT_texture_filter_anisotropic GL_EXT_texture_integer GL_EXT_texture_lod_bias GL_EXT_texture_rectangle GL_EXT_texture_shared_exponent GL_EXT_texture_sRGB GL_EXT_texture_sRGB_decode GL_EXT_timer_query GL_EXT_transform_feedback GL_EXT_vertex_array_bgra GL_APPLE_aux_depth_stencil GL_APPLE_client_storage GL_APPLE_element_array GL_APPLE_fence GL_APPLE_float_pixels GL_APPLE_flush_buffer_range GL_APPLE_flush_render GL_APPLE_packed_pixels GL_APPLE_pixel_buffer GL_APPLE_rgb_422 GL_APPLE_row_bytes GL_APPLE_specular_vector GL_APPLE_texture_range GL_APPLE_transform_hint GL_APPLE_vertex_array_object GL_APPLE_vertex_point_size GL_APPLE_vertex_program_evaluators GL_APPLE_ycbcr_422 GL_ATI_separate_stencil GL_ATI_texture_env_combine3 GL_ATI_texture_float GL_IBM_rasterpos_clip GL_NV_blend_square GL_NV_conditional_render GL_NV_depth_clamp GL_NV_fog_distance GL_NV_fragment_program_option GL_NV_fragment_program2 GL_NV_light_max_exponent GL_NV_texgen_reflection GL_NV_texture_barrier GL_NV_vertex_program2_option GL_NV_vertex_program3 GL_SGI_color_matrix GL_SGIS_generate_mipmap GL_SGIS_texture_edge_clamp GL_SGIS_texture_lod 
+GL_MAX_TEXTURE_SIZE: 16384
+GL_MAX_TEXTURE_UNITS_ARB: 8
+
+PIXELFORMAT: color(24-bits) Z(32-bit) stencil(8-bits)
+MODE: -2, 1680 x 1050 fullscreen hz:N/A
+GAMMA: software w/ 0 overbright bits
+rendering primitives: multiple glArrayElement
+texturemode: GL_LINEAR_MIPMAP_LINEAR
+picmip: 0
+picmip2: 0
+texture bits: 32
+multitexture: enabled
+compiled vertex arrays: disabled
+texenv add: enabled
+compressed textures: disabled
+ATI truform: disabled
+NV distance fog: disabled
+Forcing glFinish
+----- finished R_Init -----
+------ Initializing Sound ------
+SDL audio driver is "coreaudio".
+SDL_AudioSpec:
+  Format:   AUDIO_S16LSB
+  Freq:     22050
+  Channels: 2
+SDL capture device opened.
+Starting SDL audio callback...
+SDL audio initialized.
+----- Sound Info -----
+    2 channels
+40960 samples
+   16 samplebits (int)
+    1 submission_chunk
+22050 speed
+0xc95680000 dma buffer
+No background file.
+----------------------
+Sound initialization successful.
+--------------------------------
+Sound memory manager started
+--- Common Initialization Complete ---
+Hostname: MacBook-Air-Denis.local
+IP6: ::1
+IP6: fe80::1%lo0
+IP: 127.0.0.1
+IP: 192.168.1.2
+IP6: fe80::1cfd:b525:f72d:6c0f%en0
+Opening IP6 socket: [::]:27960
+Opening IP socket: 0.0.0.0:27960
+^3WARNING: music file sound/music/l_theme.wav is not 22k stereo
+Brightness changes require vid_restart with SDL3 OpenGL1 software gamma
+^3turning EXEC_NOW 'quit' into EXEC_INSERT
+----- Client Shutdown (Client quit) -----
+RE_Shutdown( 1 )
+Hunk_Clear: reset the hunk ok
+Closing SDL audio playback device...
+SDL audio playback device closed.
+Closing SDL audio capture device...
+SDL audio capture device closed.
+SDL audio shut down.
+-----------------------
+
+═══ Игра вышла с кодом 0 ═══
+✓ Никаких ASAN/UBSAN репортов. Sanitizer молчал — это хорошо.
