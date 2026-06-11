@@ -3,7 +3,7 @@
 **Date:** 2026-06-11 (rewritten — earlier draft had wrong Quake3e attribution)
 **Branch:** `macos-arm64-vulkan` in worktree `~/fedorov_tech/RealRTCW-vulkan-wt`
 **Milestone:** Phase 2 / M4 (first run + validation triage)
-**Status:** decision committed — implementing **θ'** for M4. **γ'** documented as the correct principled answer for Phase 3 once Vulkan is feature-complete.
+**Status:** **θ' LANDED** 2026-06-11 (commits `d52b71a` → `dbe754d`, see `docs/vulkan-phase2/m4-iter4-postθ.log`). `R_Init` now reaches `VKimp_Init`; the `SDL_window not initialized` fatal is gone. M4 fix-loop continues — next crash is segfault during `GLimp_SetMode` post-`VKimp_Init( )` print (earlier than the documented CL_SetScaling site at `tr_init.c:543`; root cause to be triaged next iter). **γ'** documented as the correct principled answer for Phase 3 once Vulkan is feature-complete.
 
 ## TL;DR — layered decision
 
