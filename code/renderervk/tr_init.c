@@ -1489,6 +1489,18 @@ R_Register
 */
 static void R_Register( void )
 {
+#ifdef BUILD_RENDERER_VULKAN
+	/* gamma' migration (notes/decisions/2026-06-10-m4-window-ownership-model.md):
+	 * window cvars (r_mode, r_fullscreen, etc.) are now registered
+	 * engine-side by sdl_glimp.c. The bridge populates the renderer-DLL-
+	 * side cvar_t* globals so internal renderervk code that dereferences
+	 * them keeps working. */
+	{
+		extern void RealRTCW_VkBridgeInit( void );
+		RealRTCW_VkBridgeInit();
+	}
+#endif
+
 	// make sure all the commands added here are also removed in R_Shutdown
 	ri.Cmd_AddCommand( "imagelist", R_ImageList_f );
 	ri.Cmd_AddCommand( "shaderlist", R_ShaderList_f );

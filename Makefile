@@ -2063,6 +2063,7 @@ Q3OBJ = \
   $(B)/splines/splines.o \
   $(B)/splines/util_str.o \
   \
+  $(B)/client/sdl_glimp.o \
   $(B)/client/sdl_input.o \
   $(B)/client/sdl_snd.o \
   \
@@ -2120,8 +2121,11 @@ ifeq ($(USE_BLOOM),1)
 endif
 
   Q3ROBJ += $(B)/renderer/sdl_gamma.o
-  Q3ROBJ += $(B)/renderer/sdl_glimp.o
   Q3ROBJ += $(B)/renderer/r_glimp.o
+  # γ' migration: sdl_glimp.o is now in Q3OBJ (engine binary). The OpenGL
+  # renderer DLL invokes platform-layer entry points through SMALL
+  # refImport_t's ri.GLimp_* slots (wired in code/client/cl_main.c
+  # CL_InitRef).
 
 ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3ROBJ += \
@@ -2175,7 +2179,9 @@ Q3VKOBJ = \
   $(B)/rendv/realrtcw_vk_window_bridge.o
 
   Q3VKOBJ += $(B)/rendv/sdl_gamma.o
-  Q3VKOBJ += $(B)/rendv/sdl_glimp.o
+  # γ' migration: sdl_glimp.o moved to Q3OBJ. The Vulkan renderer DLL
+  # invokes engine-side VKimp_Init via BIG refImport_t's ri.VKimp_Init
+  # slot (wired in code/client/cl_refvulkan.c — Task 3).
 
 ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3VKOBJ += \
@@ -3088,7 +3094,6 @@ $(B)/rendv/%.o: $(SDLDIR)/%.c
 # never reaches these compilation units and the #ifdef-guarded code
 # compiles out silently. Latent bug discovered during M3.5; pre-existed
 # in M3 but only mattered once the engine-side call site was added.
-$(B)/rendv/sdl_glimp.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
 $(B)/rendv/sdl_gamma.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
 # Engine-side TU that branches on BUILD_RENDERER_VULKAN to swap the
 # small engine-native refImport_t for the translator-built big
@@ -3099,6 +3104,10 @@ $(B)/rendv/sdl_gamma.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
 # which is only compiled when cl_refvulkan.o joins Q3OBJ (line 2080).
 ifeq ($(BUILD_RENDERER_VULKAN),1)
 $(B)/client/cl_main.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
+# γ' migration: sdl_glimp.o is engine-side now; its #ifdef BUILD_RENDERER_VULKAN
+# guards VKimp_Init/VKimp_Shutdown bodies, so the engine binary must compile
+# sdl_glimp.c with the same define when Vulkan support is enabled.
+$(B)/client/sdl_glimp.o: override CFLAGS += -DBUILD_RENDERER_VULKAN
 endif
 
 $(B)/ded/%.o: $(ASMDIR)/%.s

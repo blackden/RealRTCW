@@ -608,3 +608,18 @@ void GLimp_RendererShutdown( void )
 {
 	GLimp_ClearProcAddresses();
 }
+
+/*
+===============
+GLimp_LogComment
+
+No-op log helper called from various GL backend codepaths. After γ',
+sdl_glimp.c lives engine-side and no longer provides this symbol to the
+renderer DLL. Keep a renderer-internal stub so the existing call sites
+in tr_backend.c / tr_shade.c / tr_scene.c link.
+===============
+*/
+void GLimp_LogComment( char *comment )
+{
+	(void)comment;
+}

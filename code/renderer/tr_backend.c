@@ -1659,7 +1659,7 @@ const void  *RB_SwapBuffers( const void *data ) {
 
 	GLimp_LogComment( "***************** RB_SwapBuffers *****************\n\n\n" );
 
-	GLimp_EndFrame();
+	ri.GLimp_EndFrame();
 
 	backEnd.projection2D = qfalse;
 

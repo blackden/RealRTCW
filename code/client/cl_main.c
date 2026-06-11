@@ -3484,6 +3484,20 @@ void CL_InitRef( void ) {
 	ri.Sys_GLimpInit = Sys_GLimpInit;
 	ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;
 
+	/* gamma' migration: platform-layer GLimp_* lives engine-side in
+	 * code/sdl/sdl_glimp.c. Wire the slots so the OpenGL renderer DLL
+	 * calls into the engine via ri.GLimp_*. */
+	{
+		extern void GLimp_Init( qboolean fixedFunction );
+		extern void GLimp_Shutdown( void );
+		extern void GLimp_EndFrame( void );
+		extern void GLimp_Minimize( void );
+		ri.GLimp_Init     = GLimp_Init;
+		ri.GLimp_Shutdown = GLimp_Shutdown;
+		ri.GLimp_EndFrame = GLimp_EndFrame;
+		ri.GLimp_Minimize = GLimp_Minimize;
+	}
+
 #ifdef BUILD_RENDERER_VULKAN
 	{
 		/* Hand the vendored Vulkan renderer the BIG (Quake3e-shaped)

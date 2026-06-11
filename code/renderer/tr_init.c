@@ -292,7 +292,7 @@ static void InitOpenGL( void ) {
 	if ( glConfig.vidWidth == 0 ) {
 		GLint temp;
 
-		GLimp_Init( qtrue );
+		ri.GLimp_Init( qtrue );
 
 		/* gamma' Task 2a: renderer-internal GL probing (qgl* function
 		 * pointer load, software-rasterizer rejection, glConfig string
@@ -1414,7 +1414,7 @@ void R_Register( void ) {
 	ri.Cmd_AddCommand( "screenshot", R_ScreenShot_f );
 	ri.Cmd_AddCommand( "screenshotJPEG", R_ScreenShotJPEG_f );
 	ri.Cmd_AddCommand( "gfxinfo", GfxInfo_f );
-	ri.Cmd_AddCommand( "minimize", GLimp_Minimize );
+	ri.Cmd_AddCommand( "minimize", ri.GLimp_Minimize );
 	ri.Cmd_AddCommand( "taginfo", R_TagInfo_f );
 
 	// Ridah
@@ -1562,7 +1562,7 @@ void RE_Shutdown( qboolean destroyWindow ) {
 		/* gamma' Task 2a: clear qgl* function pointers before engine-side
 		 * GLimp_Shutdown destroys the GL context. */
 		GLimp_RendererShutdown();
-		GLimp_Shutdown();
+		ri.GLimp_Shutdown();
 
 		Com_Memset( &glConfig, 0, sizeof( glConfig ) );
 		textureFilterAnisotropic = qfalse;

@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../client/client.h"
 #include "../sys/sys_local.h"
+#include "sdl_glw.h"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #define KMOD_SCROLL KMOD_RESERVED
@@ -57,7 +58,8 @@ static int vidRestartTime = 0;
 
 static int in_eventTime = 0;
 
-SDL_Window *SDL_window = NULL;  /* Exposed externally for cl_refvulkan.c (M3.5 — Vulkan adapter). Populated by IN_Init when renderer hands us its window pointer. */
+/* SDL_window is defined engine-side in code/sdl/sdl_glimp.c (γ' migration);
+ * this TU sees it via sdl_glw.h's extern. No more duplicate definition. */
 
 #define CTRL(a) ((a)-'a'+1)
 
@@ -1232,7 +1234,7 @@ void IN_Frame( void )
 IN_Init
 ===============
 */
-void IN_Init( void *windowData )
+void IN_Init( void )
 {
 	int appState;
 
@@ -1242,7 +1244,8 @@ void IN_Init( void *windowData )
 		return;
 	}
 
-	SDL_window = (SDL_Window *)windowData;
+	/* SDL_window is a single engine-side global (γ' migration); set by
+	 * sdl_glimp.c when it creates the window. No cross-DLL handoff. */
 
 	Com_DPrintf( "\n------- Input Initialization -------\n" );
 
@@ -1293,5 +1296,5 @@ IN_Restart
 void IN_Restart( void )
 {
 	IN_ShutdownJoystick( );
-	IN_Init( SDL_window );
+	IN_Init();
 }

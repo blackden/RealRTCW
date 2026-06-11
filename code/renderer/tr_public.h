@@ -184,7 +184,7 @@ typedef struct {
 	void	(*CL_WriteAVIVideoFrame)( const byte *buffer, int size );
 
 	// input event handling
-	void	(*IN_Init)( void *windowData );
+	void	(*IN_Init)( void );
 	void	(*IN_Shutdown)( void );
 	void	(*IN_Restart)( void );
 
@@ -196,6 +196,15 @@ typedef struct {
 	void	(*Sys_GLimpSafeInit)( void );
 	void	(*Sys_GLimpInit)( void );
 	qboolean (*Sys_LowPhysicalMemory)( void );
+
+	/* gamma' migration (notes/decisions/2026-06-10-m4-window-ownership-model.md):
+	 * platform-layer (SDL window + GL context) lives engine-side in
+	 * code/sdl/sdl_glimp.c. The OpenGL renderer DLL invokes it through
+	 * these vtable slots. Engine wires them in CL_InitRef (cl_main.c). */
+	void	(*GLimp_Init)( qboolean fixedFunction );
+	void	(*GLimp_Shutdown)( void );
+	void	(*GLimp_EndFrame)( void );
+	void	(*GLimp_Minimize)( void );
 } refimport_t;
 
 

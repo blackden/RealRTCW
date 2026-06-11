@@ -31,19 +31,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdlib.h>
 #include <math.h>
 
-#include "../renderer/tr_local.h"
+/* γ' migration (notes/decisions/2026-06-10-m4-window-ownership-model.md):
+ * sdl_glimp.c is now an engine-side TU (Q3OBJ). Includes engine-side
+ * headers (client.h, sys_local.h, sdl_glw.h) instead of renderer-DLL
+ * headers. The SMALL refImport_t's GLimp_* slots (wired in cl_main.c
+ * CL_InitRef) let the OpenGL renderer DLL invoke us via ri.GLimp_*. */
+#include "../client/client.h"
 #include "../sys/sys_local.h"
+#include "sdl_glw.h"
 #include "sdl_icon.h"
-
-#ifdef BUILD_RENDERER_VULKAN
-/* Populates the renderer-side cvar globals + R_GetModeInfo this TU expects
- * when linked into renderer_sp_vulkan_<arch>.dylib. Guard is set per-target
- * in Makefile (see "$(B)/rendv/sdl_glimp.o: CFLAGS += ..."). */
-#include "../renderervk/realrtcw_vk_window_bridge.h"
-#endif
-
-/* OpenGL ES compat helpers (USE_OPENGLES) moved to code/renderer/r_glimp.c
- * (gamma' Task 2a). */
 
 typedef enum
 {
@@ -58,14 +54,135 @@ typedef enum
 SDL_Window *SDL_window = NULL;
 static SDL_GLContext SDL_glContext = NULL;
 
-cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
-cvar_t *r_allowResize; // make window resizable
-cvar_t *r_centerWindow;
-cvar_t *r_sdlDriver;
+static cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
+static cvar_t *r_allowResize; // make window resizable
+static cvar_t *r_centerWindow;
+static cvar_t *r_sdlDriver;
 
-/* qgl* function pointer DEFINITIONS moved to code/renderer/r_glimp.c
- * (gamma' Task 2a). Renderer DLL's R_Init calls GLimp_RendererInit()
- * after this engine-side GLimp_Init returns. */
+/* Engine-side mirrors of the renderer-side window cvars. Renderer DLLs
+ * register their own copies (engine OpenGL via tr_init.c R_Register; Vulkan
+ * via RealRTCW_VkBridgeInit). The engine-side sdl_glimp.c registers them
+ * too so the platform-layer code can read them without going through a
+ * renderer vtable. Cvar_Get is idempotent — same name = same cvar_t. */
+static cvar_t *r_mode;
+static cvar_t *r_fullscreen;
+static cvar_t *r_noborder;
+static cvar_t *r_colorbits;
+static cvar_t *r_depthbits;
+static cvar_t *r_stencilbits;
+static cvar_t *r_stereoEnabled;
+static cvar_t *r_ext_multisample;
+static cvar_t *r_swapInterval;
+static cvar_t *r_drawBuffer;
+
+/* glConfig fields populated here (vidWidth/Height, windowAspect,
+ * isFullscreen) — engine carries its own glconfig_t. Renderer DLLs see
+ * their own glConfig in their own binary; populated by the
+ * GLimp_Init/VKimp_Init return contract (config->vidWidth etc). */
+static glconfig_t glConfig;
+static float    displayAspect;
+
+#define R_MODE_FALLBACK 3 // 640 * 480
+
+/* ------------------------------------------------------------------ *
+ * r_vidModes table + R_GetModeInfo — ported from
+ *   code/renderervk/realrtcw_vk_window_bridge.c (which in turn ports
+ *   iortcw SP code/renderer/tr_init.c L354–L416). Engine-side platform
+ *   glue needs to resolve `r_mode` → (width, height, aspect) without
+ *   going through a renderer vtable.
+ * ------------------------------------------------------------------ */
+
+typedef struct vidmode_s
+{
+	const char *description;
+	int width, height;
+	float pixelAspect;              /* pixel width / height */
+} vidmode_t;
+
+static const vidmode_t r_vidModes[] =
+{
+	{ "Mode  0:   320x240   (4:3)",     320,     240,    1 },
+	{ "Mode  1:   400x300   (4:3)",     400,     300,    1 },
+	{ "Mode  2:   512x384   (4:3)",     512,     384,    1 },
+	{ "Mode  3:   640x480   (4:3)",     640,     480,    1 },
+	{ "Mode  4:   800x600   (4:3)",     800,     600,    1 },
+	{ "Mode  5:   960x720   (4:3)",     960,     720,    1 },
+	{ "Mode  6:  1024x768   (4:3)",    1024,     768,    1 },
+	{ "Mode  7:  1152x864   (4:3)",    1152,     864,    1 },
+	{ "Mode  8: 1280x1024   (5:4)",    1280,    1024,    1 },
+	{ "Mode  9: 1600x1200   (4:3)",    1600,    1200,    1 },
+	{ "Mode 10: 2048x1536   (4:3)",    2048,    1536,    1 },
+	{ "Mode 11:   856x480  (16:9)",     856,     480,    1 },
+	{ "Mode 12:   640x360  (16:9)",     640,     360,    1 },
+	{ "Mode 13:   640x400 (16:10)",     640,     400,    1 },
+	{ "Mode 14:   800x450  (16:9)",     800,     450,    1 },
+	{ "Mode 15:   800x500 (16:10)",     800,     500,    1 },
+	{ "Mode 16:  1024x640 (16:10)",    1024,     640,    1 },
+	{ "Mode 17:  1024x576  (16:9)",    1024,     576,    1 },
+	{ "Mode 18:  1280x720  (16:9)",    1280,     720,    1 },
+	{ "Mode 19:  1280x768 (16:10)",    1280,     768,    1 },
+	{ "Mode 20:  1280x800 (16:10)",    1280,     800,    1 },
+	{ "Mode 21:  1280x960   (4:3)",    1280,     960,    1 },
+	{ "Mode 22:  1440x900 (16:10)",    1440,     900,    1 },
+	{ "Mode 23:  1600x900  (16:9)",    1600,     900,    1 },
+	{ "Mode 24: 1600x1000 (16:10)",    1600,    1000,    1 },
+	{ "Mode 25: 1680x1050 (16:10)",    1680,    1050,    1 },
+	{ "Mode 26: 1920x1080  (16:9)",    1920,    1080,    1 },
+	{ "Mode 27: 1920x1200 (16:10)",    1920,    1200,    1 },
+	{ "Mode 28: 1920x1440   (4:3)",    1920,    1440,    1 },
+	{ "Mode 29: 2560x1600 (16:10)",    2560,    1600,    1 }
+};
+static const int s_numVidModes = (int)(sizeof(r_vidModes) / sizeof(r_vidModes[0]));
+
+static qboolean R_GetModeInfo( int *width, int *height, float *windowAspect, int mode ) {
+	const vidmode_t *vm;
+	float            pixelAspect;
+
+	if ( mode < -1 ) {
+		return qfalse;
+	}
+	if ( mode >= s_numVidModes ) {
+		return qfalse;
+	}
+
+	if ( mode == -1 ) {
+		*width  = Cvar_VariableIntegerValue( "r_customwidth" );
+		*height = Cvar_VariableIntegerValue( "r_customheight" );
+
+		pixelAspect = (float)atof( Cvar_VariableString( "r_customPixelAspect" ) );
+	} else {
+		vm = &r_vidModes[mode];
+
+		*width  = vm->width;
+		*height = vm->height;
+		pixelAspect = vm->pixelAspect;
+	}
+
+	*windowAspect = (float)*width / ( *height * pixelAspect );
+
+	return qtrue;
+}
+
+/* Engine-side cvar registration shared by GLimp_Init and VKimp_Init.
+ * Cvar_Get is idempotent so the second call is a no-op. */
+static void GLimp_RegisterCvars( void )
+{
+	r_allowSoftwareGL = Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );
+	r_sdlDriver       = Cvar_Get( "r_sdlDriver", "", CVAR_ROM );
+	r_allowResize     = Cvar_Get( "r_allowResize", "0", CVAR_ARCHIVE | CVAR_LATCH );
+	r_centerWindow    = Cvar_Get( "r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH );
+
+	r_mode            = Cvar_Get( "r_mode",          "-2", CVAR_ARCHIVE | CVAR_LATCH );
+	r_fullscreen      = Cvar_Get( "r_fullscreen",    "1",  CVAR_ARCHIVE | CVAR_LATCH );
+	r_noborder        = Cvar_Get( "r_noborder",      "0",  CVAR_ARCHIVE | CVAR_LATCH );
+	r_colorbits       = Cvar_Get( "r_colorbits",     "0",  CVAR_ARCHIVE | CVAR_LATCH );
+	r_depthbits       = Cvar_Get( "r_depthbits",     "0",  CVAR_ARCHIVE | CVAR_LATCH );
+	r_stencilbits     = Cvar_Get( "r_stencilbits",   "0",  CVAR_ARCHIVE | CVAR_LATCH );
+	r_stereoEnabled   = Cvar_Get( "r_stereoEnabled", "0",  CVAR_ARCHIVE | CVAR_LATCH );
+	r_ext_multisample = Cvar_Get( "r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH );
+	r_swapInterval    = Cvar_Get( "r_swapInterval",  "0",  CVAR_ARCHIVE | CVAR_LATCH );
+	r_drawBuffer      = Cvar_Get( "r_drawBuffer", "GL_BACK", 0 );
+}
 
 /*
 ===============
@@ -74,7 +191,19 @@ GLimp_Shutdown
 */
 void GLimp_Shutdown( void )
 {
-	ri.IN_Shutdown();
+	IN_Shutdown();
+
+	if ( SDL_glContext != NULL )
+	{
+		SDL_GL_DestroyContext( SDL_glContext );
+		SDL_glContext = NULL;
+	}
+
+	if ( SDL_window != NULL )
+	{
+		SDL_DestroyWindow( SDL_window );
+		SDL_window = NULL;
+	}
 
 	SDL_QuitSubSystem( SDL_INIT_VIDEO );
 }
@@ -142,7 +271,7 @@ static qboolean GLimp_SetFullscreenMode( SDL_Window *window, SDL_DisplayID displ
 	modes = SDL_GetFullscreenDisplayModes( display, &numModes );
 	if ( !modes || numModes <= 0 )
 	{
-		ri.Printf( PRINT_DEVELOPER,
+		Com_DPrintf(
 			"SDL_GetFullscreenDisplayModes failed: %s\n", SDL_GetError() );
 
 		SDL_free( modes );
@@ -165,7 +294,7 @@ static qboolean GLimp_SetFullscreenMode( SDL_Window *window, SDL_DisplayID displ
 
 	if ( !best )
 	{
-		ri.Printf( PRINT_DEVELOPER,
+		Com_DPrintf(
 			"No exclusive fullscreen mode found for %dx%d\n", width, height );
 
 		SDL_free( modes );
@@ -178,7 +307,7 @@ static qboolean GLimp_SetFullscreenMode( SDL_Window *window, SDL_DisplayID displ
 	}
 	else
 	{
-		ri.Printf( PRINT_DEVELOPER,
+		Com_DPrintf(
 			"SDL_SetWindowFullscreenMode %dx%d failed: %s\n",
 			width, height, SDL_GetError() );
 	}
@@ -209,7 +338,7 @@ static void GLimp_DetectAvailableModes(void)
 	const SDL_DisplayID display = SDL_GetDisplayForWindow( SDL_window );
 	if( display == 0 )
 	{
-		ri.Printf( PRINT_WARNING, "Couldn't get window display index, no resolutions detected: %s\n", SDL_GetError() );
+		Com_Printf( "WARNING: ""Couldn't get window display index, no resolutions detected: %s\n", SDL_GetError() );
 		return;
 	}
 	
@@ -218,7 +347,7 @@ static void GLimp_DetectAvailableModes(void)
 
 	if (numSDLModes <= 0)
 	{
-		ri.Printf(PRINT_WARNING, "No fullscreen display modes detected: %s\n", SDL_GetError());
+		Com_Printf("WARNING: " "No fullscreen display modes detected: %s\n", SDL_GetError());
 		SDL_free(fsmodes);
 		return;
 	}
@@ -235,7 +364,7 @@ static void GLimp_DetectAvailableModes(void)
 	modes = SDL_calloc( (size_t)numSDLModes, sizeof( SDL_Rect ) );
 	if ( !modes )
 	{
-		ri.Error( ERR_FATAL, "Out of memory" );
+		Com_Error( ERR_FATAL, "Out of memory" );
 		SDL_free( fsmodes );
         return;
 	}
@@ -248,7 +377,7 @@ static void GLimp_DetectAvailableModes(void)
 
 		if( !mode.w || !mode.h )
 		{
-			ri.Printf( PRINT_ALL, "Display supports any resolution\n" );
+			Com_Printf("Display supports any resolution\n" );
 			SDL_free( modes );
 			SDL_free( fsmodes );
 			return;
@@ -286,16 +415,16 @@ static void GLimp_DetectAvailableModes(void)
 		if( strlen( newModeString ) < (int)sizeof( buf ) - strlen( buf ) )
 			Q_strcat( buf, sizeof( buf ), newModeString );
 		else
-			ri.Printf( PRINT_WARNING, "Skipping mode %ux%u, buffer too small\n", modes[ i ].w, modes[ i ].h );
+			Com_Printf( "WARNING: ""Skipping mode %ux%u, buffer too small\n", modes[ i ].w, modes[ i ].h );
 	}
 
 	if( *buf )
 	{
 		buf[ strlen( buf ) - 1 ] = 0;
-		ri.Printf( PRINT_ALL, "Available modes: '%s'\n", buf );
-		ri.Cvar_Set( "r_availableModes", buf );
-		ri.Cvar_SetValue( "r_maxResolutionWidth", (float)maxWidth );
-		ri.Cvar_SetValue( "r_maxResolutionHeight", (float)maxHeight );
+		Com_Printf("Available modes: '%s'\n", buf );
+		Cvar_Set("r_availableModes", buf );
+		Cvar_SetValue("r_maxResolutionWidth", (float)maxWidth );
+		Cvar_SetValue("r_maxResolutionHeight", (float)maxHeight );
 	}
 	SDL_free( modes );
 	SDL_free( fsmodes );
@@ -325,7 +454,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 	SDL_DisplayID display = 0;
 	int x = SDL_WINDOWPOS_UNDEFINED, y = SDL_WINDOWPOS_UNDEFINED;
 
-	ri.Printf( PRINT_ALL, "Initializing OpenGL display\n");
+	Com_Printf("Initializing OpenGL display\n");
 
 	if ( r_allowResize->integer )
 		flags |= SDL_WINDOW_RESIZABLE;
@@ -345,7 +474,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 		display = SDL_GetDisplayForWindow(SDL_window);
 		if (display == 0)
 		{
-			ri.Printf(PRINT_DEVELOPER, "SDL_GetDisplayForWindow() failed: %s\n", SDL_GetError());
+			Com_DPrintf( "SDL_GetDisplayForWindow() failed: %s\n", SDL_GetError());
 		}
 	}
 
@@ -354,7 +483,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 		display = SDL_GetPrimaryDisplay();
 		if (display == 0)
 		{
-			ri.Printf(PRINT_DEVELOPER, "SDL_GetPrimaryDisplay() failed: %s\n", SDL_GetError());
+			Com_DPrintf( "SDL_GetPrimaryDisplay() failed: %s\n", SDL_GetError());
 		}
 	}
 
@@ -364,17 +493,17 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 		SDL_copyp(&desktopMode, pdesktopMode);
 		displayAspect = (float)desktopMode.w / (float)desktopMode.h;
 
-		ri.Printf( PRINT_ALL, "Display aspect: %.3f\n", displayAspect );
+		Com_Printf("Display aspect: %.3f\n", displayAspect );
 	}
 	else
 	{
 		Com_Memset( &desktopMode, 0, sizeof( SDL_DisplayMode ) );
 
-		ri.Printf( PRINT_ALL,
+		Com_Printf(
 				"Cannot determine display aspect, assuming 1.333\n" );
 	}
 
-	ri.Printf (PRINT_ALL, "...setting mode %d:", mode );
+	Com_Printf( "...setting mode %d:", mode );
 
 	if (mode == -2)
 	{
@@ -388,7 +517,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 		{
 			glConfig.vidWidth = 640;
 			glConfig.vidHeight = 480;
-			ri.Printf( PRINT_ALL,
+			Com_Printf(
 					"Cannot determine display resolution, assuming 640x480\n" );
 		}
 
@@ -396,10 +525,10 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 	}
 	else if ( !R_GetModeInfo( &glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode ) )
 	{
-		ri.Printf( PRINT_ALL, " invalid mode\n" );
+		Com_Printf(" invalid mode\n" );
 		return RSERR_INVALID_MODE;
 	}
-	ri.Printf( PRINT_ALL, " %d %d\n", glConfig.vidWidth, glConfig.vidHeight);
+	Com_Printf(" %d %d\n", glConfig.vidWidth, glConfig.vidHeight);
 
 	// Center window
 	if( r_centerWindow->integer && !fullscreen )
@@ -419,7 +548,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 	if( SDL_window != NULL )
 	{
 		SDL_GetWindowPosition( SDL_window, &x, &y );
-		ri.Printf( PRINT_DEVELOPER, "Existing window at %dx%d before being destroyed\n", x, y );
+		Com_DPrintf("Existing window at %dx%d before being destroyed\n", x, y );
 		SDL_DestroyWindow( SDL_window );
 		SDL_window = NULL;
 	}
@@ -558,7 +687,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 		if( ( SDL_window = SDL_CreateWindow( CLIENT_WINDOW_TITLE,
 				glConfig.vidWidth, glConfig.vidHeight, flags ) ) == NULL )
 		{
-			ri.Printf( PRINT_DEVELOPER, "SDL_CreateWindow failed: %s\n", SDL_GetError( ) );
+			Com_DPrintf("SDL_CreateWindow failed: %s\n", SDL_GetError( ) );
 			continue;
 		}
 
@@ -581,14 +710,14 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 				SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &majorVersion);
 				SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minorVersion);
 
-				ri.Printf(PRINT_ALL, "Trying to get an OpenGL 3.2 core context\n");
+				Com_Printf( "Trying to get an OpenGL 3.2 core context\n");
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 				if ((SDL_glContext = SDL_GL_CreateContext(SDL_window)) == NULL)
 				{
-					ri.Printf(PRINT_ALL, "SDL_GL_CreateContext failed: %s\n", SDL_GetError());
-					ri.Printf(PRINT_ALL, "Reverting to default context\n");
+					Com_Printf( "SDL_GL_CreateContext failed: %s\n", SDL_GetError());
+					Com_Printf( "Reverting to default context\n");
 
 					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profileMask);
 					SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, majorVersion);
@@ -596,7 +725,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 				}
 				else
 				{
-					ri.Printf(PRINT_ALL, "SDL_GL_CreateContext succeeded.\n");
+					Com_Printf( "SDL_GL_CreateContext succeeded.\n");
 					/* gamma' Task 2a: qgl* probe + software-rasterizer
 					 * rejection moved to renderer-side GLimp_RendererInit
 					 * (code/renderer/r_glimp.c). Engine-side keeps the
@@ -612,7 +741,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 			{
 				if( ( SDL_glContext = SDL_GL_CreateContext( SDL_window ) ) == NULL )
 				{
-					ri.Printf( PRINT_DEVELOPER, "SDL_GL_CreateContext failed: %s\n", SDL_GetError( ) );
+					Com_DPrintf("SDL_GL_CreateContext failed: %s\n", SDL_GetError( ) );
 					SDL_DestroyWindow( SDL_window );
 					SDL_window = NULL;
 					continue;
@@ -623,7 +752,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 			if( !SDL_GL_SetSwapInterval( r_swapInterval->integer ) )
 			{
-				ri.Printf( PRINT_DEVELOPER, "SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError( ) );
+				Com_DPrintf("SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError( ) );
 			}
 
 			SDL_GL_GetAttribute( SDL_GL_RED_SIZE, &realColorBits[0] );
@@ -634,7 +763,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 			glConfig.colorBits = realColorBits[0] + realColorBits[1] + realColorBits[2];
 
-			ri.Printf( PRINT_ALL, "Using %d color bits, %d depth, %d stencil display.\n",
+			Com_Printf("Using %d color bits, %d depth, %d stencil display.\n",
 					glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits );
 		}
 
@@ -643,7 +772,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 			if (!GLimp_SetFullscreenMode(SDL_window, display,
 										 glConfig.vidWidth, glConfig.vidHeight))
 			{
-				ri.Printf(PRINT_DEVELOPER,
+				Com_DPrintf(
 						  "Falling back to borderless fullscreen desktop mode\n");
 
 				SDL_SetWindowFullscreenMode(SDL_window, NULL);
@@ -651,7 +780,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 			if (!SDL_SetWindowFullscreen(SDL_window, true))
 			{
-				ri.Printf(PRINT_DEVELOPER,
+				Com_DPrintf(
 						  "SDL_SetWindowFullscreen failed: %s\n", SDL_GetError());
 
 				if ( !vulkan )
@@ -677,7 +806,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 	if( !SDL_window )
 	{
-		ri.Printf( PRINT_ALL, "Couldn't get a visual\n" );
+		Com_Printf("Couldn't get a visual\n" );
 		return RSERR_INVALID_MODE;
 	}
 
@@ -704,19 +833,19 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 		if (!SDL_Init(SDL_INIT_VIDEO))
 		{
-			ri.Printf( PRINT_ALL, "SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n", SDL_GetError());
+			Com_Printf("SDL_Init( SDL_INIT_VIDEO ) FAILED (%s)\n", SDL_GetError());
 			return qfalse;
 		}
 
 		driverName = SDL_GetCurrentVideoDriver( );
-		ri.Printf( PRINT_ALL, "SDL using driver \"%s\"\n", driverName );
-		ri.Cvar_Set( "r_sdlDriver", driverName );
+		Com_Printf("SDL using driver \"%s\"\n", driverName );
+		Cvar_Set("r_sdlDriver", driverName );
 	}
 
-	if (fullscreen && ri.Cvar_VariableIntegerValue( "in_nograb" ) )
+	if (fullscreen && Cvar_VariableIntegerValue("in_nograb" ) )
 	{
-		ri.Printf( PRINT_ALL, "Fullscreen not allowed with in_nograb 1\n");
-		ri.Cvar_Set( "r_fullscreen", "0" );
+		Com_Printf("Fullscreen not allowed with in_nograb 1\n");
+		Cvar_Set("r_fullscreen", "0" );
 		r_fullscreen->modified = qfalse;
 		fullscreen = qfalse;
 	}
@@ -726,10 +855,10 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 	switch ( err )
 	{
 		case RSERR_INVALID_FULLSCREEN:
-			ri.Printf( PRINT_ALL, "...WARNING: fullscreen unavailable in this mode\n" );
+			Com_Printf("...WARNING: fullscreen unavailable in this mode\n" );
 			return qfalse;
 		case RSERR_INVALID_MODE:
-			ri.Printf( PRINT_ALL, "...WARNING: could not set the given mode (%d)\n", mode );
+			Com_Printf("...WARNING: could not set the given mode (%d)\n", mode );
 			return qfalse;
 		default:
 			break;
@@ -751,37 +880,30 @@ of OpenGL
 */
 void GLimp_Init( qboolean fixedFunction )
 {
-#ifdef BUILD_RENDERER_VULKAN
-	RealRTCW_VkBridgeInit();
-#endif
+	Com_DPrintf("Glimp_Init( )\n" );
 
-	ri.Printf( PRINT_DEVELOPER, "Glimp_Init( )\n" );
+	GLimp_RegisterCvars();
 
-	r_allowSoftwareGL = ri.Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );
-	r_sdlDriver = ri.Cvar_Get( "r_sdlDriver", "", CVAR_ROM );
-	r_allowResize = ri.Cvar_Get( "r_allowResize", "0", CVAR_ARCHIVE | CVAR_LATCH );
-	r_centerWindow = ri.Cvar_Get( "r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH );
-
-	if( ri.Cvar_VariableIntegerValue( "com_abnormalExit" ) )
+	if( Cvar_VariableIntegerValue("com_abnormalExit" ) )
 	{
-		ri.Cvar_Set( "r_mode", va( "%d", R_MODE_FALLBACK ) );
-		ri.Cvar_Set( "r_fullscreen", "0" );
-		ri.Cvar_Set( "r_centerWindow", "0" );
-		ri.Cvar_Set( "com_abnormalExit", "0" );
+		Cvar_Set("r_mode", va( "%d", R_MODE_FALLBACK ) );
+		Cvar_Set("r_fullscreen", "0" );
+		Cvar_Set("r_centerWindow", "0" );
+		Cvar_Set("com_abnormalExit", "0" );
 	}
 
-	ri.Sys_GLimpInit( );
+	Sys_GLimpInit();
 
-	ri.Cvar_Get("r_availableModes", "", CVAR_ROM);
-	ri.Cvar_Get("r_maxResolutionWidth", "0", 0);
-	ri.Cvar_Get("r_maxResolutionHeight", "0", 0);
+	Cvar_Get("r_availableModes", "", CVAR_ROM);
+	Cvar_Get("r_maxResolutionWidth", "0", 0);
+	Cvar_Get("r_maxResolutionHeight", "0", 0);
 
 	// Create the window and set up the context
 	if(GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, r_noborder->integer, fixedFunction, qfalse))
 		goto success;
 
 	// Try again, this time in a platform specific "safe mode"
-	ri.Sys_GLimpSafeInit( );
+	Sys_GLimpSafeInit();
 
 	if(GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, qfalse, fixedFunction, qfalse))
 		goto success;
@@ -789,7 +911,7 @@ void GLimp_Init( qboolean fixedFunction )
 	// Finally, try the default screen resolution
 	if( r_mode->integer != R_MODE_FALLBACK )
 	{
-		ri.Printf( PRINT_ALL, "Setting r_mode %d failed, falling back on r_mode %d\n",
+		Com_Printf("Setting r_mode %d failed, falling back on r_mode %d\n",
 				r_mode->integer, R_MODE_FALLBACK );
 
 		if(GLimp_StartDriverAndSetMode(R_MODE_FALLBACK, qfalse, qfalse, fixedFunction, qfalse))
@@ -797,7 +919,7 @@ void GLimp_Init( qboolean fixedFunction )
 	}
 
 	// Nothing worked, give up
-	ri.Error( ERR_FATAL, "GLimp_Init() - could not load OpenGL subsystem" );
+	Com_Error( ERR_FATAL, "GLimp_Init() - could not load OpenGL subsystem" );
 
 success:
 	// These values force the UI to disable driver selection
@@ -818,7 +940,7 @@ success:
 	 * function returns. */
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
-	ri.IN_Init( SDL_window );
+	IN_Init();
 }
 
 #ifdef BUILD_RENDERER_VULKAN
@@ -837,48 +959,43 @@ See notes/decisions/2026-06-10-m4-window-ownership-model.md §3.
 */
 void VKimp_Init( glconfig_t *config )
 {
-	RealRTCW_VkBridgeInit();
+	Com_DPrintf("VKimp_Init( )\n" );
 
-	ri.Printf( PRINT_DEVELOPER, "VKimp_Init( )\n" );
+	GLimp_RegisterCvars();
 
-	r_allowSoftwareGL = ri.Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );
-	r_sdlDriver = ri.Cvar_Get( "r_sdlDriver", "", CVAR_ROM );
-	r_allowResize = ri.Cvar_Get( "r_allowResize", "0", CVAR_ARCHIVE | CVAR_LATCH );
-	r_centerWindow = ri.Cvar_Get( "r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH );
-
-	if( ri.Cvar_VariableIntegerValue( "com_abnormalExit" ) )
+	if( Cvar_VariableIntegerValue("com_abnormalExit" ) )
 	{
-		ri.Cvar_Set( "r_mode", va( "%d", R_MODE_FALLBACK ) );
-		ri.Cvar_Set( "r_fullscreen", "0" );
-		ri.Cvar_Set( "r_centerWindow", "0" );
-		ri.Cvar_Set( "com_abnormalExit", "0" );
+		Cvar_Set("r_mode", va( "%d", R_MODE_FALLBACK ) );
+		Cvar_Set("r_fullscreen", "0" );
+		Cvar_Set("r_centerWindow", "0" );
+		Cvar_Set("com_abnormalExit", "0" );
 	}
 
-	ri.Sys_GLimpInit( );
+	Sys_GLimpInit();
 
-	ri.Cvar_Get("r_availableModes", "", CVAR_ROM);
-	ri.Cvar_Get("r_maxResolutionWidth", "0", 0);
-	ri.Cvar_Get("r_maxResolutionHeight", "0", 0);
+	Cvar_Get("r_availableModes", "", CVAR_ROM);
+	Cvar_Get("r_maxResolutionWidth", "0", 0);
+	Cvar_Get("r_maxResolutionHeight", "0", 0);
 
 	/* Create the window with SDL_WINDOW_VULKAN; no GL context. */
 	if(GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, r_noborder->integer, qfalse, qtrue))
 		goto success;
 
-	ri.Sys_GLimpSafeInit( );
+	Sys_GLimpSafeInit();
 
 	if(GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, qfalse, qfalse, qtrue))
 		goto success;
 
 	if( r_mode->integer != R_MODE_FALLBACK )
 	{
-		ri.Printf( PRINT_ALL, "Setting r_mode %d failed, falling back on r_mode %d\n",
+		Com_Printf("Setting r_mode %d failed, falling back on r_mode %d\n",
 				r_mode->integer, R_MODE_FALLBACK );
 
 		if(GLimp_StartDriverAndSetMode(R_MODE_FALLBACK, qfalse, qfalse, qfalse, qtrue))
 			goto success;
 	}
 
-	ri.Error( ERR_FATAL, "VKimp_Init() - could not create SDL Vulkan window" );
+	Com_Error( ERR_FATAL, "VKimp_Init() - could not create SDL Vulkan window" );
 
 success:
 	/* Populate glconfig fields that downstream Q3e Vulkan code reads.
@@ -893,7 +1010,7 @@ success:
 	/* Hand the window pointer to the engine input subsystem via the
 	 * existing ri.IN_Init handoff (same channel GLimp_Init uses at the
 	 * end of its body). */
-	ri.IN_Init( SDL_window );
+	IN_Init();
 }
 
 /*
@@ -940,10 +1057,10 @@ void GLimp_EndFrame( void )
 		// Find out the current state
 		fullscreen = !!( SDL_GetWindowFlags( SDL_window ) & SDL_WINDOW_FULLSCREEN );
 
-		if( r_fullscreen->integer && ri.Cvar_VariableIntegerValue( "in_nograb" ) )
+		if( r_fullscreen->integer && Cvar_VariableIntegerValue("in_nograb" ) )
 		{
-			ri.Printf( PRINT_ALL, "Fullscreen not allowed with in_nograb 1\n");
-			ri.Cvar_Set( "r_fullscreen", "0" );
+			Com_Printf("Fullscreen not allowed with in_nograb 1\n");
+			Cvar_Set("r_fullscreen", "0" );
 			r_fullscreen->modified = qfalse;
 		}
 
@@ -956,15 +1073,15 @@ void GLimp_EndFrame( void )
 			if( fullscreen )
 			{
 				Com_Printf( "Switching to windowed rendering\n" );
-				ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
+				Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");
 			}
 			else
 			{
 				Com_Printf( "Switching to fullscreen rendering\n" );
-				ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
+				Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");
 			}
 
-			ri.IN_Restart( );
+			IN_Restart();
 		}
 
 		r_fullscreen->modified = qfalse;
