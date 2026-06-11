@@ -3,15 +3,19 @@
 **Date:** 2026-06-11 (rewritten — earlier draft had wrong Quake3e attribution)
 **Branch:** `macos-arm64-vulkan` in worktree `~/fedorov_tech/RealRTCW-vulkan-wt`
 **Milestone:** Phase 2 / M4 (first run + validation triage)
-**Status:** **θ' LANDED** 2026-06-11 (commits `d52b71a` → `dbe754d`, see `docs/vulkan-phase2/m4-iter4-postθ.log`). `R_Init` now reaches `VKimp_Init`; the `SDL_window not initialized` fatal is gone. M4 fix-loop continues — next crash is segfault during `GLimp_SetMode` post-`VKimp_Init( )` print (earlier than the documented CL_SetScaling site at `tr_init.c:543`; root cause to be triaged next iter). **γ'** documented as the correct principled answer for Phase 3 once Vulkan is feature-complete.
+**Status:** **γ' LANDED** 2026-06-11 late evening (commits `0cd758d` → `55012af`, see `docs/vulkan-phase2/m4-gamma-{opengl,vulkan}-smoke.log`). Full Quake3e topology adopted: `sdl_glimp.c` engine-side, single `SDL_window` global, `void IN_Init(void)`, both renderers invoke window-init through `ri.GLimp_*` / `ri.VKimp_*` vtable slots. Vulkan now boots through `VKimp_Init` → window 1680x1050 → `IN_Init` joystick body → segfault on `vk_ri.CL_SetScaling` (the next-iter landmine documented in §6). OpenGL safety net verified intact (clean R_Init, GL_RENDERER detected, no crash).
 
-## TL;DR — layered decision
+**θ' archived:** attempted 2026-06-11 earlier (commits `d52b71a` → `7a805b3`); reached `VKimp_Init( )` print but crashed immediately on cross-DLL `ri.IN_Init` call due to a dual-`refimport_t` struct-view mismatch (SMALL view in `sdl_glimp.c`, BIG view in actual `ri` storage when linked into Vulkan DLL). Post-mortem in §2.
 
-| Horizon | Option | Why this layer |
+## TL;DR — layered decision (γ'-current)
+
+| Horizon | Option | Status |
 |---|---|---|
-| **M4 (now)** | **θ'** | symmetric with our OpenGL handoff, zero code duplication, 2-line vendor-edit, preserves green OpenGL safety net |
-| **Phase 3 (after Vulkan reaches parity)** | **γ'** | the principled answer — single `sdl_glimp.c` engine-side, matches Quake3e topology 1:1, removes the class of two-globals bugs M3.5 fought |
-| **Phase 5+ / new engine** | platform layer | greenfield ideal (Bevy/Godot/O3DE-style) — separate platform/RHI/game-logic layers with dependency injection |
+| **M4 (now)** | **γ'** | **LANDED** — full Quake3e topology. Single `sdl_glimp.c` engine-side, single `SDL_window`, vtable for backend dispatch. Resolves dual-struct landmine that θ' hit. |
+| **Phase 3 (sweep)** | OpenGL sunset after Vulkan parity | Pending — see §5a |
+| **Phase 5+ / new engine** | Platform layer | Greenfield ideal — see §5 |
+
+Reading order if you're picking this up cold: read §1 (the architectural mismatch that started this), §2 (the 6 options + θ' post-mortem), §4 (γ' implementation — now the M4 answer, not Phase 3), §5a (OpenGL sunset policy), §6 (recon facts).
 
 Reading order if you're picking this up cold: read §1 (the architectural mismatch), then §2 (the 6 options compared), then §3 (the θ' implementation), then §4 (the γ' cleanup that should follow Vulkan-parity), then §6 (recon facts — so you don't re-discover them).
 
