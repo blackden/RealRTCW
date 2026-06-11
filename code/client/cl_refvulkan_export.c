@@ -40,6 +40,24 @@ static void vk_re_wrap_Shutdown( qboolean destroyWindow ) {
                                         : 0 /* REF_KEEP_CONTEXT */ );
 }
 
+/* SMALL: AddRefEntityToScene(refEntity_t*). BIG adds qboolean intShaderTime.
+ * Default to qfalse (Q3e's "use ent->shaderTime as-is"). */
+static void vk_re_wrap_AddRefEntityToScene( const refEntity_t *re ) {
+    vk_re_thunk_AddRefEntityToScene( (const void *)re, 0 /* intShaderTime = qfalse */ );
+}
+
+/* SMALL: AddPolyToScene(hShader, numVerts, verts). BIG adds int num.
+ * Engine never split-loops over polys here — pass num=1. */
+static void vk_re_wrap_AddPolyToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts ) {
+    vk_re_thunk_AddPolyToScene( hShader, numVerts, (const void *)verts, 1 );
+}
+
+/* SMALL: AddLightToScene(org, intensity, r, g, b, overdraw). BIG drops overdraw. */
+static void vk_re_wrap_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
+    (void)overdraw;  /* RTCW-specific dynamic-light visibility hint; not modeled by Q3e renderer. */
+    vk_re_thunk_AddLightToScene( org, intensity, r, g, b );
+}
+
 void *CL_BuildVulkanRefExport( void *big_export ) {
     if ( vk_re_built ) {
         return &vk_re_small;
@@ -52,6 +70,11 @@ void *CL_BuildVulkanRefExport( void *big_export ) {
 
     /* Group B — Shutdown: qboolean → refShutdownCode_t */
     vk_re_small.Shutdown = vk_re_wrap_Shutdown;
+
+    /* Group B — scene-build wrappers */
+    vk_re_small.AddRefEntityToScene = vk_re_wrap_AddRefEntityToScene;
+    vk_re_small.AddPolyToScene      = vk_re_wrap_AddPolyToScene;
+    vk_re_small.AddLightToScene     = vk_re_wrap_AddLightToScene;
 
     /* Group A — identity slots: name + signature match in SMALL and BIG.
      * Cast through void * to silence "incompatible pointer type" warnings

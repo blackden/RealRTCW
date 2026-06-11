@@ -551,3 +551,23 @@ VK_RE_GET(TakeVideoFrame)
 void vk_re_thunk_Shutdown( int code ) {
     vk_re_big->Shutdown( (refShutdownCode_t)code );
 }
+
+void vk_re_thunk_AddRefEntityToScene( const void *re_ptr, int intShaderTime ) {
+    /* re_ptr originates from engine-side SMALL refEntity_t. SMALL and BIG
+     * tr_types.h diverge — boot-critical fields are believed to overlap
+     * (proven by vk_BuildRefImport working through R_Init), but scene-
+     * rendering field reads beyond the overlap zone are M6 territory. */
+    vk_re_big->AddRefEntityToScene( (const refEntity_t *)re_ptr,
+                                    intShaderTime ? qtrue : qfalse );
+}
+
+void vk_re_thunk_AddPolyToScene( qhandle_t hShader, int numVerts, const void *verts, int num ) {
+    vk_re_big->AddPolyToScene( hShader, numVerts, (const polyVert_t *)verts, num );
+}
+
+void vk_re_thunk_AddLightToScene( const float *org, float intensity, float r, float g, float b ) {
+    /* SMALL passes `int overdraw`; BIG has no such arg. Drop it. The
+     * overdraw flag was an RTCW-specific dynamic-light visibility hint;
+     * the Q3e renderer just renders the light. */
+    vk_re_big->AddLightToScene( (vec_t *)org, intensity, r, g, b );
+}
