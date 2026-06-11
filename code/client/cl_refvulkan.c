@@ -105,6 +105,7 @@ static void      vk_Cvar_SetGroup( cvar_t *var, cvarGroup_t group );
 static int       vk_Cvar_CheckGroup( cvarGroup_t group );
 static void      vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFlags );
 static void      vk_CL_SetScaling( float factor, int captureWidth, int captureHeight );
+static void      vk_Free( void *ptr );
 
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
@@ -205,6 +206,7 @@ void *CL_BuildVulkanRefImport( void ) {
      *     Defined further down in this file. */
     vk_ri.Microseconds              = vk_Microseconds;
     vk_ri.Malloc                    = vk_Malloc;
+    vk_ri.Free                      = vk_Free;
     vk_ri.FreeAll                   = vk_FreeAll;
 
     /* --- NO-OP STUBS: Q3e cvar metadata extensions (descriptions, ranges,
@@ -247,11 +249,6 @@ void *CL_BuildVulkanRefImport( void ) {
      *                              for now -- AVI capture not in M4.
      *       CM_ClusterPVS        -- not exported via qcommon.h
      *       CM_DrawDebugSurface  -- not exported via qcommon.h
-     *       Free                 -- engine has no Z_Free that takes a
-     *                              raw pointer the renderer would own;
-     *                              renderer typically pairs Malloc with
-     *                              FreeAll. If triage shows otherwise,
-     *                              wire to Z_Free.
      *       GLimp_EndFrame       -- OpenGL window slot, not Vulkan
      *       GLimp_Init           -- OpenGL window slot, not Vulkan
      *       GLimp_InitGamma      -- OpenGL window slot, not Vulkan
@@ -310,6 +307,27 @@ static void vk_FreeAll( void ) {
         vk_ri_allocs[i] = NULL;
     }
     vk_ri_n_allocs = 0;
+}
+
+/* M4 iter 7 fix: Q3e renderer calls ri.Free(ptr) on individual allocations
+ * (e.g., extension_names + extension_properties in vk_initialize at
+ * code/renderervk/vk.c:1382,1383). Was NULL in the translator, causing
+ * SIGSEGV right after qvkCreateInstance. Find ptr in the alloc tracker,
+ * swap with last, decrement count, free. Silent no-op if not in tracker
+ * (allocations not made via vk_Malloc -- shouldn't happen but defensive). */
+static void vk_Free( void *ptr ) {
+    int i;
+    if ( !ptr ) {
+        return;
+    }
+    for ( i = 0; i < vk_ri_n_allocs; i++ ) {
+        if ( vk_ri_allocs[i] == ptr ) {
+            vk_ri_allocs[i] = vk_ri_allocs[--vk_ri_n_allocs];
+            vk_ri_allocs[vk_ri_n_allocs] = NULL;
+            break;
+        }
+    }
+    free( ptr );
 }
 
 /* Q3e cvar metadata API — no engine storage exists. Each is a no-op:

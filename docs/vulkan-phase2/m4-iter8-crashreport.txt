@@ -1,0 +1,40 @@
+Iter 8 macOS Crash Reporter output (text-extracted from system dialog).
+
+Boot progresses through (per stdout log /tmp/m4-iter8-stdout.log):
+- vkCreateInstance OK
+- Physical device enumerated: Integrated Apple M1 (0x1a050207)
+- Device memory: 8192MB
+- Presentation modes: FIFO IMMEDIATE
+- Selected presentation mode: IMMEDIATE, image count 3
+- THEN crash at R_Init+7092 (vulkan DLL) with PC=0x0
+
+Stack:
+  frame #0: 0x0  <NULL function call>
+  frame #1: R_Init + 7092       (renderer_sp_vulkan_arm64.dylib)
+  frame #2: RE_BeginRegistration + 20
+  frame #3: CL_StartHunkUsers + 104
+
+Thread state at crash (extracted from CrashReport):
+  pc = 0x0
+  lr = 0x10ee7383c  (return address inside renderer_sp_vulkan_arm64.dylib)
+  x0  = "glConfig" symbol
+  x20 = "ri" symbol (refImport_t global)
+  x21 = "glConfig" symbol
+  x22 = "glConfig"+11100 offset
+
+  esr = 0x82000006 (Instruction Abort) Translation fault
+  far = 0x0
+
+Interpretation: ri.SOMETHING() where SOMETHING is a NULL function pointer
+in the refImport_t struct populated by cl_refvulkan.c translator. Same
+class of bug as the vk_Free NULL we fixed in iter 8 -- another dormant
+NULL slot that the renderer DLL invokes.
+
+Per analyst recommendation (iter 7 triage doc §1.5 final paragraph):
+"Recommend running q3-renderer-abi-diff over tr_public.h vs the translator
+before iter 8 to surface any other still-NULL slots in one pass -- there
+are likely more dormant gaps that will surface as soon as this one is
+fixed."
+
+Iter 8 confirms the prediction. Next: dispatch q3-renderer-abi-diff for
+comprehensive sweep instead of crash-iterate-fix loop.
