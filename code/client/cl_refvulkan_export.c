@@ -32,9 +32,32 @@ void *CL_BuildVulkanRefExport( void *big_export ) {
     /* Hand the BIG pointer to the sibling TU which holds the thunks. */
     CL_VulkanRefExport_StoreBig( big_export );
 
-    /* M5 Task 1: skeleton only — every slot still NULL. First re.X call
-     * from CL_InitRef caller will SIGSEGV; that's the wire-in proof.
-     * Slot population follows in Tasks 2-7. */
+    /* Group A — identity slots: name + signature match in SMALL and BIG.
+     * Cast through void * to silence "incompatible pointer type" warnings
+     * (legitimate — SMALL and BIG see different tr_types.h, so the
+     * function pointer types differ in record-typed args even when the
+     * slot semantics are identical). */
+    vk_re_small.BeginRegistration   = (void (*)( glconfig_t * ))vk_re_get_BeginRegistration();
+    vk_re_small.RegisterModel       = (qhandle_t (*)( const char * ))vk_re_get_RegisterModel();
+    vk_re_small.RegisterSkin        = (qhandle_t (*)( const char * ))vk_re_get_RegisterSkin();
+    vk_re_small.RegisterShader      = (qhandle_t (*)( const char * ))vk_re_get_RegisterShader();
+    vk_re_small.RegisterShaderNoMip = (qhandle_t (*)( const char * ))vk_re_get_RegisterShaderNoMip();
+    vk_re_small.LoadWorld           = (void (*)( const char * ))vk_re_get_LoadWorld();
+    vk_re_small.SetWorldVisData     = (void (*)( const byte * ))vk_re_get_SetWorldVisData();
+    vk_re_small.EndRegistration     = (void (*)( void ))vk_re_get_EndRegistration();
+    vk_re_small.ClearScene          = (void (*)( void ))vk_re_get_ClearScene();
+    vk_re_small.LightForPoint       = (int (*)( vec3_t, vec3_t, vec3_t, vec3_t ))vk_re_get_LightForPoint();
+    vk_re_small.RenderScene         = (void (*)( const refdef_t * ))vk_re_get_RenderScene();
+    vk_re_small.SetColor            = (void (*)( const float * ))vk_re_get_SetColor();
+    vk_re_small.DrawStretchPic      = (void (*)( float, float, float, float, float, float, float, float, qhandle_t ))vk_re_get_DrawStretchPic();
+    vk_re_small.BeginFrame          = (void (*)( stereoFrame_t ))vk_re_get_BeginFrame();
+    vk_re_small.EndFrame            = (void (*)( int *, int * ))vk_re_get_EndFrame();
+    vk_re_small.MarkFragments       = (int (*)( int, const vec3_t *, const vec3_t, int, vec3_t, int, markFragment_t * ))vk_re_get_MarkFragments();
+    vk_re_small.ModelBounds         = (void (*)( qhandle_t, vec3_t, vec3_t ))vk_re_get_ModelBounds();
+    vk_re_small.RegisterFont        = (void (*)( const char *, int, fontInfo_t * ))vk_re_get_RegisterFont();
+    vk_re_small.RemapShader         = (void (*)( const char *, const char *, const char * ))vk_re_get_RemapShader();
+    vk_re_small.GetEntityToken      = (qboolean (*)( char *, int ))vk_re_get_GetEntityToken();
+    vk_re_small.TakeVideoFrame      = (void (*)( int, int, byte *, byte *, qboolean ))vk_re_get_TakeVideoFrame();
 
     vk_re_built = qtrue;
     return &vk_re_small;

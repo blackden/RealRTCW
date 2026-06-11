@@ -510,3 +510,34 @@ static void *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name ) 
     return (void *)loader( instance, name );
 }
 
+/* ====================================================================
+ * M5 Group A — slot accessors for identity-signature slots.
+ * Each returns (void *) so cl_refvulkan_export.c can assign without
+ * pulling in BIG type declarations.
+ * ==================================================================== */
+
+#define VK_RE_GET(name)  void *vk_re_get_##name( void ) { return (void *)vk_re_big->name; }
+
+VK_RE_GET(BeginRegistration)
+VK_RE_GET(RegisterModel)
+VK_RE_GET(RegisterSkin)
+VK_RE_GET(RegisterShader)
+VK_RE_GET(RegisterShaderNoMip)
+VK_RE_GET(LoadWorld)
+VK_RE_GET(SetWorldVisData)
+VK_RE_GET(EndRegistration)
+VK_RE_GET(ClearScene)
+VK_RE_GET(LightForPoint)
+VK_RE_GET(RenderScene)
+VK_RE_GET(SetColor)
+VK_RE_GET(DrawStretchPic)
+VK_RE_GET(BeginFrame)
+VK_RE_GET(EndFrame)
+VK_RE_GET(MarkFragments)
+VK_RE_GET(ModelBounds)
+VK_RE_GET(RegisterFont)
+VK_RE_GET(RemapShader)
+VK_RE_GET(GetEntityToken)
+VK_RE_GET(TakeVideoFrame)
+
+#undef VK_RE_GET

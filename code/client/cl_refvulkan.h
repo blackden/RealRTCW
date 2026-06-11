@@ -61,4 +61,30 @@ void *CL_BuildVulkanRefExport( void *big_export );
  * during CL_BuildVulkanRefExport; thunks below read this pointer. */
 void  CL_VulkanRefExport_StoreBig( void *big_export );
 
+/* M5 Group A — direct slot accessors. Each returns the BIG slot's
+ * function pointer as an opaque void *. SMALL-side translator casts
+ * them to the SMALL slot's function-pointer type before assignment.
+ * No signature translation happens here — only Group B wrappers do that. */
+void *vk_re_get_BeginRegistration( void );
+void *vk_re_get_RegisterModel( void );
+void *vk_re_get_RegisterSkin( void );
+void *vk_re_get_RegisterShader( void );
+void *vk_re_get_RegisterShaderNoMip( void );
+void *vk_re_get_LoadWorld( void );
+void *vk_re_get_SetWorldVisData( void );
+void *vk_re_get_EndRegistration( void );
+void *vk_re_get_ClearScene( void );
+void *vk_re_get_LightForPoint( void );
+void *vk_re_get_RenderScene( void );
+void *vk_re_get_SetColor( void );
+void *vk_re_get_DrawStretchPic( void );
+void *vk_re_get_BeginFrame( void );
+void *vk_re_get_EndFrame( void );
+void *vk_re_get_MarkFragments( void );
+void *vk_re_get_ModelBounds( void );
+void *vk_re_get_RegisterFont( void );
+void *vk_re_get_RemapShader( void );
+void *vk_re_get_GetEntityToken( void );
+void *vk_re_get_TakeVideoFrame( void );
+
 #endif /* __CL_REFVULKAN_H__ */
