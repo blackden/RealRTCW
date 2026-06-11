@@ -1331,11 +1331,14 @@ static void create_instance( void )
 	appInfo.applicationVersion = 0x0;
 	appInfo.pEngineName = NULL;
 	appInfo.engineVersion = 0x0;
-#ifdef _DEBUG
+	/* RealRTCW M4 iter 5 triage: release path was VK_API_VERSION_1_0 which
+	 * crashes when the Khronos validation layer is implicitly injected via
+	 * VK_INSTANCE_LAYERS=VK_LAYER_KHRONOS_validation (the validation layer's
+	 * CreateInstance interceptor dereferences feature/property structs the
+	 * 1.0 path doesn't populate). MoltenVK supports 1.1+ uniformly on macOS
+	 * arm64; bumping unifies debug/release behavior. See
+	 * docs/vulkan-phase2/2026-06-11-iter5-crash-triage.md §1 (P1). */
 	appInfo.apiVersion = VK_API_VERSION_1_1;
-#else
-	appInfo.apiVersion = VK_API_VERSION_1_0;
-#endif
 
 	// create instance
 	desc.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
