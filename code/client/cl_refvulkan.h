@@ -96,5 +96,9 @@ void vk_re_thunk_AddPolyToScene( qhandle_t hShader, int numVerts, const void *ve
 void vk_re_thunk_AddLightToScene( const float *org, float intensity, float r, float g, float b );
 int vk_re_thunk_LerpTag( void *tag, int hModel, int startFrame, int endFrame,
                          float frac, const char *tagName );
+void vk_re_thunk_DrawStretchRaw( int x, int y, int w, int h, int cols, int rows,
+                                 const byte *data, int client, int dirty );
+void vk_re_thunk_UploadCinematic( int w, int h, int cols, int rows,
+                                  const byte *data, int client, int dirty );
 
 #endif /* __CL_REFVULKAN_H__ */

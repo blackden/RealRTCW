@@ -578,3 +578,20 @@ int vk_re_thunk_LerpTag( void *tag, int hModel, int startFrame, int endFrame,
                                (qhandle_t)hModel,
                                startFrame, endFrame, frac, tagName );
 }
+
+void vk_re_thunk_DrawStretchRaw( int x, int y, int w, int h, int cols, int rows,
+                                 const byte *data, int client, int dirty ) {
+    /* BIG signature drops const on data ptr but renderer never writes
+     * through it. Cast away const here, alone, so the unsafe cast is
+     * grep-locatable. */
+    vk_re_big->DrawStretchRaw( x, y, w, h, cols, rows,
+                               (byte *)data, client, dirty ? qtrue : qfalse );
+}
+
+void vk_re_thunk_UploadCinematic( int w, int h, int cols, int rows,
+                                  const byte *data, int client, int dirty ) {
+    /* Same const-strip pattern as DrawStretchRaw — UploadCinematic copies
+     * data into a renderer-owned texture, never writes through the input. */
+    vk_re_big->UploadCinematic( w, h, cols, rows,
+                                (byte *)data, client, dirty ? qtrue : qfalse );
+}

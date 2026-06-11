@@ -82,6 +82,20 @@ static int vk_re_wrap_LerpTag( orientation_t *tag, const refEntity_t *refent,
                                 tagName );
 }
 
+/* SMALL DrawStretchRaw / UploadCinematic take `const byte *data`; BIG drops
+ * the const. The renderer copies data into texture memory and never writes
+ * through the input ptr (verified in code/renderervk/tr_cmds.c). Wrap so
+ * the const-cast lives inside vk_re_thunk_* and is grep-locatable. */
+static void vk_re_wrap_DrawStretchRaw( int x, int y, int w, int h, int cols, int rows,
+                                       const byte *data, int client, qboolean dirty ) {
+    vk_re_thunk_DrawStretchRaw( x, y, w, h, cols, rows, data, client, dirty );
+}
+
+static void vk_re_wrap_UploadCinematic( int w, int h, int cols, int rows,
+                                        const byte *data, int client, qboolean dirty ) {
+    vk_re_thunk_UploadCinematic( w, h, cols, rows, data, client, dirty );
+}
+
 void *CL_BuildVulkanRefExport( void *big_export ) {
     if ( vk_re_built ) {
         return &vk_re_small;
@@ -100,6 +114,8 @@ void *CL_BuildVulkanRefExport( void *big_export ) {
     vk_re_small.AddPolyToScene      = vk_re_wrap_AddPolyToScene;
     vk_re_small.AddLightToScene     = vk_re_wrap_AddLightToScene;
     vk_re_small.LerpTag             = vk_re_wrap_LerpTag;
+    vk_re_small.DrawStretchRaw  = vk_re_wrap_DrawStretchRaw;
+    vk_re_small.UploadCinematic = vk_re_wrap_UploadCinematic;
 
     /* Group A — identity slots: name + signature match in SMALL and BIG.
      * Cast through void * to silence "incompatible pointer type" warnings
