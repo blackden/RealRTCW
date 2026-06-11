@@ -37,6 +37,7 @@ Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
+#include "../qcommon/cm_public.h"
 #include "../renderercommon/tr_public.h"
 #include "../sys/sys_local.h"
 #include "cl_refvulkan.h"
@@ -106,6 +107,9 @@ static int       vk_Cvar_CheckGroup( cvarGroup_t group );
 static void      vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFlags );
 static void      vk_CL_SetScaling( float factor, int captureWidth, int captureHeight );
 static void      vk_Free( void *ptr );
+static void      vk_GLimp_InitGamma( glconfig_t *config );
+static void      vk_GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] );
+static qboolean  vk_CL_IsMinimized( void );
 
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
@@ -225,6 +229,24 @@ void *CL_BuildVulkanRefImport( void ) {
      *     from code/renderervk/tr_init.c:543,556,562 right after VKimp_Init. */
     vk_ri.CL_SetScaling             = vk_CL_SetScaling;
 
+    /* --- NO-OP STUBS: Q3e gamma slots called even on Vulkan path (cf.
+     *     code/renderervk/tr_init.c:583 GLimp_InitGamma and
+     *     code/renderervk/tr_image.c:1714 GLimp_SetGamma). MoltenVK does
+     *     gamma via shader, not the OS gamma table -- safe no-op for boot.
+     *     Iter 8 triage: docs/vulkan-phase2/2026-06-11-iter8-null-slot-sweep.md */
+    vk_ri.GLimp_InitGamma           = vk_GLimp_InitGamma;
+    vk_ri.GLimp_SetGamma            = vk_GLimp_SetGamma;
+
+    /* --- NO-OP STUB: Q3e per-frame minimization query. Six callers in
+     *     renderervk/ (vk.c:7371/7517/7543/7607, tr_cmds.c:89/95,
+     *     tr_init.c:1069) -- first-frame landmine. Returns qfalse for now;
+     *     wire to actual engine state when we add multi-window/visibility. */
+    vk_ri.CL_IsMinimized            = vk_CL_IsMinimized;
+
+    /* --- DIRECT WIRE: engine CM_ClusterPVS used by renderervk's BSP
+     *     visibility code (tr_world.c). Signature matches. */
+    vk_ri.CM_ClusterPVS             = CM_ClusterPVS;
+
     /* --- VULKAN WINDOW SYSTEM: code that doesn't exist on engine side.
      *     Defined further down. */
     vk_ri.VK_CreateSurface          = vk_VK_CreateSurface;
@@ -239,7 +261,6 @@ void *CL_BuildVulkanRefImport( void ) {
      *     diagnose in M4 logs.
      *
      *     Listed for grep-discoverability (alphabetical):
-     *       CL_IsMinimized       -- not present in RealRTCW engine
      *       CL_LoadJPG           -- not present in RealRTCW engine
      *       CL_SaveJPG           -- not present in RealRTCW engine
      *       CL_SaveJPGToBuffer   -- not present in RealRTCW engine
@@ -247,12 +268,9 @@ void *CL_BuildVulkanRefImport( void ) {
      *                              Q3e sig matches; could wire if
      *                              renderer triages it. Leave NULL
      *                              for now -- AVI capture not in M4.
-     *       CM_ClusterPVS        -- not exported via qcommon.h
      *       CM_DrawDebugSurface  -- not exported via qcommon.h
      *       GLimp_EndFrame       -- OpenGL window slot, not Vulkan
      *       GLimp_Init           -- OpenGL window slot, not Vulkan
-     *       GLimp_InitGamma      -- OpenGL window slot, not Vulkan
-     *       GLimp_SetGamma       -- OpenGL window slot, not Vulkan
      *       GLimp_Shutdown       -- OpenGL window slot, not Vulkan
      *       GL_GetProcAddress    -- OpenGL window slot, not Vulkan
      *       Sys_SetClipboardBitmap -- not present in RealRTCW engine
@@ -328,6 +346,29 @@ static void vk_Free( void *ptr ) {
         }
     }
     free( ptr );
+}
+
+/* Q3e GLimp_InitGamma is called on Vulkan path too (renderervk/tr_init.c:583).
+ * MoltenVK doesn't expose OS gamma tables — gamma is applied via shader.
+ * Mark deviceSupportsGamma=qfalse so engine doesn't try OS gamma adjustments. */
+static void vk_GLimp_InitGamma( glconfig_t *config ) {
+    if ( config ) {
+        config->deviceSupportsGamma = qfalse;
+    }
+}
+
+/* Q3e GLimp_SetGamma is invoked from R_SetColorMappings (tr_image.c:1714)
+ * unconditionally after GLimp_InitGamma. Since we report
+ * deviceSupportsGamma=qfalse, the renderer should skip — but be defensive. */
+static void vk_GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] ) {
+    (void)red; (void)green; (void)blue;
+}
+
+/* Q3e per-frame minimization query — 6 callers in renderervk/. RealRTCW
+ * doesn't track minimization state (no multi-window). Returns qfalse;
+ * wire to engine state if/when we add visibility tracking. */
+static qboolean vk_CL_IsMinimized( void ) {
+    return qfalse;
 }
 
 /* Q3e cvar metadata API — no engine storage exists. Each is a no-op:
