@@ -53,6 +53,13 @@ Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * one consumer in the engine binary today (this TU). */
 extern SDL_Window *SDL_window;
 
+/* γ' migration: VKimp_Init is defined engine-side in code/sdl/sdl_glimp.c
+ * (under #ifdef BUILD_RENDERER_VULKAN). The renderer DLL invokes it
+ * through this slot; we wire the engine-side symbol directly.
+ * See notes/decisions/2026-06-10-m4-window-ownership-model.md §4. */
+extern void VKimp_Init( glconfig_t *config );
+extern void VKimp_Shutdown( qboolean unloadDLL );
+
 /* Forward declarations for client-side symbols normally exposed via
  * client.h. We avoid including client.h so the small refimport_t
  * doesn't pollute this TU. */
@@ -101,8 +108,6 @@ static void      vk_Cvar_ResetGroup( cvarGroup_t group, qboolean resetModifiedFl
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
 static void     *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name );
-static void      vk_VKimp_Init( glconfig_t *config );
-static void      vk_VKimp_Shutdown( qboolean unloadDLL );
 
 /* ====================================================================
  * Local tagged-allocation tracker for vk_Malloc / vk_FreeAll.
@@ -215,8 +220,8 @@ void *CL_BuildVulkanRefImport( void ) {
      *     Defined further down. */
     vk_ri.VK_CreateSurface          = vk_VK_CreateSurface;
     vk_ri.VK_GetInstanceProcAddr    = vk_VK_GetInstanceProcAddr;
-    vk_ri.VKimp_Init                = vk_VKimp_Init;
-    vk_ri.VKimp_Shutdown            = vk_VKimp_Shutdown;
+    vk_ri.VKimp_Init                = VKimp_Init;
+    vk_ri.VKimp_Shutdown            = VKimp_Shutdown;
 
     /* --- INTENTIONALLY NULL: Q3e-only slots the RTCW engine has no
      *     equivalent for. Com_Memset above zeroed all slots; NULL
@@ -402,23 +407,3 @@ static void *vk_VK_GetInstanceProcAddr( VkInstance instance, const char *name ) 
     return (void *)loader( instance, name );
 }
 
-static void vk_VKimp_Init( glconfig_t *config ) {
-    /* The shared engine SDL window was already created by GLimp_Init
-     * (sdl_glimp.c) before the renderer DLL was loaded. The Vulkan
-     * renderer just needs the window to exist; surface creation
-     * happens later via vk_VK_CreateSurface.
-     *
-     * config: Q3e renderer's view of glconfig. The engine doesn't
-     * populate this directly here -- if the renderer reads fields,
-     * M4 triage will surface NULL/garbage and we can fill them then. */
-    (void)config;
-    if ( !SDL_window ) {
-        Com_Error( ERR_FATAL, "vk_VKimp_Init: SDL_window not initialized -- engine startup order is broken" );
-    }
-    Com_Printf( "vk_VKimp_Init: SDL window present, deferring surface creation to vk_VK_CreateSurface\n" );
-}
-
-static void vk_VKimp_Shutdown( qboolean unloadDLL ) {
-    (void)unloadDLL;
-    /* idempotent stub -- safe to no-op on shutdown */
-}
