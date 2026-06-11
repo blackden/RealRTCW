@@ -2080,7 +2080,8 @@ endif
 
 ifeq ($(BUILD_RENDERER_VULKAN),1)
   Q3OBJ += \
-    $(B)/client/cl_refvulkan.o
+    $(B)/client/cl_refvulkan.o \
+    $(B)/client/cl_refvulkan_export.o
 endif
 
 Q3ROBJ = \

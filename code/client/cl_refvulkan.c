@@ -80,6 +80,15 @@ void QDECL CL_RefPrintf( int print_level, const char *fmt, ... );
 static refimport_t  vk_ri;
 static qboolean     vk_ri_built = qfalse;
 
+/* M5: BIG refexport_t cache. Set by cl_refvulkan_export.c during the
+ * SMALL-side translator build. Thunks below invoke renderer entry
+ * points through this pointer. */
+static refexport_t *vk_re_big = NULL;
+
+void CL_VulkanRefExport_StoreBig( void *big_export ) {
+    vk_re_big = (refexport_t *)big_export;
+}
+
 /* ====================================================================
  * Forward declarations of stub/wrapper functions defined later in this
  * file. Grouped by category for readability.

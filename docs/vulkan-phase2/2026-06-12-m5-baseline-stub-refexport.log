@@ -1,0 +1,48 @@
+═══ RealRTCW release build (без sanitizer'а) ═══
+Лог-префиксы:  /tmp/rtcw-asan.<pid>.log   /tmp/rtcw-ubsan.<pid>.log
+Бинарник:      /Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam/RealRTCW.arm64
+
+Renderer:      Vulkan (cl_renderer=vulkan)
+Auto mode:     boot, 10s, quit
+tty console mode disabled
+RealRTCW 5.4 macosx-arm64 Jun 11 2026
+----- FS_Startup -----
+Current search path:
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zzzsurvival.pk3 (410 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zzrealrtcw_scripts.pk3 (280 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui_hd.pk3 (90 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui.pk3 (692 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_zperson.pk3 (50 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures_hd.pk3 (1674 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures.pk3 (704 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds_hd.pk3 (203 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds.pk3 (758 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_weapons.pk3 (772 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_hd.pk3 (393 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters_hd.pk3 (815 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters.pk3 (575 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models.pk3 (715 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps_re.pk3 (27 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps.pk3 (63 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_localization.pk3 (306 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak4.pk3 (21 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak3.pk3 (14 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak2.pk3 (232 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak1.pk3 (1342 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main/pak0.pk3 (4775 files)
+/Users/ragnar/Library/Application Support/RealRTCW/main
+/Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam/main
+
+----------------------
+14911 files in pk3 files
+execing realrtcwdefault.cfg
+execing realrtcw_binds.cfg
+execing realrtcw_cvars.cfg
+execing autoexec.cfg
+couldn't exec dlc1.cfg
+couldn't exec ee_dlc.cfg
+Hunk_Clear: reset the hunk ok
+scripts/mac/playtest.sh: line 90: 19415 Killed: 9               "$BIN" "${RENDERER_ARGS[@]+"${RENDERER_ARGS[@]}"}" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}" "${AUTO_ARGS[@]+"${AUTO_ARGS[@]}"}" < /dev/null
+
+═══ Игра вышла с кодом 137 ═══
+✓ Никаких ASAN/UBSAN репортов. Sanitizer молчал — это хорошо.

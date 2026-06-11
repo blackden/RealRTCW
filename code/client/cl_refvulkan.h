@@ -43,4 +43,22 @@ Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 void *CL_BuildVulkanRefImport( void );
 
+/* M5: refexport_t translator (renderer → engine direction).
+ *
+ * Takes the BIG refexport_t pointer returned by the vendored renderervk
+ * GetRefAPI and returns a pointer to a SMALL refexport_t whose slots are
+ * wired (directly or via wrappers) to the BIG slots.
+ *
+ * Opaque return type because cl_main.c (the only caller) sees SMALL but
+ * this header is included from cl_refvulkan.c too which sees BIG. The
+ * caller casts back to SMALL refexport_t * at the use site.
+ *
+ * Idempotent: subsequent calls return the same pointer; second BIG arg
+ * is ignored. */
+void *CL_BuildVulkanRefExport( void *big_export );
+
+/* BIG-side thunk storage. Setter called from cl_refvulkan_export.c
+ * during CL_BuildVulkanRefExport; thunks below read this pointer. */
+void  CL_VulkanRefExport_StoreBig( void *big_export );
+
 #endif /* __CL_REFVULKAN_H__ */

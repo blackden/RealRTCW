@@ -3520,6 +3520,16 @@ void CL_InitRef( void ) {
 		Com_Error( ERR_FATAL, "Couldn't initialize refresh" );
 	}
 
+#ifdef BUILD_RENDERER_VULKAN
+	/* M5: renderer fills BIG refexport_t; engine `re` is SMALL.
+	 * Translate slot offsets + signature drift before copy.
+	 * Returns a SMALL refexport_t * for `re = *ret;` to consume. */
+	ret = (refexport_t *)CL_BuildVulkanRefExport( ret );
+	if ( !ret ) {
+		Com_Error( ERR_FATAL, "CL_BuildVulkanRefExport returned NULL" );
+	}
+#endif
+
 	re = *ret;
 
 	Com_Printf( "---- Renderer Initialization Complete ----\n" );
