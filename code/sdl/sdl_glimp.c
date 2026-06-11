@@ -1336,6 +1336,101 @@ success:
 	ri.IN_Init( SDL_window );
 }
 
+#ifdef BUILD_RENDERER_VULKAN
+/*
+===============
+VKimp_Init
+
+θ' window-init path. Owns SDL window creation for the Vulkan renderer
+DLL. Mirrors GLimp_Init but takes the Vulkan branch through
+GLimp_StartDriverAndSetMode (no GL context creation).
+
+The caller is code/renderervk/tr_init.c (vendored Q3e), which now
+invokes this function directly instead of going through ri.VKimp_Init.
+See notes/decisions/2026-06-10-m4-window-ownership-model.md §3.
+===============
+*/
+void VKimp_Init( glconfig_t *config )
+{
+	RealRTCW_VkBridgeInit();
+
+	ri.Printf( PRINT_DEVELOPER, "VKimp_Init( )\n" );
+
+	r_allowSoftwareGL = ri.Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );
+	r_sdlDriver = ri.Cvar_Get( "r_sdlDriver", "", CVAR_ROM );
+	r_allowResize = ri.Cvar_Get( "r_allowResize", "0", CVAR_ARCHIVE | CVAR_LATCH );
+	r_centerWindow = ri.Cvar_Get( "r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH );
+
+	if( ri.Cvar_VariableIntegerValue( "com_abnormalExit" ) )
+	{
+		ri.Cvar_Set( "r_mode", va( "%d", R_MODE_FALLBACK ) );
+		ri.Cvar_Set( "r_fullscreen", "0" );
+		ri.Cvar_Set( "r_centerWindow", "0" );
+		ri.Cvar_Set( "com_abnormalExit", "0" );
+	}
+
+	ri.Sys_GLimpInit( );
+
+	ri.Cvar_Get("r_availableModes", "", CVAR_ROM);
+	ri.Cvar_Get("r_maxResolutionWidth", "0", 0);
+	ri.Cvar_Get("r_maxResolutionHeight", "0", 0);
+
+	/* Create the window with SDL_WINDOW_VULKAN; no GL context. */
+	if(GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, r_noborder->integer, qfalse, qtrue))
+		goto success;
+
+	ri.Sys_GLimpSafeInit( );
+
+	if(GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, qfalse, qfalse, qtrue))
+		goto success;
+
+	if( r_mode->integer != R_MODE_FALLBACK )
+	{
+		ri.Printf( PRINT_ALL, "Setting r_mode %d failed, falling back on r_mode %d\n",
+				r_mode->integer, R_MODE_FALLBACK );
+
+		if(GLimp_StartDriverAndSetMode(R_MODE_FALLBACK, qfalse, qfalse, qfalse, qtrue))
+			goto success;
+	}
+
+	ri.Error( ERR_FATAL, "VKimp_Init() - could not create SDL Vulkan window" );
+
+success:
+	/* Populate glconfig fields that downstream Q3e Vulkan code reads.
+	 * vidWidth / vidHeight are already set by GLimp_SetMode. */
+	config->vidWidth        = glConfig.vidWidth;
+	config->vidHeight       = glConfig.vidHeight;
+	config->windowAspect    = glConfig.windowAspect;
+	config->isFullscreen    = glConfig.isFullscreen;
+	config->displayFrequency = 60;        /* refined later when swapchain is built */
+	config->deviceSupportsGamma = qfalse; /* MoltenVK path -- shader gamma only */
+
+	/* Hand the window pointer to the engine input subsystem via the
+	 * existing ri.IN_Init handoff (same channel GLimp_Init uses at the
+	 * end of its body). */
+	ri.IN_Init( SDL_window );
+}
+
+/*
+===============
+VKimp_Shutdown
+===============
+*/
+void VKimp_Shutdown( qboolean unloadDLL )
+{
+	if( SDL_window )
+	{
+		SDL_DestroyWindow( SDL_window );
+		SDL_window = NULL;
+	}
+
+	if( unloadDLL )
+	{
+		SDL_QuitSubSystem( SDL_INIT_VIDEO );
+	}
+}
+#endif /* BUILD_RENDERER_VULKAN */
+
 
 /*
 ===============
