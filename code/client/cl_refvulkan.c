@@ -541,3 +541,13 @@ VK_RE_GET(GetEntityToken)
 VK_RE_GET(TakeVideoFrame)
 
 #undef VK_RE_GET
+
+/* ====================================================================
+ * M5 Group B — signature-translating thunks.
+ * Each takes int / void * args from the SMALL-side wrapper and calls
+ * the BIG slot with proper BIG-shaped enums / types.
+ * ==================================================================== */
+
+void vk_re_thunk_Shutdown( int code ) {
+    vk_re_big->Shutdown( (refShutdownCode_t)code );
+}

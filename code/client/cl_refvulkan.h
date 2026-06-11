@@ -87,4 +87,9 @@ void *vk_re_get_RemapShader( void );
 void *vk_re_get_GetEntityToken( void );
 void *vk_re_get_TakeVideoFrame( void );
 
+/* M5 Group B — signature-translating thunks. SMALL-side wrapper in
+ * cl_refvulkan_export.c calls these with int / void * args; thunk
+ * casts to BIG enums/types and invokes the slot. */
+void vk_re_thunk_Shutdown( int code );
+
 #endif /* __CL_REFVULKAN_H__ */

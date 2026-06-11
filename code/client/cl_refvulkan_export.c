@@ -22,6 +22,24 @@ TUs communicate via void* and link-time symbols only.
 static refexport_t  vk_re_small;
 static qboolean     vk_re_built = qfalse;
 
+/* Engine SMALL: Shutdown(qboolean destroyWindow).
+ *   destroyWindow == qtrue  → renderer should drop the window.
+ *   destroyWindow == qfalse → reconfig only; keep window+context to
+ *                             avoid the desktop-flash UX glitch.
+ * Maps to Q3e BIG: Shutdown(refShutdownCode_t code).
+ *   REF_DESTROY_WINDOW  ≈ qtrue
+ *   REF_KEEP_CONTEXT    ≈ qfalse (also keeps window, so safe choice)
+ *
+ * Hardcoded enum values to avoid pulling in BIG type defs:
+ *   REF_KEEP_CONTEXT   = 0
+ *   REF_KEEP_WINDOW    = 1
+ *   REF_DESTROY_WINDOW = 2
+ *   REF_UNLOAD_DLL     = 3 */
+static void vk_re_wrap_Shutdown( qboolean destroyWindow ) {
+    vk_re_thunk_Shutdown( destroyWindow ? 2 /* REF_DESTROY_WINDOW */
+                                        : 0 /* REF_KEEP_CONTEXT */ );
+}
+
 void *CL_BuildVulkanRefExport( void *big_export ) {
     if ( vk_re_built ) {
         return &vk_re_small;
@@ -31,6 +49,9 @@ void *CL_BuildVulkanRefExport( void *big_export ) {
 
     /* Hand the BIG pointer to the sibling TU which holds the thunks. */
     CL_VulkanRefExport_StoreBig( big_export );
+
+    /* Group B — Shutdown: qboolean → refShutdownCode_t */
+    vk_re_small.Shutdown = vk_re_wrap_Shutdown;
 
     /* Group A — identity slots: name + signature match in SMALL and BIG.
      * Cast through void * to silence "incompatible pointer type" warnings
