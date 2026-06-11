@@ -269,3 +269,210 @@ land it.
   loader entry on first call and never invalidates. Fine for normal use; if we ever
   hot-reload the renderer DLL, this needs invalidation.
 
+
+---
+
+## §1.5 — iter 7 follow-up: NULL `ri.Free` in refImport translator
+
+**Status:** identified, fix scoped.
+
+### Crash signature recap
+
+After P1 (`VK_API_VERSION_1_1` unification, commit `cacbf3d`) and dual-MoltenVK
+resolution (`brew uninstall molten-vk`), the smoke run reaches further:
+
+```
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0x0)
+  * frame #0: 0x0000000000000000
+    frame #1: 0x000000010bda52f8 renderer_sp_vulkan_arm64.dylib`vk_initialize + 972
+    frame #2: 0x000000010bd8382c renderer_sp_vulkan_arm64.dylib`R_Init + 7076
+```
+
+`PC == 0x0` ⇒ **calling a NULL function pointer**, not a NULL data dereference.
+
+### Last printed log line (iter 7 lldb log line 206 / noval log line 76)
+
+```
+^1instance extension: VK_KHR_portability_enumeration
+```
+
+This is `code/renderervk/vk.c:1325` — the last iteration of the extension-listing
+loop inside `create_instance()`. Execution continues silently until the segfault.
+
+### Pinpoint: which call is at `vk_initialize + 972`
+
+`vk_initialize` (vk.c:3938) opens with `init_vulkan_library();` (vk.c:3949).
+`init_vulkan_library` (vk.c:1902) — a small static called only from `vk_initialize`
+— is inlined by the optimizer. Inside it, `create_instance()` (vk.c:1279, also
+static-with-single-caller) is likewise inlined. After unrolling, the linear
+code path from the last `ri.Printf` is:
+
+| vk.c line | Statement                                                        |
+|----------:|------------------------------------------------------------------|
+| 1325      | `ri.Printf( PRINT_DEVELOPER, "instance extension: %s\n", ext );` ← last log line |
+| 1326      | loop closes                                                       |
+| 1328–1341 | populate `appInfo` (`VK_API_VERSION_1_1`)                         |
+| 1344–1349 | populate `desc` (`VkInstanceCreateInfo`)                          |
+| 1376–1377 | `desc.enabledLayerCount = 0; desc.ppEnabledLayerNames = NULL;` *(release path, no `USE_VK_VALIDATION`)* |
+| 1379      | `res = qvkCreateInstance( &desc, NULL, &vk_instance );`           |
+| **1382**  | **`ri.Free( (void*)extension_names );`** ← suspected crash site   |
+| 1383      | `ri.Free( extension_properties );`                                |
+
+Between the printf and `ri.Free` there are only stack-local assignments and a
+single Vulkan call. The only non-trivial *indirect call through a function
+pointer* in this window is `ri.Free` at 1382.
+
+### Translator audit: is `vk_ri.Free` populated?
+
+`code/client/cl_refvulkan.c` zeroes `vk_ri` with `Com_Memset` and then
+assigns slots one by one. The slots wired for memory management are:
+
+```c
+// cl_refvulkan.c:182,207-208
+vk_ri.Hunk_Alloc                = vk_Hunk_Alloc;
+vk_ri.Hunk_AllocateTempMemory   = vk_Hunk_AllocateTempMemory;
+vk_ri.Hunk_FreeTempMemory       = Hunk_FreeTempMemory;
+vk_ri.Malloc                    = vk_Malloc;
+vk_ri.FreeAll                   = vk_FreeAll;
+```
+
+`vk_ri.Free` is **never assigned**. Per the explanatory comment block at
+`cl_refvulkan.c:250-254`:
+
+> **Free** — engine has no `Z_Free` that takes a raw pointer the renderer
+> would own; renderer typically pairs `Malloc` with `FreeAll`. If triage
+> shows otherwise, wire to `Z_Free`.
+
+The renderer **does not** pair `Malloc` with `FreeAll`: `vk.c:1298-1299`
+uses `ri.Malloc` to allocate `extension_properties` and `extension_names`,
+then `vk.c:1382-1383` releases each with `ri.Free`. Same pattern at
+`vk.c:539`, `1549`, `1633`, `1709`, `2005`. Seven distinct call sites in
+the hot init path.
+
+This is exactly the "if triage shows otherwise" condition flagged in the
+translator comment.
+
+### Why iter 5 didn't hit this
+
+In iter 5 the crash was further upstream, inside the validation-layer
+`vkCreateInstance` interceptor (P1: apiVersion 1.0 mismatch). The first
+`ri.Free` call sits *after* `qvkCreateInstance`, so we never reached it.
+P1 fixed the layer-interceptor crash, the run advanced past `vkCreateInstance`,
+and the very next instruction call site exposes the dormant NULL slot.
+
+### Why the user's hypothesis (#3, `INIT_INSTANCE_FUNCTION` resolving to NULL)
+### is unlikely
+
+`INIT_INSTANCE_FUNCTION` (vk.c:1856) wraps NULL detection with
+`ri.Error(ERR_FATAL, "Failed to find entrypoint %s", #func)`. The release log
+shows no such "Failed to find entrypoint" message before the segfault, so the
+loader path is returning non-NULL function pointers for every requested name.
+`VK_EXT_metal_surface` being newly enabled by the 1.1 bump does not regress
+this path — none of the post-instance `INIT_INSTANCE_FUNCTION` calls request a
+metal-surface entry point (those go through `ri.VK_CreateSurface` via SDL3,
+not via direct extension-function loading).
+
+`VK_KHR_get_physical_device_properties2` is loaded into `qvkGetPhysicalDeviceProperties2KHR`
+only at `vk_create_device` (vk.c:1709-area) which we don't reach.
+
+### Concrete fix
+
+**File:** `code/client/cl_refvulkan.c`
+
+**Change 1** — wire the slot (single line, near line 208):
+
+```c
+vk_ri.FreeAll                   = vk_FreeAll;
++   vk_ri.Free                  = Z_Free;
+```
+
+**Where does `Z_Free` come from?** RealRTCW's engine-side `code/qcommon/common.c`
+exposes `Z_Free(void *ptr)` — the inverse of `Z_TagMalloc` / `Z_Malloc`. The
+translator's `vk_Malloc` wrapper currently routes to a local allocation tracker
+(`cl_refvulkan.c` C1 alloc tracker, per recent commit `ba38b1d`) precisely
+*because* `Z_TagMalloc`/`Z_FreeTags` in `common.c` are `#if 0`'d dead code on
+RealRTCW. So we have two options:
+
+- **Option A (minimal, matches Quake3e contract):** route `vk_ri.Free` to a
+  new `vk_Free(void *ptr)` wrapper that calls the local tracker's free
+  function (the tracker the C1 review fixes introduced). This keeps Malloc/Free
+  symmetric on the renderer side and avoids touching engine memory paths.
+
+- **Option B (engine-native):** route `vk_ri.Free` to `Z_Free` directly. Only
+  works if `vk_Malloc` actually backs onto `Z_Malloc`; with the current local
+  tracker it would mismatch allocators. Skip until Malloc is migrated.
+
+**Recommend Option A.** Add ~10 lines to `cl_refvulkan.c`:
+
+```c
+/* Pair for vk_Malloc — release a single tracker entry. */
+static void vk_Free( void *ptr ) {
+    if ( !ptr ) return;
+    /* Walk the C1 tracker, unlink and Z_Free or free() the matching entry.
+     * Implementation mirrors the inverse of vk_Malloc / vk_FreeAll. */
+    vk_alloc_tracker_release( ptr );  /* see existing tracker API */
+}
+```
+
+then in `CL_BuildRefImportVulkan`:
+
+```c
+vk_ri.Malloc                    = vk_Malloc;
++   vk_ri.Free                  = vk_Free;
+vk_ri.FreeAll                   = vk_FreeAll;
+```
+
+**Change 2 — defensive (optional):** also wire `Hunk_AllocDebug` /
+`Hunk_Alloc` and any other still-NULL slot called by `vk.c` post-iter-7.
+None visible in the current call window, but ABI-diff via
+`q3-renderer-abi-diff` skill would surface them in one pass.
+
+### Confirmation strategy (one repro, < 2 min)
+
+Before patching, prove the hypothesis cheaply:
+
+```bash
+lldb ./build/release-darwin-arm64-nosteam/RealRTCW.arm64
+(lldb) breakpoint set --file vk.c --line 1382
+(lldb) run +set cl_renderer vulkan +set developer 1
+# at the breakpoint:
+(lldb) frame variable extension_names
+(lldb) memory read --size 8 --count 1 -- 'vk_ri.Free'   # via the engine symbol
+# expect: 0x0000000000000000
+(lldb) continue
+# expect SIGSEGV at the next instruction with PC=0
+```
+
+If `vk_ri.Free == 0` at the breakpoint, fix as above.
+
+### Estimated effort
+
+- Patch: 10–15 lines in `cl_refvulkan.c` (define `vk_Free` + one assignment).
+- Build: ~30 s incremental.
+- Smoke: 1 repro under lldb.
+- **Total: < 1 hour**, no ABI-shape churn, no engine-side change.
+
+### Layered-decision label
+
+- **M4_now:** Option A wrapper. Closes iter 7 crash.
+- **Phase_later:** unify the renderer's allocator path — if/when the local
+  tracker is replaced by `Z_TagMalloc`-backed allocation (revival of the
+  `#if 0`'d code in `common.c`), `Free` becomes `Z_Free` directly and the
+  tracker disappears.
+- **Greenfield_ideal:** renderers should not own engine-side allocators at
+  all; replace `ri.Malloc`/`ri.Free` with an arena handed to the renderer
+  at init. Phase 3 modernization scope.
+
+### Predicted iter 8 next crash
+
+Once `ri.Free` is wired, execution will advance into
+`qvkEnumeratePhysicalDevices` (vk.c:1966), then `vk_create_device`
+(vk.c:1999), then the device-level `INIT_DEVICE_FUNCTION` block
+(vk.c:2015-2095). Watch for:
+
+- Any other NULL `vk_ri.*` slot — recommend running ABI-diff
+  ([[q3-renderer-abi-diff]]) over the renderer-side `tr_public.h` vs the
+  translator before iter 8 to surface all NULL slots in one pass.
+- `vk_create_device` may probe optional extensions; failure modes there
+  print explicit `ri.Printf` messages, not silent crashes.
+
