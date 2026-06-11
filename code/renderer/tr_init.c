@@ -29,6 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 // tr_init.c -- functions that are not called every frame
 
 #include "tr_local.h"
+#include "r_glimp.h"
 
 glconfig_t  glConfig;
 qboolean    textureFilterAnisotropic = qfalse;
@@ -292,6 +293,15 @@ static void InitOpenGL( void ) {
 		GLint temp;
 
 		GLimp_Init( qtrue );
+
+		/* gamma' Task 2a: renderer-internal GL probing (qgl* function
+		 * pointer load, software-rasterizer rejection, glConfig string
+		 * fields, extension detection). Engine-side GLimp_Init created
+		 * the SDL window and GL context; this populates the renderer
+		 * state that depends on a current GL context. */
+		if ( !GLimp_RendererInit( qtrue ) ) {
+			ri.Error( ERR_FATAL, "GLimp_RendererInit failed" );
+		}
 
 		// OpenGL driver constants
 		qglGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
@@ -1548,6 +1558,9 @@ void RE_Shutdown( qboolean destroyWindow ) {
 
 	// shut down platform specific OpenGL stuff
 	if ( destroyWindow ) {
+		/* gamma' Task 2a: clear qgl* function pointers before engine-side
+		 * GLimp_Shutdown destroys the GL context. */
+		GLimp_RendererShutdown();
 		GLimp_Shutdown();
 
 		Com_Memset( &glConfig, 0, sizeof( glConfig ) );

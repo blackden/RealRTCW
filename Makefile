@@ -2121,6 +2121,7 @@ endif
 
   Q3ROBJ += $(B)/renderer/sdl_gamma.o
   Q3ROBJ += $(B)/renderer/sdl_glimp.o
+  Q3ROBJ += $(B)/renderer/r_glimp.o
 
 ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3ROBJ += \
