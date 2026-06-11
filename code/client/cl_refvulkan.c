@@ -571,3 +571,10 @@ void vk_re_thunk_AddLightToScene( const float *org, float intensity, float r, fl
      * the Q3e renderer just renders the light. */
     vk_re_big->AddLightToScene( (vec_t *)org, intensity, r, g, b );
 }
+
+int vk_re_thunk_LerpTag( void *tag, int hModel, int startFrame, int endFrame,
+                         float frac, const char *tagName ) {
+    return vk_re_big->LerpTag( (orientation_t *)tag,
+                               (qhandle_t)hModel,
+                               startFrame, endFrame, frac, tagName );
+}

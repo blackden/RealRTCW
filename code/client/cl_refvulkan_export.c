@@ -58,6 +58,30 @@ static void vk_re_wrap_AddLightToScene( const vec3_t org, float intensity, float
     vk_re_thunk_AddLightToScene( org, intensity, r, g, b );
 }
 
+/* SMALL LerpTag: (tag, refent, tagName, startIndex).
+ * BIG LerpTag:   (tag, hModel, startFrame, endFrame, frac, tagName).
+ *
+ * Translate by reading model/frame/oldframe/backlerp out of refent.
+ *   BIG endFrame   = refent->frame      (current frame)
+ *   BIG startFrame = refent->oldframe   (previous frame)
+ *   BIG frac       = 1.0 - refent->backlerp
+ *     (engine semantic: backlerp=1 means "fully on oldframe" → frac=0;
+ *                       backlerp=0 means "fully on frame"    → frac=1.)
+ *
+ * startIndex dropped — RTCW-only multi-tag iteration extension. RTCW SP
+ * cgame doesn't rely on it (verified via cgame asset audit, M3.5 era).
+ * If a duplicate-name tag bug appears in gameplay, this is the place. */
+static int vk_re_wrap_LerpTag( orientation_t *tag, const refEntity_t *refent,
+                               const char *tagName, int startIndex ) {
+    (void)startIndex;
+    return vk_re_thunk_LerpTag( (void *)tag,
+                                (int)refent->hModel,
+                                refent->oldframe,
+                                refent->frame,
+                                1.0f - refent->backlerp,
+                                tagName );
+}
+
 void *CL_BuildVulkanRefExport( void *big_export ) {
     if ( vk_re_built ) {
         return &vk_re_small;
@@ -75,6 +99,7 @@ void *CL_BuildVulkanRefExport( void *big_export ) {
     vk_re_small.AddRefEntityToScene = vk_re_wrap_AddRefEntityToScene;
     vk_re_small.AddPolyToScene      = vk_re_wrap_AddPolyToScene;
     vk_re_small.AddLightToScene     = vk_re_wrap_AddLightToScene;
+    vk_re_small.LerpTag             = vk_re_wrap_LerpTag;
 
     /* Group A — identity slots: name + signature match in SMALL and BIG.
      * Cast through void * to silence "incompatible pointer type" warnings

@@ -94,5 +94,7 @@ void vk_re_thunk_Shutdown( int code );
 void vk_re_thunk_AddRefEntityToScene( const void *re_ptr, int intShaderTime );
 void vk_re_thunk_AddPolyToScene( qhandle_t hShader, int numVerts, const void *verts, int num );
 void vk_re_thunk_AddLightToScene( const float *org, float intensity, float r, float g, float b );
+int vk_re_thunk_LerpTag( void *tag, int hModel, int startFrame, int endFrame,
+                         float frac, const char *tagName );
 
 #endif /* __CL_REFVULKAN_H__ */
