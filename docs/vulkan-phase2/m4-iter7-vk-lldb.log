@@ -1,0 +1,375 @@
+(lldb) target create "./build/release-darwin-arm64-nosteam/RealRTCW.arm64"
+Current executable set to '/Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam/RealRTCW.arm64' (arm64).
+(lldb) run +set cl_renderer vulkan +set developer 1
+tty]    RealRTCW 5.4 macosx-arm64 Jun 11 2026
+tty]    ----- FS_Startup -----
+tty]    Current search path:
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zzzsurvival.pk3 (410 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zzrealrtcw_scripts.pk3 (280 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui_hd.pk3 (90 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui.pk3 (692 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zperson.pk3 (50 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures_hd.pk3 (1674 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures.pk3 (704 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds_hd.pk3 (203 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds.pk3 (758 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_weapons.pk3 (772 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_hd.pk3 (393 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters_hd.pk3 (815 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters.pk3 (575 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models.pk3 (715 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps_re.pk3 (27 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps.pk3 (63 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_localization.pk3 (306 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak4.pk3 (21 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak3.pk3 (14 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak2.pk3 (232 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak1.pk3 (1342 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/pak0.pk3 (4775 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main
+tty]    /Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam/main
+tty]    
+tty]    ----------------------
+tty]    14911 files in pk3 files
+tty]    ^3EXEC_NOW exec realrtcwdefault.cfg
+
+tty]    execing realrtcwdefault.cfg
+tty]    execing realrtcw_binds.cfg
+tty]    execing realrtcw_cvars.cfg
+tty]    execing autoexec.cfg
+tty]    couldn't exec dlc1.cfg
+tty]    couldn't exec ee_dlc.cfg
+tty]    Hunk_Clear: reset the hunk ok
+tty]    Warning: cvar "sv_cheats" given initial values: "0" and "1"
+tty]    Bypassing CD checks
+tty]    ----- Client Initialization -----
+tty]    Cmd_AddCommand: map_restart already defined
+tty]    ----- Initializing Renderer ----
+tty]    Trying to load "renderer_sp_vulkan_arm64.dylib" from "/Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam"...
+tty]    ---- Renderer Initialization Complete ----
+tty]    RTCWKEY found.
+tty]    ----- Client Initialization Complete -----
+tty]    ----- R_Init -----
+tty]    VKimp_Init( )
+tty]    SDL using driver "cocoa"
+tty]    Initializing OpenGL display
+tty]    Display aspect: 1.600
+tty]    ...setting mode -2: 1680 1050
+tty]2026-06-11 23:39:50.660001+0300 RealRTCW.arm64[91124:2220509] [WindowTab] Cannot index window tabs due to missing main bundle identifier
+2026-06-11 23:39:50.694121+0300 RealRTCW.arm64[91124:2220595] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.695376+0300 RealRTCW.arm64[91124:2220694] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716528+0300 RealRTCW.arm64[91124:2220694] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.696296+0300 RealRTCW.arm64[91124:2220696] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.695729+0300 RealRTCW.arm64[91124:2220695] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.693589+0300 RealRTCW.arm64[91124:2220596] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716567+0300 RealRTCW.arm64[91124:2220696] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.696565+0300 RealRTCW.arm64[91124:2220697] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.696843+0300 RealRTCW.arm64[91124:2220698] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716616+0300 RealRTCW.arm64[91124:2220698] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716610+0300 RealRTCW.arm64[91124:2220596] [Application] Error registering app with intents framework: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716631+0300 RealRTCW.arm64[91124:2220697] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.697104+0300 RealRTCW.arm64[91124:2220699] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.697357+0300 RealRTCW.arm64[91124:2220700] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716717+0300 RealRTCW.arm64[91124:2220700] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.697629+0300 RealRTCW.arm64[91124:2220701] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716755+0300 RealRTCW.arm64[91124:2220701] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.697858+0300 RealRTCW.arm64[91124:2220702] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716787+0300 RealRTCW.arm64[91124:2220702] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716776+0300 RealRTCW.arm64[91124:2220699] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.698119+0300 RealRTCW.arm64[91124:2220703] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.698351+0300 RealRTCW.arm64[91124:2220704] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716834+0300 RealRTCW.arm64[91124:2220704] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.698582+0300 RealRTCW.arm64[91124:2220705] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716837+0300 RealRTCW.arm64[91124:2220703] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716853+0300 RealRTCW.arm64[91124:2220705] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.698813+0300 RealRTCW.arm64[91124:2220706] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716876+0300 RealRTCW.arm64[91124:2220706] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.699035+0300 RealRTCW.arm64[91124:2220707] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716902+0300 RealRTCW.arm64[91124:2220707] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.699257+0300 RealRTCW.arm64[91124:2220708] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.699482+0300 RealRTCW.arm64[91124:2220709] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.699705+0300 RealRTCW.arm64[91124:2220710] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716948+0300 RealRTCW.arm64[91124:2220709] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716962+0300 RealRTCW.arm64[91124:2220710] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.699924+0300 RealRTCW.arm64[91124:2220711] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.716983+0300 RealRTCW.arm64[91124:2220708] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717001+0300 RealRTCW.arm64[91124:2220711] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.700386+0300 RealRTCW.arm64[91124:2220713] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.700145+0300 RealRTCW.arm64[91124:2220712] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.700607+0300 RealRTCW.arm64[91124:2220714] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717019+0300 RealRTCW.arm64[91124:2220712] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.700824+0300 RealRTCW.arm64[91124:2220715] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717032+0300 RealRTCW.arm64[91124:2220714] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.701049+0300 RealRTCW.arm64[91124:2220716] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.701300+0300 RealRTCW.arm64[91124:2220717] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717051+0300 RealRTCW.arm64[91124:2220717] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717063+0300 RealRTCW.arm64[91124:2220715] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.701575+0300 RealRTCW.arm64[91124:2220718] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717065+0300 RealRTCW.arm64[91124:2220716] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.701847+0300 RealRTCW.arm64[91124:2220719] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717092+0300 RealRTCW.arm64[91124:2220719] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.702306+0300 RealRTCW.arm64[91124:2220721] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.702059+0300 RealRTCW.arm64[91124:2220720] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.702541+0300 RealRTCW.arm64[91124:2220722] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717108+0300 RealRTCW.arm64[91124:2220721] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717114+0300 RealRTCW.arm64[91124:2220722] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.702761+0300 RealRTCW.arm64[91124:2220723] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717135+0300 RealRTCW.arm64[91124:2220723] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.702986+0300 RealRTCW.arm64[91124:2220724] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717148+0300 RealRTCW.arm64[91124:2220724] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717151+0300 RealRTCW.arm64[91124:2220720] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.703205+0300 RealRTCW.arm64[91124:2220725] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.703411+0300 RealRTCW.arm64[91124:2220726] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.703637+0300 RealRTCW.arm64[91124:2220727] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717176+0300 RealRTCW.arm64[91124:2220727] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717179+0300 RealRTCW.arm64[91124:2220726] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.703903+0300 RealRTCW.arm64[91124:2220729] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.704163+0300 RealRTCW.arm64[91124:2220731] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.704457+0300 RealRTCW.arm64[91124:2220733] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.705045+0300 RealRTCW.arm64[91124:2220735] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.705273+0300 RealRTCW.arm64[91124:2220656] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.705497+0300 RealRTCW.arm64[91124:2220736] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.705753+0300 RealRTCW.arm64[91124:2220738] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.706007+0300 RealRTCW.arm64[91124:2220739] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.706288+0300 RealRTCW.arm64[91124:2220740] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.706554+0300 RealRTCW.arm64[91124:2220741] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.706811+0300 RealRTCW.arm64[91124:2220742] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.707069+0300 RealRTCW.arm64[91124:2220743] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.707389+0300 RealRTCW.arm64[91124:2220745] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.707646+0300 RealRTCW.arm64[91124:2220746] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.707892+0300 RealRTCW.arm64[91124:2220747] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.708195+0300 RealRTCW.arm64[91124:2220748] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.708418+0300 RealRTCW.arm64[91124:2220749] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.708639+0300 RealRTCW.arm64[91124:2220750] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.708920+0300 RealRTCW.arm64[91124:2220751] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.709137+0300 RealRTCW.arm64[91124:2220752] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.709623+0300 RealRTCW.arm64[91124:2220753] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.710362+0300 RealRTCW.arm64[91124:2220737] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.710696+0300 RealRTCW.arm64[91124:2220755] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.711126+0300 RealRTCW.arm64[91124:2220756] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.711345+0300 RealRTCW.arm64[91124:2220754] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.694421+0300 RealRTCW.arm64[91124:2220597] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.694780+0300 RealRTCW.arm64[91124:2220657] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.695089+0300 RealRTCW.arm64[91124:2220693] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717650+0300 RealRTCW.arm64[91124:2220695] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.717679+0300 RealRTCW.arm64[91124:2220713] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718551+0300 RealRTCW.arm64[91124:2220725] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718578+0300 RealRTCW.arm64[91124:2220735] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718585+0300 RealRTCW.arm64[91124:2220749] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718597+0300 RealRTCW.arm64[91124:2220729] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718620+0300 RealRTCW.arm64[91124:2220748] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718619+0300 RealRTCW.arm64[91124:2220656] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718677+0300 RealRTCW.arm64[91124:2220718] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718711+0300 RealRTCW.arm64[91124:2220743] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718772+0300 RealRTCW.arm64[91124:2220745] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718766+0300 RealRTCW.arm64[91124:2220742] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718801+0300 RealRTCW.arm64[91124:2220597] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718804+0300 RealRTCW.arm64[91124:2220754] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718826+0300 RealRTCW.arm64[91124:2220741] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718837+0300 RealRTCW.arm64[91124:2220740] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718867+0300 RealRTCW.arm64[91124:2220753] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718876+0300 RealRTCW.arm64[91124:2220737] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718882+0300 RealRTCW.arm64[91124:2220739] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718900+0300 RealRTCW.arm64[91124:2220752] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718926+0300 RealRTCW.arm64[91124:2220733] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718938+0300 RealRTCW.arm64[91124:2220731] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.718980+0300 RealRTCW.arm64[91124:2220751] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719007+0300 RealRTCW.arm64[91124:2220747] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719016+0300 RealRTCW.arm64[91124:2220746] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719046+0300 RealRTCW.arm64[91124:2220693] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719085+0300 RealRTCW.arm64[91124:2220657] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719115+0300 RealRTCW.arm64[91124:2220595] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719131+0300 RealRTCW.arm64[91124:2220736] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719194+0300 RealRTCW.arm64[91124:2220755] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719211+0300 RealRTCW.arm64[91124:2220750] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719163+0300 RealRTCW.arm64[91124:2220756] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.719256+0300 RealRTCW.arm64[91124:2220738] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.720366+0300 RealRTCW.arm64[91124:2220738] [Connection] Will NOT re-try to establish the connection
+2026-06-11 23:39:50.720464+0300 RealRTCW.arm64[91124:2220694] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-06-11 23:39:50.720489+0300 RealRTCW.arm64[91124:2220694] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+    Available modes: '840x525 1024x640 1152x720 1280x800 1440x900 1680x1050 2048x1280 2560x1600 825x525 1650x1050 800x600 1024x768'
+tty]    
+------- Input Initialization -------
+tty]    Calling SDL_Init(SDL_INIT_JOYSTICK)...
+tty]2026-06-11 23:39:51.115898+0300 RealRTCW.arm64[91124:2220754] [Common] Unable to obtain a task name port right for pid 455: (os/kern) failure (0x5)
+    SDL_Init(SDL_INIT_JOYSTICK) passed.
+tty]    Calling SDL_Init(SDL_INIT_GAMECONTROLLER)...
+tty]    SDL_Init(SDL_INIT_GAMECONTROLLER) passed.
+tty]    No joystick opened: Joystick 0 not found
+tty]    ------------------------------------
+tty]    ^1instance extension: VK_KHR_get_physical_device_properties2
+tty]    ^1instance extension: VK_KHR_surface
+tty]    ^1instance extension: VK_EXT_debug_utils
+tty]    ^1instance extension: VK_EXT_metal_surface
+tty]    ^1instance extension: VK_EXT_headless_surface
+tty]    ^1instance extension: VK_MVK_macos_surface
+tty]    ^1instance extension: VK_KHR_portability_enumeration
+tty]Process 91124 launched: '/Users/ragnar/fedorov_tech/RealRTCW-vulkan-wt/build/release-darwin-arm64-nosteam/RealRTCW.arm64' (arm64)
+Process 91124 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0x0)
+    frame #0: 0x0000000000000000 
+error: memory read failed for 0x0
+Target 0: (RealRTCW.arm64) stopped.
+(lldb) bt all
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0x0)
+  * frame #0: 0x0000000000000000 
+    frame #1: 0x000000010bda52f8 renderer_sp_vulkan_arm64.dylib`vk_initialize + 972
+    frame #2: 0x000000010bd8382c renderer_sp_vulkan_arm64.dylib`R_Init + 7076
+    frame #3: 0x000000010bd8a3e8 renderer_sp_vulkan_arm64.dylib`RE_BeginRegistration + 20
+    frame #4: 0x0000000100014a94 RealRTCW.arm64`CL_StartHunkUsers + 104
+    frame #5: 0x00000001000339a0 RealRTCW.arm64`Com_Init + 2156
+    frame #6: 0x00000001000c0e0c RealRTCW.arm64`main + 392
+    frame #7: 0x000000018e99be00 dyld`start + 6992
+  thread #2
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #3
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #4
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #5, name = 'com.apple.NSEventThread'
+    frame #0: 0x000000018ed15c34 libsystem_kernel.dylib`mach_msg2_trap + 8
+    frame #1: 0x000000018ed28574 libsystem_kernel.dylib`mach_msg2_internal + 76
+    frame #2: 0x000000018ed1e9c0 libsystem_kernel.dylib`mach_msg_overwrite + 480
+    frame #3: 0x000000018ed15fc0 libsystem_kernel.dylib`mach_msg + 24
+    frame #4: 0x000000018ee170d8 CoreFoundation`__CFRunLoopServiceMachPort + 160
+    frame #5: 0x000000018ee159c4 CoreFoundation`__CFRunLoopRun + 1188
+    frame #6: 0x000000018eee81c4 CoreFoundation`_CFRunLoopRunSpecificWithOptions + 532
+    frame #7: 0x0000000193365c7c AppKit`_NSEventThread + 184
+    frame #8: 0x000000018ed59c58 libsystem_pthread.dylib`_pthread_start + 136
+  thread #6
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #7
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #8
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #9
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #10
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #11
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #12
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #13
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #14
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #15
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #16
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #17
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #18
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #19
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #20
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #21
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #22
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #23
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #24
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #25
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #26
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #27
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #28
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #29
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #30
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #31
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #32
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #33
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #34
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #35
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #36
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #37
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #38
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #39
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #40
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #41
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #42
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #43
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #44
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #45
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #46
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #47
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #48, queue = 'com.apple.root.user-interactive-qos'
+    frame #0: 0x000000018ed15c34 libsystem_kernel.dylib`mach_msg2_trap + 8
+    frame #1: 0x000000018ed28574 libsystem_kernel.dylib`mach_msg2_internal + 76
+    frame #2: 0x000000018ed1e9c0 libsystem_kernel.dylib`mach_msg_overwrite + 480
+    frame #3: 0x000000018ed15fc0 libsystem_kernel.dylib`mach_msg + 24
+    frame #4: 0x000000018ee170d8 CoreFoundation`__CFRunLoopServiceMachPort + 160
+    frame #5: 0x000000018ee159c4 CoreFoundation`__CFRunLoopRun + 1188
+    frame #6: 0x000000018eee81c4 CoreFoundation`_CFRunLoopRunSpecificWithOptions + 532
+    frame #7: 0x000000019065fb44 Foundation`-[NSRunLoop(NSRunLoop) runMode:beforeDate:] + 212
+    frame #8: 0x0000000193a160cc AppKit`-[NSAnimation _runBlocking] + 412
+    frame #9: 0x000000018eb9ea28 libdispatch.dylib`_dispatch_call_block_and_release + 32
+    frame #10: 0x000000018ebb84b0 libdispatch.dylib`_dispatch_client_callout + 16
+    frame #11: 0x000000018ebd5d6c libdispatch.dylib`_dispatch_channel_invoke.cold.9 + 28
+    frame #12: 0x000000018ebb0adc libdispatch.dylib`_dispatch_root_queue_drain + 708
+    frame #13: 0x000000018ebb1120 libdispatch.dylib`_dispatch_worker_thread2 + 184
+    frame #14: 0x000000018ed55e84 libsystem_pthread.dylib`_pthread_wqthread + 232
+  thread #49
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #50
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #51
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #52
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #53
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #54
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #55
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #56
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #57
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #58
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #59
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #60
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #61
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #62
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #63
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #64
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #65
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+  thread #66
+    frame #0: 0x000000018ed179f0 libsystem_kernel.dylib`__workq_kernreturn + 8
+(lldb) quit
