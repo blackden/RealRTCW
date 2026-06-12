@@ -1,0 +1,142 @@
+tty]    RealRTCW 5.4 macosx-arm64 Jun 12 2026
+tty]    ----- FS_Startup -----
+tty]    Current search path:
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zzzsurvival.pk3 (410 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zzrealrtcw_scripts.pk3 (280 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui_hd.pk3 (90 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui.pk3 (692 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zperson.pk3 (50 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures_hd.pk3 (1674 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures.pk3 (704 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds_hd.pk3 (203 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds.pk3 (758 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_weapons.pk3 (772 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_hd.pk3 (393 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters_hd.pk3 (815 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters.pk3 (575 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models.pk3 (715 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps_re.pk3 (27 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps.pk3 (63 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_localization.pk3 (306 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak4.pk3 (21 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak3.pk3 (14 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak2.pk3 (232 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak1.pk3 (1342 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/pak0.pk3 (4775 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main
+tty]    ./build/release-darwin-arm64-nosteam/main
+tty]    
+tty]    ----------------------
+tty]    14911 files in pk3 files
+tty]    execing realrtcwdefault.cfg
+tty]    execing realrtcw_binds.cfg
+tty]    execing realrtcw_cvars.cfg
+tty]    execing autoexec.cfg
+tty]    couldn't exec dlc1.cfg
+tty]    couldn't exec ee_dlc.cfg
+tty]    Hunk_Clear: reset the hunk ok
+tty]    Bypassing CD checks
+tty]    ----- Client Initialization -----
+tty]    Cmd_AddCommand: map_restart already defined
+tty]    ----- Initializing Renderer ----
+tty]    Trying to load "renderer_sp_vulkan_arm64.dylib" from "./build/release-darwin-arm64-nosteam"...
+tty]    ---- Renderer Initialization Complete ----
+tty]    RTCWKEY found.
+tty]    ----- Client Initialization Complete -----
+tty]    ----- R_Init -----
+tty]    SDL using driver "cocoa"
+tty]    Initializing OpenGL display
+tty]    Display aspect: 1.600
+tty]    ...setting mode -2: 1680 1050
+tty]    Available modes: '840x525 1024x640 1152x720 1280x800 1440x900 1680x1050 2048x1280 2560x1600 825x525 1650x1050 800x600 1024x768'
+tty]    .......................
+Available physical devices:
+tty]     0: Integrated Apple M1, 0x1a050207
+tty]     1: Integrated Apple M1, 0x0064
+tty]    .......................
+tty]    ...selected physical device: 0
+tty]    ...device memory size: 8192MB
+tty]    ...presentation modes: FIFO IMMEDIATE
+tty]    ...selected presentation mode: IMMEDIATE, image count: 3
+tty]    
+VK_VENDOR: Apple Inc.
+tty]    VK_RENDERER: Integrated Apple M1, 0x1a050207
+tty]    VK_VERSION: API: 1.1.334, Driver: 0.2.2209
+tty]    
+VK_MAX_TEXTURE_SIZE: 11
+tty]    VK_MAX_TEXTURE_UNITS: 8
+tty]    
+PIXELFORMAT: color(0-bits) Z(0-bit) stencil(0-bits)
+tty]     presentation: VK_FORMAT_B8G8R8A8_UNORM
+tty]     depth: VK_FORMAT_D32_SFLOAT
+tty]    MODE: -2, 0 x 0 windowed hz:N/A
+tty]    GAMMA: software w/ 0 overbright bits
+tty]    texturemode: GL_LINEAR_MIPMAP_LINEAR
+tty]    texture bits: 32
+tty]    picmip: 0
+tty]    Forcing glFinish
+tty]    Initializing Shaders
+tty]    ^3WARNING: Ignoring shader file scripts/common.shader. Shader "textures/sfx/portal3a_back2" on line 842 missing closing brace.
+tty]    ^3WARNING: Ignoring shader file scripts/models_mapobjects_et.shader. Shader "models/mapobjects/flag/flag_dam" on line 1347 missing closing brace.
+tty]    ^3Ignoring entire file 'scripts/ui_wolf.shader' due to error.
+tty]    ^3WARNING: unknown general shader parameter 'nofog' in 'flareShader'
+tty]    ^3WARNING: unknown general shader parameter 'nofog' in 'sun'
+tty]    ----- finished R_Init -----
+tty]    ^3WARNING: unknown general shader parameter 'nocompress' in 'console'
+tty]    ^3WARNING: unknown general shader parameter 'nocompress' in 'console2'
+tty]    ------ Initializing Sound ------
+tty]    SDL audio driver is "coreaudio".
+tty]    SDL_AudioSpec:
+tty]      Format:   AUDIO_S16LSB
+tty]      Freq:     22050
+tty]      Channels: 2
+tty]    SDL capture device opened.
+tty]    Starting SDL audio callback...
+tty]    SDL audio initialized.
+tty]    ----- Sound Info -----
+tty]        2 channels
+tty]    40960 samples
+tty]       16 samplebits (int)
+tty]        1 submission_chunk
+tty]    22050 speed
+tty]    0xc449d4000 dma buffer
+tty]    No background file.
+tty]    ----------------------
+tty]    Sound initialization successful.
+tty]    --------------------------------
+tty]    Sound memory manager started
+tty]    ^3[M5.10] Hunk_FreeTempMemory bad magic:
+  buf=0x72c84d378 hdr=0x72c84d370 hdr->magic=0x00001132 hdr->size=0
+  HUNK_MAGIC=0x89537892 HUNK_FREE_MAGIC=0x89537893
+  s_hunkData=0x72c000000 s_hunkTotal=1073741824
+  hdr offset into hunk: 8704880
+  bytes [hdr-8 .. hdr+15]: a5 8e 6a 89 3c 00 00 00 | 32 11 00 00 00 00 00 00
+tty]    ^3[M5.10] backtrace (16 frames):
+tty]      0   RealRTCW.arm64                      0x0000000100992240 Hunk_FreeTempMemory + 540
+tty]      1   renderer_sp_vulkan_arm64.dylib      0x000000011ec9af5c R_CreateImage + 2780
+tty]      2   renderer_sp_vulkan_arm64.dylib      0x000000011ec9b6d0 R_FindImageFile + 1460
+tty]      3   renderer_sp_vulkan_arm64.dylib      0x000000011ecb4ab4 R_FindShader + 756
+tty]      4   renderer_sp_vulkan_arm64.dylib      0x000000011ecba3b4 RE_RegisterShaderNoMip + 88
+tty]      5   RealRTCW.arm64                      0x0000000100981eac CL_UISystemCalls + 4496
+tty]      6   RealRTCW.arm64                      0x00000001009da104 VM_DllSyscall + 228
+tty]      7   ui.sp.arm64.dylib                   0x00000001208fca58 trap_R_RegisterShaderNoMip + 32
+tty]      8   ui.sp.arm64.dylib                   0x00000001208d2934 AssetCache + 52
+tty]      9   ui.sp.arm64.dylib                   0x00000001208d1334 _UI_Init + 2256
+tty]      10  ui.sp.arm64.dylib                   0x00000001208d0924 vmMain + 52
+tty]      11  RealRTCW.arm64                      0x00000001009dae78 VM_Call + 196
+tty]      12  RealRTCW.arm64                      0x0000000100982ec8 CL_InitUI + 120
+tty]      13  RealRTCW.arm64                      0x0000000100993b94 Com_Init + 2156
+tty]      14  RealRTCW.arm64                      0x0000000100a21000 main + 392
+tty]      15  dyld                                0x000000018e99be00 start + 6992
+tty]    ----- Client Shutdown (Client fatal crashed: Hunk_FreeTempMemory: bad magic) -----
+tty]    forcefully unloading ui vm
+tty]    RE_Shutdown( 2 )
+tty]    Hunk_Clear: reset the hunk ok
+tty]    Closing SDL audio playback device...
+tty]    SDL audio playback device closed.
+tty]    Closing SDL audio capture device...
+tty]    SDL audio capture device closed.
+tty]    SDL audio shut down.
+tty]    -----------------------
+tty]    Hunk_FreeTempMemory: bad magic
+tty]    
