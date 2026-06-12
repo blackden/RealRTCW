@@ -147,17 +147,22 @@ static int   vk_ri_n_allocs = 0;
  * Builder -- fills vk_ri and returns its address.
  * ==================================================================== */
 
+/* M6 lock: SMALL (engine path via cm_public.h → ../renderer/tr_types.h)
+ * and BIG (renderercommon/tr_types.h) tr_types.h must produce identical
+ * layouts. The shared __TR_TYPES_H guard means only one definition wins
+ * per TU; cl_refvulkan.c TU sees BIG. Sizes captured at first M6 smoke
+ * 2026-06-12 (notes/decisions/2026-06-12-m6-types-unification.md). If
+ * either tr_types.h drifts, build fails here. Update the constants ONLY
+ * after deliberate canonical change reflected in both tr_types.h files. */
+_Static_assert( sizeof( refEntity_t ) == 232,  "M6 drift: refEntity_t size changed; check tr_types.h sync" );
+_Static_assert( sizeof( refdef_t )    == 432,  "M6 drift: refdef_t size changed; check tr_types.h sync" );
+_Static_assert( sizeof( glconfig_t )  == 7268, "M6 drift: glconfig_t size changed; check tr_types.h sync AND tr_init.c sentinels (renderer:1442, renderervk:1864)" );
+_Static_assert( sizeof( polyVert_t )  == 24,   "M6 drift: polyVert_t size changed; check tr_types.h sync" );
+
 void *CL_BuildVulkanRefImport( void ) {
     if ( vk_ri_built ) {
         return &vk_ri;
     }
-
-    /* M6 size probe: prints once on first init so we can bake real sizes
-     * into _Static_assert below. After first smoke, replace this Com_Printf
-     * with _Static_assert lines using the captured values. */
-    Com_Printf( "[M6] tr_types sizes: refEntity_t=%zu refdef_t=%zu glconfig_t=%zu polyVert_t=%zu\n",
-                sizeof( refEntity_t ), sizeof( refdef_t ),
-                sizeof( glconfig_t ), sizeof( polyVert_t ) );
 
     Com_Memset( &vk_ri, 0, sizeof( vk_ri ) );
 

@@ -1861,8 +1861,12 @@ void R_Init( void ) {
 	Com_Memset( &tess, 0, sizeof( tess ) );
 	Com_Memset( &glState, 0, sizeof( glState ) );
 
-	if ( sizeof( glconfig_t ) != 11332 )
-		ri.Error( ERR_FATAL, "Mod ABI incompatible: sizeof(glconfig_t) == %u != 11332", (unsigned int) sizeof( glconfig_t ) );
+	/* M6: was 11332 (legacy Quake3e BIG_INFO_STRING + no RTCW extras
+	 * layout). After tr_types.h unification (notes/decisions/
+	 * 2026-06-12-m6-types-unification.md) canonical glconfig_t is 7268,
+	 * matching code/renderer/tr_init.c:1442. */
+	if ( sizeof( glconfig_t ) != 7268 )
+		ri.Error( ERR_FATAL, "Mod ABI incompatible: sizeof(glconfig_t) == %u != 7268", (unsigned int) sizeof( glconfig_t ) );
 
 	if ( (intptr_t)tess.xyz & 15 ) {
 		ri.Printf( PRINT_WARNING, "tess.xyz not 16 byte aligned\n" );
