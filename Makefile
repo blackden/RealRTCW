@@ -1328,6 +1328,10 @@ else
   JPEG_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs libjpeg || echo -ljpeg)
   BASE_CFLAGS += $(JPEG_CFLAGS)
   RENDERER_LIBS += $(JPEG_LIBS)
+  # M7 (2026-06-12): engine binary needs libjpeg too — CL_LoadJPG in
+  # code/client/cl_jpeg.c is the engine-side libjpeg consumer routed
+  # through vk_CL_LoadJPG into renderervk's refImport.CL_LoadJPG slot.
+  CLIENT_LIBS += $(JPEG_LIBS)
 endif
 
 ifeq ($(USE_FREETYPE),1)
@@ -1963,6 +1967,7 @@ Q3OBJ = \
   $(B)/client/cl_cin.o \
   $(B)/client/cl_console.o \
   $(B)/client/cl_input.o \
+  $(B)/client/cl_jpeg.o \
   $(B)/client/cl_keys.o \
   $(B)/client/cl_main.o \
   $(B)/client/cl_net_chan.o \
@@ -2541,10 +2546,13 @@ ifeq ($(USE_MUMBLE),1)
 endif
 
 ifneq ($(USE_RENDERER_DLOPEN),0)
-$(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(LIBSDLMAIN)
+# M7 (2026-06-12): engine binary now needs libjpeg too — CL_LoadJPG in
+# code/client/cl_jpeg.c is the engine-side consumer routed through
+# vk_CL_LoadJPG into renderervk's refImport.CL_LoadJPG slot.
+$(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(JPGOBJ) $(LIBSDLMAIN)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CXX) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) $(NOTSHLIBLDFLAGS) \
-		-o $@ $(Q3OBJ) \
+		-o $@ $(Q3OBJ) $(JPGOBJ) \
 		$(LIBSDLMAIN) $(CLIENT_LIBS) $(LIBS)
 
 $(B)/renderer_sp_opengl1_$(SHLIBNAME): $(Q3ROBJ) $(JPGOBJ) $(FTOBJ)

@@ -1032,6 +1032,12 @@ void CL_JoystickEvent( int axis, int value, int time );
 
 void CL_PacketEvent( netadr_t from, msg_t *msg );
 
+void CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height );
+// engine-side libjpeg consumer; routed through vk_CL_LoadJPG into renderervk's
+// refImport.CL_LoadJPG slot. Legacy OpenGL renderer .dylib has its own
+// internal R_LoadJPG so this prototype is only used by the engine binary
+// (CLIENTBIN) and the Vulkan refImport translator. M7 — 2026-06-12.
+
 void CL_ConsolePrint( char *text );
 
 void CL_MapLoading( void );

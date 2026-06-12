@@ -265,12 +265,11 @@ void *CL_BuildVulkanRefImport( void ) {
      *     wire to actual engine state when we add multi-window/visibility. */
     vk_ri.CL_IsMinimized            = vk_CL_IsMinimized;
 
-    /* --- NO-OP STUB: JPG image loader. RealRTCW engine has no libjpeg
-     *     integration. The image loader loop in R_LoadImage tries each
-     *     extension; if vk_CL_LoadJPG returns *pic=NULL the fallback
-     *     to TGA/PNG continues. JPG textures effectively unsupported on
-     *     Vulkan path for now -- iter 10 fix. Add real decode later if
-     *     game content actually ships JPG textures. */
+    /* --- DIRECT WIRE (M7): engine-side CL_LoadJPG (code/client/cl_jpeg.c)
+     *     decodes JPG via libjpeg. Required for RTCW UI backgrounds like
+     *     realrtcw_background.jpg. M6 left this as the visible stub-NULL
+     *     symptom — the main menu rendered placeholder texture instead
+     *     of the cover art. M7 closes it. */
     vk_ri.CL_LoadJPG                = vk_CL_LoadJPG;
 
     /* --- DIRECT WIRE: engine CM_ClusterPVS used by renderervk's BSP
@@ -400,15 +399,11 @@ static qboolean vk_CL_IsMinimized( void ) {
     return qfalse;
 }
 
-/* JPG loader stub. Leaves *pic NULL so the renderer's R_LoadImage
- * format-search-loop falls through to the next extension (TGA, PNG).
- * Game content for stock RTCW SP doesn't ship JPG textures, so this
- * is observationally inert. Wire to real libjpeg if/when needed. */
+/* JPG loader. Delegates to engine-side CL_LoadJPG (code/client/cl_jpeg.c),
+ * which links the same JPGOBJ libjpeg sources that the legacy OpenGL
+ * renderer .dylib uses. M7 — 2026-06-12. */
 static void vk_CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height ) {
-    (void)filename;
-    if ( pic ) *pic = NULL;
-    if ( width ) *width = 0;
-    if ( height ) *height = 0;
+    CL_LoadJPG( filename, pic, width, height );
 }
 
 /* Q3e cvar metadata API — no engine storage exists. Each is a no-op:
