@@ -450,7 +450,36 @@ static void *vk_Hunk_AllocDebug( size_t size, ha_pref preference, const char *la
 }
 #endif
 
+/* M5.10 workaround for vendored renderervk image-upload temp-overflow.
+ *
+ * generate_image_upload_data() in code/renderervk/tr_image.c at line 633
+ * allocates upload_data->buffer with size = 2 * 4 * scaled_w * scaled_h
+ * using PRE-clamp scaled values. For NOSCALE images with one dimension
+ * equal to 0 (e.g., 0×8 placeholder assets in the UI AssetCache path),
+ * the alloc returns a 0-byte block.
+ *
+ * Later at tr_image.c:720, Com_Memcpy(upload_data->buffer, scaled_buffer,
+ * mip_level_size) writes scaled_w * scaled_h * 4 bytes using POST-clamp
+ * scaled values — at least 4, typically 32+ for the failing UI path.
+ * The pre/post mismatch overflows past upload_data->buffer's end into
+ * the next temp allocation's hunkHeader_t magic. The corruption surfaces
+ * later when that next block is freed: Hunk_FreeTempMemory: bad magic.
+ *
+ * Backtrace of the crash (M5.10 triage):
+ *   Hunk_FreeTempMemory → R_CreateImage+2156 (= generate_image_upload_data
+ *   resampled_buffer free at tr_image.c:750, inlined)
+ *   → R_FindImageFile+1460 → R_FindShader+756
+ *   → RE_RegisterShaderNoMip+88 → trap_R_RegisterShaderNoMip (UI vm)
+ *
+ * Round the alloc to 4096 bytes minimum. This absorbs the overflow for
+ * any reasonable UI image dimension (4096 / 4 = 1024 pixels of mipmap
+ * data, more than typical UI placeholders ever need). Proper fix lives
+ * in renderervk: clamp scaled values before the alloc at line 633.
+ * Tracked in [[project-m5-10-hunk-free-temp-memory-landmine]]. */
 static void *vk_Hunk_AllocateTempMemory( size_t size ) {
+    if ( size == 0 ) {
+        size = 4096;
+    }
     return Hunk_AllocateTempMemory( (int)size );
 }
 

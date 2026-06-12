@@ -1,0 +1,687 @@
+tty]    RealRTCW 5.4 macosx-arm64 Jun 12 2026
+tty]    ----- FS_Startup -----
+tty]    Current search path:
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zzzsurvival.pk3 (410 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zzrealrtcw_scripts.pk3 (280 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui_hd.pk3 (90 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zrealrtcw_ui.pk3 (692 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_zperson.pk3 (50 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures_hd.pk3 (1674 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_textures.pk3 (704 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds_hd.pk3 (203 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_sounds.pk3 (758 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_weapons.pk3 (772 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_hd.pk3 (393 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters_hd.pk3 (815 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models_characters.pk3 (575 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_models.pk3 (715 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps_re.pk3 (27 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_maps.pk3 (63 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/z_realrtcw_localization.pk3 (306 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak4.pk3 (21 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak3.pk3 (14 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak2.pk3 (232 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/sp_pak1.pk3 (1342 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main/pak0.pk3 (4775 files)
+tty]    /Users/ragnar/Library/Application Support/RealRTCW/main
+tty]    ./build/release-darwin-arm64-nosteam/main
+tty]    
+tty]    ----------------------
+tty]    14911 files in pk3 files
+tty]    execing realrtcwdefault.cfg
+tty]    execing realrtcw_binds.cfg
+tty]    execing realrtcw_cvars.cfg
+tty]    execing autoexec.cfg
+tty]    couldn't exec dlc1.cfg
+tty]    couldn't exec ee_dlc.cfg
+tty]    Hunk_Clear: reset the hunk ok
+tty]    Bypassing CD checks
+tty]    ----- Client Initialization -----
+tty]    Cmd_AddCommand: map_restart already defined
+tty]    ----- Initializing Renderer ----
+tty]    Trying to load "renderer_sp_vulkan_arm64.dylib" from "./build/release-darwin-arm64-nosteam"...
+tty]    ---- Renderer Initialization Complete ----
+tty]    RTCWKEY found.
+tty]    ----- Client Initialization Complete -----
+tty]    ----- R_Init -----
+tty]    SDL using driver "cocoa"
+tty]    Initializing OpenGL display
+tty]    Display aspect: 1.600
+tty]    ...setting mode -2: 1680 1050
+tty]    Available modes: '840x525 1024x640 1152x720 1280x800 1440x900 1680x1050 2048x1280 2560x1600 825x525 1650x1050 800x600 1024x768'
+tty]    .......................
+Available physical devices:
+tty]     0: Integrated Apple M1, 0x1a050207
+tty]     1: Integrated Apple M1, 0x0064
+tty]    .......................
+tty]    ...selected physical device: 0
+tty]    ...device memory size: 8192MB
+tty]    ...presentation modes: FIFO IMMEDIATE
+tty]    ...selected presentation mode: IMMEDIATE, image count: 3
+tty]    
+VK_VENDOR: Apple Inc.
+tty]    VK_RENDERER: Integrated Apple M1, 0x1a050207
+tty]    VK_VERSION: API: 1.1.334, Driver: 0.2.2209
+tty]    
+VK_MAX_TEXTURE_SIZE: 11
+tty]    VK_MAX_TEXTURE_UNITS: 8
+tty]    
+PIXELFORMAT: color(0-bits) Z(0-bit) stencil(0-bits)
+tty]     presentation: VK_FORMAT_B8G8R8A8_UNORM
+tty]     depth: VK_FORMAT_D32_SFLOAT
+tty]    MODE: -2, 0 x 0 windowed hz:N/A
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2741960 buf=0x5a2741968 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2741b68 buf=0x5a2741b70 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2741c70 buf=0x5a2741c78 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2741c70 buf=0x5a2741c78 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2741b68 buf=0x5a2741b70 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2741960 buf=0x5a2741968 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fffd98 buf=0x5e1fffda0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] free hdr=0x5e1fffd98 buf=0x5e1fffda0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fffd98 buf=0x5e1fffda0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] free hdr=0x5e1fffd98 buf=0x5e1fffda0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fffd98 buf=0x5e1fffda0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] free hdr=0x5e1fffd98 buf=0x5e1fffda0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fffd98 buf=0x5e1fffda0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fffc90 buf=0x5e1fffc98 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fffc90 buf=0x5e1fffc98 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fffd98 buf=0x5e1fffda0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=32768 -> hdr=0x5a2741ae0 buf=0x5a2741ae8 readback magic=0x89537892 size=32776
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5a2749ae8 buf=0x5a2749af0 readback magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=32 -> hdr=0x5a2749b30 buf=0x5a2749b38 readback magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a2749b30 buf=0x5a2749b38 pre-engine magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a2749ae8 buf=0x5a2749af0 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5a2741ae0 buf=0x5a2741ae8 pre-engine magic=0x89537892 size=32776
+tty]    GAMMA: software w/ 0 overbright bits
+tty]    texturemode: GL_LINEAR_MIPMAP_LINEAR
+tty]    texture bits: 32
+tty]    picmip: 0
+tty]    Forcing glFinish
+tty]    Initializing Shaders
+tty]    ^3WARNING: Ignoring shader file scripts/common.shader. Shader "textures/sfx/portal3a_back2" on line 842 missing closing brace.
+tty]    ^3WARNING: Ignoring shader file scripts/models_mapobjects_et.shader. Shader "models/mapobjects/flag/flag_dam" on line 1347 missing closing brace.
+tty]    ^3Ignoring entire file 'scripts/ui_wolf.shader' due to error.
+tty]    ^3WARNING: unknown general shader parameter 'nofog' in 'flareShader'
+tty]    ^3WARNING: unknown general shader parameter 'nofog' in 'sun'
+tty]    ----- finished R_Init -----
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    ^3WARNING: unknown general shader parameter 'nocompress' in 'console'
+tty]    ^3WARNING: unknown general shader parameter 'nocompress' in 'console2'
+tty]    ------ Initializing Sound ------
+tty]    SDL audio driver is "coreaudio".
+tty]    SDL_AudioSpec:
+tty]      Format:   AUDIO_S16LSB
+tty]      Freq:     22050
+tty]      Channels: 2
+tty]    SDL capture device opened.
+tty]    Starting SDL audio callback...
+tty]    SDL audio initialized.
+tty]    ----- Sound Info -----
+tty]        2 channels
+tty]    40960 samples
+tty]       16 samplebits (int)
+tty]        1 submission_chunk
+tty]    22050 speed
+tty]    0xb975d4000 dma buffer
+tty]    No background file.
+tty]    ----------------------
+tty]    Sound initialization successful.
+tty]    --------------------------------
+tty]    Sound memory manager started
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=32 -> hdr=0x5a284d3a8 buf=0x5a284d3b0 readback magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284d3a8 buf=0x5a284d3b0 pre-engine magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=4096 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=4104
+tty]    [M5.10-T] alloc size=4096 -> hdr=0x5a284e368 buf=0x5a284e370 readback magic=0x89537892 size=4104
+tty]    [M5.10-T] alloc size=32 -> hdr=0x5a284f370 buf=0x5a284f378 readback magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284f370 buf=0x5a284f378 pre-engine magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284e368 buf=0x5a284e370 pre-engine magic=0x89537892 size=4104
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=4104
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=32 -> hdr=0x5a284d3a8 buf=0x5a284d3b0 readback magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284d3a8 buf=0x5a284d3b0 pre-engine magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284d468 buf=0x5a284d470 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d468 buf=0x5a284d470 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d670 buf=0x5a284d678 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d670 buf=0x5a284d678 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/realrtcw_background.tga' in shader 'realrtcw_background'
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284d360 buf=0x5a284d368 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284d568 buf=0x5a284d570 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d568 buf=0x5a284d570 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284d360 buf=0x5a284d368 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28523b0 buf=0x5a28523b8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28525b8 buf=0x5a28525c0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28525b8 buf=0x5a28525c0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28523b0 buf=0x5a28523b8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fde208 buf=0x5e1fde210 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fde100 buf=0x5e1fde108 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fde100 buf=0x5e1fde108 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fde208 buf=0x5e1fde210 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2852ab0 buf=0x5a2852ab8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2852cb8 buf=0x5a2852cc0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2852cb8 buf=0x5a2852cc0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2852ab0 buf=0x5a2852ab8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2852ab0 buf=0x5a2852ab8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2852cb8 buf=0x5a2852cc0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2852cb8 buf=0x5a2852cc0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2852ab0 buf=0x5a2852ab8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fe2458 buf=0x5e1fe2460 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fe2350 buf=0x5e1fe2358 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fe2350 buf=0x5e1fe2358 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fe2458 buf=0x5e1fe2460 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fe2458 buf=0x5e1fe2460 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fe2350 buf=0x5e1fe2358 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fe2350 buf=0x5e1fe2358 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fe2458 buf=0x5e1fe2460 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284e8e0 buf=0x5a284e8e8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284eae8 buf=0x5a284eaf0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284eae8 buf=0x5a284eaf0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284e8e0 buf=0x5a284e8e8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a284ed00 buf=0x5a284ed08 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a284ef08 buf=0x5a284ef10 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284ef08 buf=0x5a284ef10 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a284ed00 buf=0x5a284ed08 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5a284f120 buf=0x5a284f128 readback magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=32 -> hdr=0x5a284f168 buf=0x5a284f170 readback magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284f168 buf=0x5a284f170 pre-engine magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5a284f120 buf=0x5a284f128 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5e1fe19d8 buf=0x5e1fe19e0 readback magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=32 -> hdr=0x5e1fe19b0 buf=0x5e1fe19b8 readback magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5e1fe19b0 buf=0x5e1fe19b8 pre-engine magic=0x89537892 size=40
+tty]    [M5.10-T] free hdr=0x5e1fe19d8 buf=0x5e1fe19e0 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284f820 buf=0x5a284f828 readback magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5a284f8a8 buf=0x5a284f8b0 readback magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5a284f8a8 buf=0x5a284f8b0 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5a284f820 buf=0x5a284f828 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5e1fe1298 buf=0x5e1fe12a0 readback magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5e1fe1250 buf=0x5e1fe1258 readback magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5e1fe1250 buf=0x5e1fe1258 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5e1fe1298 buf=0x5e1fe12a0 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a284ff20 buf=0x5a284ff28 readback magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5a284ffa8 buf=0x5a284ffb0 readback magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5a284ffa8 buf=0x5a284ffb0 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5a284ff20 buf=0x5a284ff28 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5e1fe0b98 buf=0x5e1fe0ba0 readback magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=64 -> hdr=0x5e1fe0b50 buf=0x5e1fe0b58 readback magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5e1fe0b50 buf=0x5e1fe0b58 pre-engine magic=0x89537892 size=72
+tty]    [M5.10-T] free hdr=0x5e1fe0b98 buf=0x5e1fe0ba0 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2850620 buf=0x5a2850628 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2850828 buf=0x5a2850830 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2850828 buf=0x5a2850830 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2850620 buf=0x5a2850628 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fe02f8 buf=0x5e1fe0300 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fe01f0 buf=0x5e1fe01f8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fe01f0 buf=0x5e1fe01f8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fe02f8 buf=0x5e1fe0300 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2850d40 buf=0x5a2850d48 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2850f48 buf=0x5a2850f50 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2850f48 buf=0x5a2850f50 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2850d40 buf=0x5a2850d48 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fdfbd8 buf=0x5e1fdfbe0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fdfad0 buf=0x5e1fdfad8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdfad0 buf=0x5e1fdfad8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdfbd8 buf=0x5e1fdfbe0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2851460 buf=0x5a2851468 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2851668 buf=0x5a2851670 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2851668 buf=0x5a2851670 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2851460 buf=0x5a2851468 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fdf4b8 buf=0x5e1fdf4c0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fdf3b0 buf=0x5e1fdf3b8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdf3b0 buf=0x5e1fdf3b8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdf4b8 buf=0x5e1fdf4c0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2851b80 buf=0x5a2851b88 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2851d88 buf=0x5a2851d90 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2851d88 buf=0x5a2851d90 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2851b80 buf=0x5a2851b88 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fdedb8 buf=0x5e1fdedc0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fdecb0 buf=0x5e1fdecb8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdecb0 buf=0x5e1fdecb8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdedb8 buf=0x5e1fdedc0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28522a0 buf=0x5a28522a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28524a8 buf=0x5a28524b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28524a8 buf=0x5a28524b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28522a0 buf=0x5a28522a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fde698 buf=0x5e1fde6a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fde590 buf=0x5e1fde598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fde590 buf=0x5e1fde598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fde698 buf=0x5e1fde6a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28529c0 buf=0x5a28529c8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2852bc8 buf=0x5a2852bd0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2852bc8 buf=0x5a2852bd0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28529c0 buf=0x5a28529c8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fddf78 buf=0x5e1fddf80 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fdde70 buf=0x5e1fdde78 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdde70 buf=0x5e1fdde78 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fddf78 buf=0x5e1fddf80 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28530e0 buf=0x5a28530e8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28532e8 buf=0x5a28532f0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28532e8 buf=0x5a28532f0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28530e0 buf=0x5a28530e8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fdd858 buf=0x5e1fdd860 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fdd750 buf=0x5e1fdd758 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdd750 buf=0x5e1fdd758 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdd858 buf=0x5e1fdd860 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2853800 buf=0x5a2853808 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2853a08 buf=0x5a2853a10 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2853a08 buf=0x5a2853a10 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2853800 buf=0x5a2853808 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fdd238 buf=0x5e1fdd240 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5e1fdd1b0 buf=0x5e1fdd1b8 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5e1fdd1b0 buf=0x5e1fdd1b8 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5e1fdd238 buf=0x5e1fdd240 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2854880 buf=0x5a2854888 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2854a88 buf=0x5a2854a90 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2854a88 buf=0x5a2854a90 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2854880 buf=0x5a2854888 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2854d20 buf=0x5a2854d28 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a2854e28 buf=0x5a2854e30 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a2854e28 buf=0x5a2854e30 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a2854d20 buf=0x5a2854d28 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28556a0 buf=0x5a28556a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28558a8 buf=0x5a28558b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28558a8 buf=0x5a28558b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28556a0 buf=0x5a28556a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2855ac0 buf=0x5a2855ac8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2855cc8 buf=0x5a2855cd0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2855cc8 buf=0x5a2855cd0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2855ac0 buf=0x5a2855ac8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2855ee0 buf=0x5a2855ee8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28560e8 buf=0x5a28560f0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28560e8 buf=0x5a28560f0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2855ee0 buf=0x5a2855ee8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fdaa18 buf=0x5e1fdaa20 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fda910 buf=0x5e1fda918 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fda910 buf=0x5e1fda918 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fdaa18 buf=0x5e1fdaa20 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2856600 buf=0x5a2856608 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2856808 buf=0x5a2856810 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2856808 buf=0x5a2856810 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2856600 buf=0x5a2856608 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fda2f8 buf=0x5e1fda300 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fda1f0 buf=0x5e1fda1f8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fda1f0 buf=0x5e1fda1f8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fda2f8 buf=0x5e1fda300 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2856d00 buf=0x5a2856d08 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2856f08 buf=0x5a2856f10 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2856f08 buf=0x5a2856f10 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2856d00 buf=0x5a2856d08 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd9bd8 buf=0x5e1fd9be0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd9ad0 buf=0x5e1fd9ad8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd9ad0 buf=0x5e1fd9ad8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd9bd8 buf=0x5e1fd9be0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2857420 buf=0x5a2857428 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2857628 buf=0x5a2857630 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2857628 buf=0x5a2857630 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2857420 buf=0x5a2857428 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd94b8 buf=0x5e1fd94c0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd93b0 buf=0x5e1fd93b8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd93b0 buf=0x5e1fd93b8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd94b8 buf=0x5e1fd94c0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2857b40 buf=0x5a2857b48 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2857d48 buf=0x5a2857d50 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2857d48 buf=0x5a2857d50 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2857b40 buf=0x5a2857b48 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd8d98 buf=0x5e1fd8da0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd8c90 buf=0x5e1fd8c98 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd8c90 buf=0x5e1fd8c98 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd8d98 buf=0x5e1fd8da0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2858260 buf=0x5a2858268 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2858468 buf=0x5a2858470 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2858468 buf=0x5a2858470 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2858260 buf=0x5a2858268 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd8678 buf=0x5e1fd8680 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd8570 buf=0x5e1fd8578 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd8570 buf=0x5e1fd8578 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd8678 buf=0x5e1fd8680 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2858980 buf=0x5a2858988 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a2858b88 buf=0x5a2858b90 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2858b88 buf=0x5a2858b90 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2858980 buf=0x5a2858988 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd7f58 buf=0x5e1fd7f60 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd7e50 buf=0x5e1fd7e58 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd7e50 buf=0x5e1fd7e58 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd7f58 buf=0x5e1fd7f60 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28590a0 buf=0x5a28590a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28592a8 buf=0x5a28592b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28592a8 buf=0x5a28592b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28590a0 buf=0x5a28590a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd7838 buf=0x5e1fd7840 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd7730 buf=0x5e1fd7738 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd7730 buf=0x5e1fd7738 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd7838 buf=0x5e1fd7840 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28597c0 buf=0x5a28597c8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28599c8 buf=0x5a28599d0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28599c8 buf=0x5a28599d0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28597c0 buf=0x5a28597c8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd7138 buf=0x5e1fd7140 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd7030 buf=0x5e1fd7038 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd7030 buf=0x5e1fd7038 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd7138 buf=0x5e1fd7140 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a2859ee0 buf=0x5a2859ee8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a285a0e8 buf=0x5a285a0f0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285a0e8 buf=0x5a285a0f0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a2859ee0 buf=0x5a2859ee8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd6a18 buf=0x5e1fd6a20 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd6910 buf=0x5e1fd6918 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd6910 buf=0x5e1fd6918 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd6a18 buf=0x5e1fd6a20 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a285a600 buf=0x5a285a608 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a285a808 buf=0x5a285a810 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285a808 buf=0x5a285a810 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285a600 buf=0x5a285a608 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd62f8 buf=0x5e1fd6300 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd61f0 buf=0x5e1fd61f8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd61f0 buf=0x5e1fd61f8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd62f8 buf=0x5e1fd6300 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a285ad20 buf=0x5a285ad28 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a285af28 buf=0x5a285af30 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285af28 buf=0x5a285af30 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285ad20 buf=0x5a285ad28 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd5bd8 buf=0x5e1fd5be0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd5ad0 buf=0x5e1fd5ad8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd5ad0 buf=0x5e1fd5ad8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd5bd8 buf=0x5e1fd5be0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a285b440 buf=0x5a285b448 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a285b648 buf=0x5a285b650 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285b648 buf=0x5a285b650 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285b440 buf=0x5a285b448 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd54b8 buf=0x5e1fd54c0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd53b0 buf=0x5e1fd53b8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd53b0 buf=0x5e1fd53b8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd54b8 buf=0x5e1fd54c0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a285bb60 buf=0x5a285bb68 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a285bd68 buf=0x5a285bd70 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285bd68 buf=0x5a285bd70 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a285bb60 buf=0x5a285bb68 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4d98 buf=0x5e1fd4da0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4c90 buf=0x5e1fd4c98 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4c90 buf=0x5e1fd4c98 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4d98 buf=0x5e1fd4da0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28612d0 buf=0x5a28612d8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28614d8 buf=0x5a28614e0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28614d8 buf=0x5a28614e0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28612d0 buf=0x5a28612d8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5e1fd4698 buf=0x5e1fd46a0 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5e1fd4590 buf=0x5e1fd4598 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4590 buf=0x5e1fd4598 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5e1fd4698 buf=0x5e1fd46a0 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a28603a8 buf=0x5a28603b0 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a28603a8 buf=0x5a28603b0 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=128 -> hdr=0x5a28603a8 buf=0x5a28603b0 readback magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a28603a8 buf=0x5a28603b0 pre-engine magic=0x89537892 size=136
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/bj_dossier.jpg' in shader 'bj_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/agent1_dossier.jpg' in shader 'agent1_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/agent2_dossier.jpg' in shader 'agent2_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/kessler_dossier.jpg' in shader 'kessler_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/mcdermott_dossier.jpg' in shader 'mcdermott_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/waters_dossier.jpg' in shader 'waters_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/blavatsky_dossier.jpg' in shader 'blavatsky_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/helga_dossier.jpg' in shader 'helga_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/death_dossier.jpg' in shader 'death_dossier'
+tty]    ^3WARNING: R_FindImageFile could not find 'ui/assets/colonel_dossier.jpg' in shader 'colonel_dossier'
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=512 -> hdr=0x5a28602a0 buf=0x5a28602a8 readback magic=0x89537892 size=520
+tty]    [M5.10-T] alloc size=256 -> hdr=0x5a28604a8 buf=0x5a28604b0 readback magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28604a8 buf=0x5a28604b0 pre-engine magic=0x89537892 size=264
+tty]    [M5.10-T] free hdr=0x5a28602a0 buf=0x5a28602a8 pre-engine magic=0x89537892 size=520
+tty]    --- Common Initialization Complete ---
+tty]    Hostname: MacBook-Air-Denis.local
+tty]    IP6: ::1
+tty]    IP6: fe80::1%lo0
+tty]    IP: 127.0.0.1
+tty]    IP: 192.168.1.2
+tty]    IP6: fe80::1850:c9af:202e:ef4f%en0
+tty]    Opening IP6 socket: [::]:27960
+tty]    Opening IP socket: 0.0.0.0:27960
+tty]    ----- Client Shutdown (Client quit) -----
+tty]    RE_Shutdown( 2 )
+tty]    Hunk_Clear: reset the hunk ok
+tty]    Closing SDL audio playback device...
+tty]    SDL audio playback device closed.
+tty]    Closing SDL audio capture device...
+tty]    SDL audio capture device closed.
+tty]    SDL audio shut down.
+tty]    -----------------------
+tty]    
