@@ -78,13 +78,24 @@ if [ "$VULKAN_MODE" = "1" ]; then
   RENDERER_ARGS+=("+set" "cl_renderer" "vulkan")
   echo "Renderer:      Vulkan (cl_renderer=vulkan)"
 else
-  echo "Renderer:      OpenGL (cl_renderer=opengl1, default)"
+  # cl_renderer is CVAR_ARCHIVE — persists in realrtcw_cvars.cfg from
+  # whichever value the previous run left there. Without an explicit
+  # override here, the OpenGL "baseline" run would silently load the
+  # vendored Vulkan DLL because the cfg still says cl_renderer=vulkan.
+  # Force opengl1 to make this script's "Renderer:" line truthful.
+  RENDERER_ARGS+=("+set" "cl_renderer" "opengl1")
+  echo "Renderer:      OpenGL (cl_renderer=opengl1, forced)"
 fi
 
 AUTO_ARGS=()
 if [ "$AUTO_MODE" = "1" ]; then
   AUTO_ARGS+=("+wait" "600" "+quit")
   echo "Auto mode:     boot, 10s, quit"
+  # Stale PID file from a Ctrl+C'd prior run would trigger the modal
+  # SDL "abnormal exit / use safe video settings?" dialog in
+  # Sys_InitPIDFile (code/sys/sys_main.c). With stdin redirected to
+  # /dev/null the dialog blocks forever. Headless runs must wipe it.
+  rm -f "$HOME/Library/Application Support/RealRTCW/main/iowolfsp.pid"
 fi
 
 "$BIN" "${RENDERER_ARGS[@]+"${RENDERER_ARGS[@]}"}" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}" "${AUTO_ARGS[@]+"${AUTO_ARGS[@]}"}" < /dev/null
