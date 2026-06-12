@@ -1314,7 +1314,7 @@ void CG_SpawnSpirit( centity_t *cent ) {
 
 	re->fadeStartTime = le->endTime - 2000;
 	re->fadeEndTime = le->endTime;
-	re->shaderTime = cg.time;
+	re->shaderTime.f = cg.time;
 
 	// get direction to enemy
 	if ( cg_entities[le->ownerNum].currentState.otherEntityNum2 == cg.snap->ps.clientNum ) {

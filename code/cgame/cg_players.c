@@ -3888,7 +3888,7 @@ void CG_SpawnHelgaSpirit( vec3_t origin, vec3_t vel, int trailHead, int ownerNum
 
 	re->fadeStartTime = le->endTime - 2000;
 	re->fadeEndTime = le->endTime;
-	re->shaderTime = cg.time;
+	re->shaderTime.f = cg.time;
 }
 
 /*

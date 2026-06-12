@@ -1282,11 +1282,11 @@ void CG_AddClientCritter( localEntity_t *le ) {
 
 		le->refEntity.customShader = cgs.media.onFireShader2;
 		trap_R_AddRefEntityToScene( &le->refEntity );
-		le->refEntity.shaderTime = 1434;
+		le->refEntity.shaderTime.f = 1434;
 		trap_R_AddRefEntityToScene( &le->refEntity );
 
 		le->refEntity.customShader = 0;
-		le->refEntity.shaderTime = 0;
+		le->refEntity.shaderTime.f = 0;
 	}
 }
 
