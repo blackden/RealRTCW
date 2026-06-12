@@ -3498,35 +3498,49 @@ void CL_InitRef( void ) {
 		ri.GLimp_Minimize = GLimp_Minimize;
 	}
 
+	/* Pick which refImport_t shape to hand the loaded renderer DLL.
+	 *
+	 * Vendored renderervk consumes the BIG (Quake3e-shaped) refImport_t
+	 * built by the translator in cl_refvulkan.c. The legacy OpenGL
+	 * renderer consumes the SMALL (RealRTCW-native) shape declared in
+	 * code/renderer/tr_public.h.
+	 *
+	 * Compile-time gating on BUILD_RENDERER_VULKAN was wrong: once the
+	 * engine was built with the flag, every loaded renderer received the
+	 * BIG vtable. Default `cl_renderer opengl1` then loaded the OpenGL
+	 * DLL and handed it Vulkan-shape slots. `ri.Cvar_Get` resolved to a
+	 * garbage slot, returned a garbage cvar_t*, and `r_maxpolys->integer`
+	 * fed `Hunk_Alloc(~3 GB)` on R_Init's backEndData_t allocation.
+	 * (M7.5 unblock 2026-06-12.) */
 #ifdef BUILD_RENDERER_VULKAN
-	{
-		/* Hand the vendored Vulkan renderer the BIG (Quake3e-shaped)
-		 * refImport_t, built by the translator in cl_refvulkan.c. The
-		 * small `ri` populated above is only used as a checkpoint --
-		 * the translator builds its own struct from engine globals
-		 * directly, not by copying from `ri`.
-		 *
-		 * The cast through void* hides the size mismatch from this
-		 * TU's view of refimport_t (small) -- the renderer DLL's view
-		 * (big) is what matters at the ABI boundary. */
+	const qboolean useVulkanRefImport =
+		( Q_stricmp( cl_renderer->string, "vulkan" ) == 0 );
+#else
+	const qboolean useVulkanRefImport = qfalse;
+#endif
+
+#ifdef BUILD_RENDERER_VULKAN
+	if ( useVulkanRefImport ) {
 		void *vk_ri_ptr = CL_BuildVulkanRefImport();
 		ret = GetRefAPI( REF_API_VERSION, (refimport_t *)vk_ri_ptr );
-	}
-#else
-	ret = GetRefAPI( REF_API_VERSION, &ri );
+	} else
 #endif
+	{
+		ret = GetRefAPI( REF_API_VERSION, &ri );
+	}
 
 	if ( !ret ) {
 		Com_Error( ERR_FATAL, "Couldn't initialize refresh" );
 	}
 
 #ifdef BUILD_RENDERER_VULKAN
-	/* M5: renderer fills BIG refexport_t; engine `re` is SMALL.
-	 * Translate slot offsets + signature drift before copy.
-	 * Returns a SMALL refexport_t * for `re = *ret;` to consume. */
-	ret = (refexport_t *)CL_BuildVulkanRefExport( ret );
-	if ( !ret ) {
-		Com_Error( ERR_FATAL, "CL_BuildVulkanRefExport returned NULL" );
+	if ( useVulkanRefImport ) {
+		/* renderer fills BIG refexport_t; engine `re` is SMALL.
+		 * Translate slot offsets + signature drift before copy. */
+		ret = (refexport_t *)CL_BuildVulkanRefExport( ret );
+		if ( !ret ) {
+			Com_Error( ERR_FATAL, "CL_BuildVulkanRefExport returned NULL" );
+		}
 	}
 #endif
 
