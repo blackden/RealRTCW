@@ -157,22 +157,19 @@ typedef struct {
 	qhandle_t customShader;         // use one image for the entire thing
 
 	// misc
-	/* Quake3e renderervk reads entity tint as a color4ub_t union with
-	 * .rgba[] and .u32 accessors; RealRTCW's engine code (cgame, ui)
-	 * historically writes byte shaderRGBA[4]. Anonymous union below lets
-	 * both access styles share the same 4 bytes — no engine-side rewrite
-	 * needed, vendored renderervk compiles against the same struct.
-	 * color4ub_t typedef'd inline so engine TUs that don't pull the
-	 * realrtcw_shims.h still see it. */
+	/* Entity tint: engine cgame writes via .shaderRGBA[N] (many sites in
+	 * cg_effects/cg_view/cg_players); renderervk reads .shader.rgba[N]
+	 * AND passes e.shader by-value to RB_AddQuadStamp expecting
+	 * color4ub_t (tr_surface.c:248). The inner member is typed as
+	 * color4ub_t (defined in q_shared.h as union {byte rgba[4]; uint32_t u32;})
+	 * so the value-pass type-matches; shaderRGBA[] alias provides
+	 * engine-side bytewise write access at the same 4 bytes. */
 	union {
 		byte shaderRGBA[4];
-		union {
-			byte rgba[4];
-			uint32_t u32;
-		} shader;
+		color4ub_t shader;
 	};
 	float shaderTexCoord[2];        // texture coordinates used by tcMod entity modifiers
-	float shaderTime;               // subtracted from refdef time to control effect start times
+	floatint_t shaderTime;          // -EC- promoted to union for renderervk integer-encoded shaderTime trick (cg_localents.c writes .i, tr_backend.c:680,907 reads .i/.f)
 
 	// extra sprite information
 	float radius;
