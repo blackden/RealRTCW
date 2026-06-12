@@ -12,14 +12,14 @@ renderervk) is Q3-only and never had MDC support. RTCW ships player
 meshes and many world props as MDC, so registration must succeed
 engine-side or DEFAULT_MODEL fails and the server crashes on map load.
 
-Guarded by REALRTCW_ALLOW_VENDOR_EDIT so an upstream re-vendor diff
-omits this file cleanly.
+The realrtcw_ filename prefix is the vendor-edit convention marker
+so an upstream re-vendor diff omits this file cleanly (no preprocessor
+guard needed — see notes/decisions/2026-06-08-vendor-prefix-convention.md
+and the M5.10 in-tree precedent at tr_image.c:633).
 
 See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md
 ===========================================================================
 */
-
-#ifdef REALRTCW_ALLOW_VENDOR_EDIT
 
 #include "tr_local.h"
 
@@ -233,5 +233,3 @@ qboolean R_LoadMDC( model_t *mod, int lod, void *buffer, int fileSize, const cha
 
 	return qtrue;
 }
-
-#endif /* REALRTCW_ALLOW_VENDOR_EDIT */

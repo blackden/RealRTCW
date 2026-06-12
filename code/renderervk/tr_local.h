@@ -673,11 +673,9 @@ typedef enum {
 	SF_TRIANGLES,
 	SF_POLY,
 	SF_MD3,
-#ifdef REALRTCW_ALLOW_VENDOR_EDIT
 	/* RealRTCW M9 fix: MDC surface tag (loader Phase 1, runtime Phase 2).
 	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 	SF_MDC,
-#endif
 	SF_MDR,
 	SF_IQM,
 	SF_FLARE,
@@ -968,11 +966,9 @@ typedef enum {
 	MOD_MESH,
 	MOD_MDR,
 	MOD_IQM,
-#ifdef REALRTCW_ALLOW_VENDOR_EDIT
 	/* RealRTCW M9 fix: MDC compressed mesh support.
 	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 	MOD_MDC,
-#endif
 } modtype_t;
 
 typedef struct model_s {
@@ -983,11 +979,9 @@ typedef struct model_s {
 	int			dataSize;	// just for listing purposes
 	bmodel_t	*bmodel;		// only if type == MOD_BRUSH
 	md3Header_t	*md3[MD3_MAX_LODS];	// only if type == MOD_MESH
-#ifdef REALRTCW_ALLOW_VENDOR_EDIT
 	/* RealRTCW M9 fix: MDC compressed mesh slot, parallel to md3[].
 	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 	mdcHeader_t	*mdc[MD3_MAX_LODS];
-#endif
 	void	*modelData;			// only if type == (MOD_MDR | MOD_IQM)
 
 	int			 numLods;
@@ -1817,11 +1811,9 @@ ANIMATED MODELS
 void R_MDRAddAnimSurfaces( trRefEntity_t *ent );
 void RB_MDRSurfaceAnim( mdrSurface_t *surface );
 qboolean R_LoadIQM (model_t *mod, void *buffer, int filesize, const char *name );
-#ifdef REALRTCW_ALLOW_VENDOR_EDIT
 /* RealRTCW M9 fix: MDC loader forward decl.
  * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 qboolean R_LoadMDC( model_t *mod, int lod, void *buffer, int fileSize, const char *mod_name );
-#endif
 void R_AddIQMSurfaces( trRefEntity_t *ent );
 void RB_IQMSurfaceAnim( const surfaceType_t *surface );
 int R_IQMLerpTag( orientation_t *tag, iqmData_t *data,
