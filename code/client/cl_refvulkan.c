@@ -152,6 +152,13 @@ void *CL_BuildVulkanRefImport( void ) {
         return &vk_ri;
     }
 
+    /* M6 size probe: prints once on first init so we can bake real sizes
+     * into _Static_assert below. After first smoke, replace this Com_Printf
+     * with _Static_assert lines using the captured values. */
+    Com_Printf( "[M6] tr_types sizes: refEntity_t=%zu refdef_t=%zu glconfig_t=%zu polyVert_t=%zu\n",
+                sizeof( refEntity_t ), sizeof( refdef_t ),
+                sizeof( glconfig_t ), sizeof( polyVert_t ) );
+
     Com_Memset( &vk_ri, 0, sizeof( vk_ri ) );
 
     /* --- DIRECT ALIASES: slots whose Q3e name and signature match an
@@ -553,10 +560,13 @@ void vk_re_thunk_Shutdown( int code ) {
 }
 
 void vk_re_thunk_AddRefEntityToScene( const void *re_ptr, int intShaderTime ) {
-    /* re_ptr originates from engine-side SMALL refEntity_t. SMALL and BIG
-     * tr_types.h diverge — boot-critical fields are believed to overlap
-     * (proven by vk_BuildRefImport working through R_Init), but scene-
-     * rendering field reads beyond the overlap zone are M6 territory. */
+    /* M6 closed: code/renderer/tr_types.h and code/renderercommon/tr_types.h
+     * now produce byte-identical refEntity_t. The void* round-trip crosses
+     * a layout-equivalent boundary. Sizes locked by _Static_assert above
+     * (M6 task 5). See notes/decisions/2026-06-12-m6-types-unification.md.
+     *
+     * intShaderTime currently always qfalse — SMALL refImport has no
+     * channel to communicate the flag from engine. Post-M6 work. */
     vk_re_big->AddRefEntityToScene( (const refEntity_t *)re_ptr,
                                     intShaderTime ? qtrue : qfalse );
 }
