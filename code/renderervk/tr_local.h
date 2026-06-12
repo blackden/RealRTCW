@@ -673,6 +673,11 @@ typedef enum {
 	SF_TRIANGLES,
 	SF_POLY,
 	SF_MD3,
+#ifdef REALRTCW_ALLOW_VENDOR_EDIT
+	/* RealRTCW M9 fix: MDC surface tag (loader Phase 1, runtime Phase 2).
+	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+	SF_MDC,
+#endif
 	SF_MDR,
 	SF_IQM,
 	SF_FLARE,
