@@ -630,9 +630,18 @@ static void generate_image_upload_data( image_t *image, byte *data, Image_Upload
 		scaled_height >>= 1;
 	}
 
-	upload_data->buffer = (byte*) ri.Hunk_AllocateTempMemory( 2 * 4 * scaled_width * scaled_height );
+	/* RealRTCW M5.10 fix: clamp scaled_* to >= 1 in the alloc formula
+	 * so it matches what the later memcpy at line ~720 uses (post-clamp,
+	 * always >= 1). For NOSCALE images with one dimension == 0 (UI
+	 * dossier-portrait placeholders), the pre-clamp formula returns 0;
+	 * the later memcpy then writes >= 4 bytes into a 0-byte buffer,
+	 * overflowing past it and corrupting the next temp allocation's
+	 * hunkHeader_t magic field. Crash surfaces later as bad-magic on
+	 * that next block's free. Full triage in
+	 * notes/decisions/2026-06-12-m5-10-hunk-temp-overflow-workaround.md. */
+	upload_data->buffer = (byte*) ri.Hunk_AllocateTempMemory( 2 * 4 * (scaled_width > 0 ? scaled_width : 1) * (scaled_height > 0 ? scaled_height : 1) );
 	if ( data == NULL ) {
-		Com_Memset( upload_data->buffer, 0, 2 * 4 * scaled_width * scaled_height );
+		Com_Memset( upload_data->buffer, 0, 2 * 4 * (scaled_width > 0 ? scaled_width : 1) * (scaled_height > 0 ? scaled_height : 1) );
 	}
 
 	if ( ( scaled_width != width || scaled_height != height ) && data ) {

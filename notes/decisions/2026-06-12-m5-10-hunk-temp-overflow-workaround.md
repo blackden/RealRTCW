@@ -1,6 +1,12 @@
-# M5.10 closed — vendored renderervk image-upload temp-overflow workaround (2026-06-12)
+# M5.10 closed — vendored renderervk image-upload temp-overflow fix (2026-06-12)
 
-Follow-up to [[2026-06-12-m5-refexport-translator-landed]]. With M5's refexport translator in place, Vulkan boot reached UI vm init and immediately crashed at `Hunk_FreeTempMemory: bad magic`. M5.10 is the surgical fix: a 4-line `vk_Hunk_AllocateTempMemory` clamp in `code/client/cl_refvulkan.c`. Engine and renderer code unchanged.
+Follow-up to [[2026-06-12-m5-refexport-translator-landed]]. With M5's refexport translator in place, Vulkan boot reached UI vm init and immediately crashed at `Hunk_FreeTempMemory: bad magic`. M5.10 fixes the bug at its source in the vendored renderervk.
+
+## Final state (after 2026-06-12 evening update)
+
+Two-step landing. The first commit (`294ba69`) shipped a defensive **shim workaround** in `code/client/cl_refvulkan.c::vk_Hunk_AllocateTempMemory` (round size==0 to 4096) — it unblocked boot but the bug was masked, not fixed. The second commit (this work) lands the **proper renderer-side fix** in `code/renderervk/tr_image.c:633` (clamp scaled values in the alloc formula so it matches what the later memcpy uses) and **removes the shim** — single source of truth, no more `4 KiB` waste per affected alloc.
+
+The renderer-side fix requires `REALRTCW_ALLOW_VENDOR_EDIT=1`. Vendored-prefix convention is satisfied via the `RealRTCW M5.10 fix:` comment block at the patched call site, which cross-references this decision doc so anyone diffing against ec-/Quake3e upstream understands the divergence.
 
 ## Symptom
 
@@ -30,27 +36,33 @@ So the renderer asks for 0 bytes but later writes 32. The overflow lands on the 
 
 ## Decision
 
-**Decision.** Workaround in `vk_Hunk_AllocateTempMemory` (the engine-side translator wrapper for the BIG refImport_t slot, `code/client/cl_refvulkan.c`): if the renderer requests size==0, allocate 4096 bytes instead.
+**Decision.** Patch the alloc formula at `code/renderervk/tr_image.c:633` in-place. The alloc clamps each scaled dimension to ≥ 1 so it matches what the later memcpy at line ~720 uses (post-clamp, always ≥ 1):
 
 ```c
-static void *vk_Hunk_AllocateTempMemory( size_t size ) {
-    if ( size == 0 ) {
-        size = 4096;
-    }
-    return Hunk_AllocateTempMemory( (int)size );
+upload_data->buffer = (byte*) ri.Hunk_AllocateTempMemory(
+    2 * 4 * (scaled_width  > 0 ? scaled_width  : 1)
+          * (scaled_height > 0 ? scaled_height : 1) );
+if ( data == NULL ) {
+    Com_Memset( upload_data->buffer, 0,
+        2 * 4 * (scaled_width  > 0 ? scaled_width  : 1)
+              * (scaled_height > 0 ? scaled_height : 1) );
 }
 ```
 
-**Why.** The renderer's intent at line 633 is "buffer for one image's mip chain". When dimensions degenerate to 0, the intent doesn't change but the formula produces 0. Giving 4096 bytes — enough for `4096 / 4 = 1024` pixels of mipmap data — covers any reasonable UI placeholder image. The boot smoke (`+set cl_renderer vulkan +quit`) completes cleanly to `--- Common Initialization Complete ---` and `Client Shutdown (Client quit)` with the workaround in place.
+Subsequent code keeps using the original `scaled_width` and `scaled_height` variables. Specifically, the line 638 check `(scaled_width != width || scaled_height != height)` stays accurate — for NOSCALE 0-dim images, scaled_width / scaled_height remain 0, the condition stays false, and `ResampleTexture` is never called with degenerate (0, h) source dimensions.
 
-**Trade-off.** Workaround is in the translator shim, not where the bug actually lives. Future readers debugging UI image upload will see the symptom (0-byte alloc returning a 4KB block) and have to trace back to find the comment. Mitigated by the inline comment block citing the exact source line and crash backtrace.
+**Why.** The renderer's intent at line 633 is "buffer for one image's mip chain". When dimensions degenerate to 0, the intent doesn't change but the formula produces 0. Clamping inline in the formula — without mutating the `scaled_*` variables — fixes the alloc size without disturbing the rest of the function's logic.
 
-The 4096-byte minimum also wastes 4KB per affected alloc — observed in M5.10 smokes: ~4-5 such allocs per UI init → ~20KB extra hunk_temp. Negligible against the 1 GiB hunk.
+**Trade-off.** Vendored-tree divergence from ec-/Quake3e upstream. Mitigated by:
+- The inline `RealRTCW M5.10 fix:` comment block at the patched site, cross-referencing this decision doc.
+- The `REALRTCW_ALLOW_VENDOR_EDIT=1` escape hatch in the vendor-block hook (see `[[feedback-vendor-prefix-convention]]`).
+- Compact patch shape (2 expression edits + 1 comment block) — easy to identify in a future re-vendor diff.
+
+The earlier shim workaround in `cl_refvulkan.c` (size==0 → 4096) is removed in this same commit. It served as the M_now solution before we entered the vendored tree; with the renderer-side fix in place, the shim adds no defense and obscures the simpler `vk_Hunk_AllocateTempMemory` wrapper.
 
 **Revisit if.**
-- Renderervk gets patched upstream (in `wolfetplayer/RealRTCW` or `ec-/Quake3e`) to clamp scaled values before the line 633 alloc. Then the workaround can be removed.
-- We bring `code/renderervk/tr_image.c` under `REALRTCW_ALLOW_VENDOR_EDIT=1` and apply the proper 4-line patch (add `if (scaled_width < 1) scaled_width = 1; if (scaled_height < 1) scaled_height = 1;` before line 633). Cleaner because the comment lives where the bug lives. Deferred so we keep the vendored tree minimally-touched until M5 → M6 transition.
-- UI loads a larger placeholder image with one zero dimension that exceeds 4KB of mipmap data. Unlikely but signal: bad-magic returns at a larger temp offset. Bump the 4096 to 16384 or higher.
+- ec-/Quake3e upstream lands a similar fix. Then our patch becomes redundant and gets dropped at the next re-vendor — the inline comment will guide the reviewer.
+- A different code path hits the same bug pattern. Search renderervk for other `ri.Hunk_AllocateTempMemory(...scaled...)` call sites that might also have pre/post-clamp asymmetry; the obvious candidate is `tr_image.c:639` (resampled_buffer), though that path doesn't fire for the M5.10 NOSCALE 0-dim case.
 
 ## How we got here
 
@@ -68,19 +80,20 @@ M5.10 triage took ~3 hours across two sessions. Important pivots:
 
 ## Files touched
 
-- `code/client/cl_refvulkan.c` — 4-line workaround in `vk_Hunk_AllocateTempMemory` + comment block explaining the bug.
+- `code/renderervk/tr_image.c:633-636` — clamp `scaled_width`/`scaled_height` to ≥ 1 in the alloc formula and the matching `Com_Memset` (renderer-side fix).
+- `code/client/cl_refvulkan.c::vk_Hunk_AllocateTempMemory` — earlier shim workaround REMOVED in the same commit; reverted to the original `Hunk_AllocateTempMemory((int)size)` passthrough.
 
 ## Smoke verification
 
-- Pre-workaround: `Hunk_FreeTempMemory: bad magic` at first UI shader registration.
-- Post-workaround: boot completes `--- Common Initialization Complete ---` → `Opening IP6 socket: [::]:27960` → `Opening IP socket: 0.0.0.0:27960` → clean `Client Shutdown (Client quit)` via `+quit`.
+- Pre-fix: `Hunk_FreeTempMemory: bad magic` at first UI shader registration.
+- Post-renderer-fix (no shim): boot completes `--- Common Initialization Complete ---` → `Opening IP6 socket: [::]:27960` → `Opening IP socket: 0.0.0.0:27960` → clean `Client Shutdown (Client quit)` via `+quit`. Exit code 0.
 
-Logs archived: `docs/vulkan-phase2/2026-06-12-m5-10-hunk-{instrumented,banks,trace,workaround,readback,bigger}.log`.
+Logs archived: `docs/vulkan-phase2/2026-06-12-m5-10-hunk-{instrumented,banks,trace,workaround,readback,bigger,renderer-fix}.log`.
 
 ## See also
 
 - [[2026-06-12-m5-refexport-translator-landed]] — M5 closure that unblocked boot to reach this crash site.
 - Memory: [[project-m5-10-hunk-free-temp-memory-landmine]] (now CLOSED).
-- `code/renderervk/tr_image.c:633` — alloc with pre-clamp scaled (renderer bug)
-- `code/renderervk/tr_image.c:720` — memcpy with post-clamp scaled (renderer bug, other half)
-- `code/client/cl_refvulkan.c::vk_Hunk_AllocateTempMemory` — workaround landing place
+- `code/renderervk/tr_image.c:633` — patched alloc site (RealRTCW M5.10 inline comment block lives here)
+- `code/renderervk/tr_image.c:720` — memcpy that originally overflowed (now safe because alloc at 633 is sized correctly)
+- `code/client/cl_refvulkan.c::vk_Hunk_AllocateTempMemory` — back to a passthrough wrapper, no special-case logic
