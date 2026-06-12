@@ -120,6 +120,8 @@ static void      vk_GLimp_InitGamma( glconfig_t *config );
 static void      vk_GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] );
 static qboolean  vk_CL_IsMinimized( void );
 static void      vk_CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height );
+static void      vk_CL_SaveJPG( const char *filename, int quality, int image_width, int image_height, byte *image_buffer, int padding );
+static size_t    vk_CL_SaveJPGToBuffer( byte *buffer, size_t bufSize, int quality, int image_width, int image_height, byte *image_buffer, int padding );
 
 /* Vulkan-specific (no engine counterpart) */
 static qboolean  vk_VK_CreateSurface( VkInstance instance, VkSurfaceKHR *pSurface );
@@ -272,6 +274,14 @@ void *CL_BuildVulkanRefImport( void ) {
      *     of the cover art. M7 closes it. */
     vk_ri.CL_LoadJPG                = vk_CL_LoadJPG;
 
+    /* --- DIRECT WIRE (M-screenshot 2026-06-13): engine-side SaveJPG and
+     *     SaveJPGToBuffer (cl_jpeg.c). Without these wired, +screenshotJPEG
+     *     NULL-derefs in RB_TakeScreenshotJPEG (renderervk/tr_init.c:833),
+     *     and RB_TakeVideoFrameCmd at tr_init.c:1178 would do the same on
+     *     motion-JPEG AVI capture. Mirrors M7's CL_LoadJPG port pattern. */
+    vk_ri.CL_SaveJPG                = vk_CL_SaveJPG;
+    vk_ri.CL_SaveJPGToBuffer        = vk_CL_SaveJPGToBuffer;
+
     /* --- DIRECT WIRE: engine CM_ClusterPVS used by renderervk's BSP
      *     visibility code (tr_world.c). Signature matches. */
     vk_ri.CM_ClusterPVS             = CM_ClusterPVS;
@@ -290,8 +300,6 @@ void *CL_BuildVulkanRefImport( void ) {
      *     diagnose in M4 logs.
      *
      *     Listed for grep-discoverability (alphabetical):
-     *       CL_SaveJPG           -- not present in RealRTCW engine
-     *       CL_SaveJPGToBuffer   -- not present in RealRTCW engine
      *       CL_WriteAVIVideoFrame-- engine sig (const byte*,int) vs
      *                              Q3e sig matches; could wire if
      *                              renderer triages it. Leave NULL
@@ -404,6 +412,24 @@ static qboolean vk_CL_IsMinimized( void ) {
  * renderer .dylib uses. M7 — 2026-06-12. */
 static void vk_CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height ) {
     CL_LoadJPG( filename, pic, width, height );
+}
+
+/* JPG savers. Delegate to engine-side CL_SaveJPG{,ToBuffer} (cl_jpeg.c).
+ * Without these wired, +screenshotJPEG NULL-derefs in RB_TakeScreenshotJPEG
+ * (renderervk/tr_init.c:833) and CL_WriteAVIVideoFrame at tr_init.c:1178.
+ * M-screenshot fix — 2026-06-13. */
+static void vk_CL_SaveJPG( const char *filename, int quality,
+                           int image_width, int image_height,
+                           byte *image_buffer, int padding ) {
+    CL_SaveJPG( filename, quality, image_width, image_height, image_buffer, padding );
+}
+
+static size_t vk_CL_SaveJPGToBuffer( byte *buffer, size_t bufSize, int quality,
+                                     int image_width, int image_height,
+                                     byte *image_buffer, int padding ) {
+    return CL_SaveJPGToBuffer( buffer, bufSize, quality,
+                               image_width, image_height,
+                               image_buffer, padding );
 }
 
 /* Q3e cvar metadata API — no engine storage exists. Each is a no-op:

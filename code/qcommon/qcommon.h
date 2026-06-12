@@ -1033,10 +1033,17 @@ void CL_JoystickEvent( int axis, int value, int time );
 void CL_PacketEvent( netadr_t from, msg_t *msg );
 
 void CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height );
-// engine-side libjpeg consumer; routed through vk_CL_LoadJPG into renderervk's
-// refImport.CL_LoadJPG slot. Legacy OpenGL renderer .dylib has its own
-// internal R_LoadJPG so this prototype is only used by the engine binary
-// (CLIENTBIN) and the Vulkan refImport translator. M7 — 2026-06-12.
+size_t CL_SaveJPGToBuffer( byte *buffer, size_t bufSize, int quality,
+                           int image_width, int image_height,
+                           byte *image_buffer, int padding );
+void CL_SaveJPG( const char *filename, int quality,
+                 int image_width, int image_height,
+                 byte *image_buffer, int padding );
+// engine-side libjpeg consumers; routed through vk_CL_LoadJPG / vk_CL_SaveJPG
+// (and SaveJPGToBuffer) into renderervk's refImport slots. Legacy OpenGL
+// renderer .dylib has its own internal copies so these prototypes are only
+// used by the engine binary (CLIENTBIN) and the Vulkan refImport translator.
+// M7 — 2026-06-12 (Load); screenshot fix — 2026-06-13 (Save{,ToBuffer}).
 
 void CL_ConsolePrint( char *text );
 

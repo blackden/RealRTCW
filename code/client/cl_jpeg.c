@@ -162,3 +162,142 @@ void CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *hei
 
 	FS_FreeFile( fbuffer.v );
 }
+
+
+/* Expanded data destination object: writes the compressed stream into a
+ * caller-supplied byte buffer. Mirrors code/renderer/tr_image_jpg.c so the
+ * engine-side ports of SaveJPG behave identically to the legacy OpenGL
+ * renderer's RE_SaveJPG. M-screenshot fix — 2026-06-13. */
+typedef struct {
+	struct jpeg_destination_mgr pub;
+	byte *outfile;
+	int size;
+} my_destination_mgr;
+
+typedef my_destination_mgr *my_dest_ptr;
+
+static void cl_jpeg_init_destination( j_compress_ptr cinfo )
+{
+	my_dest_ptr dest = (my_dest_ptr)cinfo->dest;
+
+	dest->pub.next_output_byte = dest->outfile;
+	dest->pub.free_in_buffer = dest->size;
+}
+
+static boolean cl_jpeg_empty_output_buffer( j_compress_ptr cinfo )
+{
+	my_dest_ptr dest = (my_dest_ptr)cinfo->dest;
+
+	jpeg_destroy_compress( cinfo );
+
+	/* Fatal: caller pre-sized the buffer to width*height*3, which is the
+	 * worst case for typical inputs. Hitting this means the encoded stream
+	 * outgrew the raw size — extremely rare, but a leak otherwise. */
+	Com_Error( ERR_FATAL,
+	           "Output buffer for encoded JPEG image has insufficient size of %d bytes",
+	           dest->size );
+
+	return FALSE;
+}
+
+static void cl_jpeg_term_destination( j_compress_ptr cinfo )
+{
+}
+
+static void cl_jpeg_dest( j_compress_ptr cinfo, byte *outfile, int size )
+{
+	my_dest_ptr dest;
+
+	if ( cinfo->dest == NULL ) {
+		cinfo->dest = (struct jpeg_destination_mgr *)
+		    (*cinfo->mem->alloc_small)( (j_common_ptr)cinfo, JPOOL_PERMANENT,
+		                                sizeof( my_destination_mgr ) );
+	}
+
+	dest = (my_dest_ptr)cinfo->dest;
+	dest->pub.init_destination = cl_jpeg_init_destination;
+	dest->pub.empty_output_buffer = cl_jpeg_empty_output_buffer;
+	dest->pub.term_destination = cl_jpeg_term_destination;
+	dest->outfile = outfile;
+	dest->size = size;
+}
+
+size_t CL_SaveJPGToBuffer( byte *buffer, size_t bufSize, int quality,
+                           int image_width, int image_height,
+                           byte *image_buffer, int padding )
+{
+	struct jpeg_compress_struct cinfo;
+	q_jpeg_error_mgr_t jerr;
+	JSAMPROW row_pointer[1];
+	my_dest_ptr dest;
+	int row_stride;
+	size_t outcount;
+
+	cinfo.err = jpeg_std_error( &jerr.pub );
+	cinfo.err->error_exit = CL_JPGErrorExit;
+	cinfo.err->output_message = CL_JPGOutputMessage;
+
+	if ( setjmp( jerr.setjmp_buffer ) ) {
+		jpeg_destroy_compress( &cinfo );
+		Com_Printf( "\n" );
+		return 0;
+	}
+
+	jpeg_create_compress( &cinfo );
+
+	cl_jpeg_dest( &cinfo, buffer, (int)bufSize );
+
+	cinfo.image_width = image_width;
+	cinfo.image_height = image_height;
+	cinfo.input_components = 3;
+	cinfo.in_color_space = JCS_RGB;
+
+	jpeg_set_defaults( &cinfo );
+	jpeg_set_quality( &cinfo, quality, TRUE );
+
+	/* Disable chroma subsampling at high quality so screenshots look sharp. */
+	if ( quality >= 85 ) {
+		cinfo.comp_info[0].h_samp_factor = 1;
+		cinfo.comp_info[0].v_samp_factor = 1;
+	}
+
+	jpeg_start_compress( &cinfo, TRUE );
+
+	row_stride = image_width * cinfo.input_components + padding;
+
+	while ( cinfo.next_scanline < cinfo.image_height ) {
+		/* Read scanlines bottom-up to match framebuffer Y-down convention. */
+		row_pointer[0] = &image_buffer[
+		    ( ( cinfo.image_height - 1 ) * row_stride ) -
+		    cinfo.next_scanline * row_stride ];
+		(void)jpeg_write_scanlines( &cinfo, row_pointer, 1 );
+	}
+
+	jpeg_finish_compress( &cinfo );
+
+	dest = (my_dest_ptr)cinfo.dest;
+	outcount = dest->size - dest->pub.free_in_buffer;
+
+	jpeg_destroy_compress( &cinfo );
+
+	return outcount;
+}
+
+void CL_SaveJPG( const char *filename, int quality,
+                 int image_width, int image_height,
+                 byte *image_buffer, int padding )
+{
+	byte *out;
+	size_t bufSize;
+
+	bufSize = (size_t)image_width * (size_t)image_height * 3;
+	out = Hunk_AllocateTempMemory( (int)bufSize );
+
+	bufSize = CL_SaveJPGToBuffer( out, bufSize, quality,
+	                              image_width, image_height,
+	                              image_buffer, padding );
+
+	FS_WriteFile( filename, out, (int)bufSize );
+
+	Hunk_FreeTempMemory( out );
+}
