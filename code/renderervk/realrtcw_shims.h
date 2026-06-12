@@ -179,13 +179,22 @@
 #define Q_atof(s) atof(s)
 #endif
 
-/* log2pad(v, roundup): ceil-power-of-2 log2 helper. Quake3e qcommon.h
- * has it as static ID_INLINE; RealRTCW has no equivalent. */
+/* log2pad(v, roundup): round v to a power of 2. Quake3e qcommon.h has
+ * this as static ID_INLINE; RealRTCW has no equivalent. Body matches
+ * Quake3e verbatim — returns the rounded VALUE (e.g. log2pad(2000, 1) ==
+ * 2048), NOT the exponent. The earlier shim returned the exponent, which
+ * clamped glConfig.maxTextureSize to 11 at vk.c:4051, then to the same
+ * 11 at tr_image.c's "clamp to current upper limit" loop, uploading
+ * every texture at ~8×8 — the Vulkan menu UI rendered as blurred mush. */
 static inline unsigned int realrtcw_log2pad(unsigned int v, int roundup) {
-    unsigned int r = 0;
-    if (roundup && v && (v & (v - 1))) v <<= 1;
-    while ((v >>= 1) != 0) r++;
-    return r;
+    unsigned int x = 1;
+    while ( x < v ) x <<= 1;
+    if ( roundup == 0 ) {
+        if ( x > v ) {
+            x >>= 1;
+        }
+    }
+    return x;
 }
 #define log2pad(v, ru) realrtcw_log2pad((v), (ru))
 
