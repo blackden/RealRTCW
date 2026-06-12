@@ -274,7 +274,11 @@ static void RB_SurfacePolychain( const srfPoly_t *p ) {
 		VectorCopy( p->verts[i].xyz, tess.xyz[numv] );
 		tess.texCoords[0][numv][0] = p->verts[i].st[0];
 		tess.texCoords[0][numv][1] = p->verts[i].st[1];
-		tess.vertexColors[numv] = p->verts[ i ].modulate;
+		/* M6: canonical polyVert_t.modulate is byte[4] (engine RTCW
+		 * convention); tess.vertexColors[] is color4ub_t (union). C
+		 * forbids array-to-union assignment, so we copy bytes.
+		 * REALRTCW_ALLOW_VENDOR_EDIT — see notes/decisions/2026-06-12-m6-types-unification.md */
+		Com_Memcpy( tess.vertexColors[numv].rgba, p->verts[ i ].modulate, 4 );
 
 		numv++;
 	}

@@ -821,7 +821,7 @@ void RB_ZombieFX( int part, drawSurf_t *drawSurf, int oldNumVerts, int oldNumInd
 		return;
 	}
 
-	deltaTime = backEnd.currentEntity->e.shaderTime;
+	deltaTime = backEnd.currentEntity->e.shaderTime.f;
 	if ( ZOMBIEFX_FADEOUT_TIME_SEC < deltaTime ) {
 		// nothing to do, it's done fading out
 		tess.numVertexes = oldNumVerts;
@@ -950,7 +950,7 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 				backEnd.currentEntity = &backEnd.refdef.entities[entityNum];
 
 				// FIXME: e.shaderTime must be passed as int to avoid fp-precision loss issues
-				backEnd.refdef.floatTime = originalTime - (double)backEnd.currentEntity->e.shaderTime;
+				backEnd.refdef.floatTime = originalTime - (double)backEnd.currentEntity->e.shaderTime.f;
 
 				// we have to reset the shaderTime as well otherwise image animations start
 				// from the wrong frame

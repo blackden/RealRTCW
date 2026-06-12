@@ -888,12 +888,12 @@ static void ComputeColors( shaderStage_t *pStage ) {
 
 		lowest = pStage->zFadeBounds[0];
 		if ( lowest == -1000 ) {    // use entity alpha
-			lowest = backEnd.currentEntity->e.shaderTime;
+			lowest = backEnd.currentEntity->e.shaderTime.f;
 			zombieEffect = qtrue;
 		}
 		highest = pStage->zFadeBounds[1];
 		if ( highest == -1000 ) {   // use entity alpha
-			highest = backEnd.currentEntity->e.shaderTime;
+			highest = backEnd.currentEntity->e.shaderTime.f;
 			zombieEffect = qtrue;
 		}
 		range = highest - lowest;
