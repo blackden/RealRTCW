@@ -56,6 +56,21 @@ static qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 			Com_sprintf(namebuf, sizeof(namebuf), "%s.%s", filename, fext);
 
 		fileSize = ri.FS_ReadFile( namebuf, &buf.v );
+
+		/* RealRTCW M9 fix: .md3 -> .mdc fallback.
+		 * RTCW ships compressed meshes as .mdc with the same base name.
+		 * If the .md3 read failed and the extension is .md3, retry with
+		 * the last char swapped to 'c'. Dispatcher below picks loader
+		 * by ident, so this works for any caller using the canonical
+		 * .md3 filename. See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+		if ( !buf.v && Q_stricmp( fext, "md3" ) == 0 ) {
+			size_t nlen = strlen( namebuf );
+			if ( nlen > 0 && namebuf[nlen - 1] == '3' ) {
+				namebuf[nlen - 1] = 'c';
+				fileSize = ri.FS_ReadFile( namebuf, &buf.v );
+			}
+		}
+
 		if ( !buf.v )
 			continue;
 
@@ -64,11 +79,20 @@ static qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 			ri.FS_FreeFile( buf.v );
 			break;
 		}
-		
+
 		ident = LittleLong( *buf.u );
 		if ( ident == MD3_IDENT ) {
 			loaded = R_LoadMD3( mod, mod->numLods, buf.v, fileSize, name );
-		} else {
+		}
+		else if ( ident == MDC_IDENT ) {
+			/* RealRTCW M9 fix: dispatch MDC compressed meshes to vendor-ported loader.
+			 * See realrtcw_tr_mdc.c. */
+			loaded = R_LoadMDC( mod, mod->numLods, buf.v, fileSize, name );
+			if ( loaded ) {
+				mod->type = MOD_MDC;
+			}
+		}
+		else {
 			ri.Printf( PRINT_WARNING, "%s: unknown fileid for %s\n", __func__, name );
 			loaded = qfalse;
 		}
