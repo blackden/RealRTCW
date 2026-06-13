@@ -148,3 +148,29 @@ Phase 2 + Phase 3 still need separate plans, written after recon. Phase 3 recon 
 4. iortcw `rend2/` reference port shape for MDS runtime adaptation (already known — see Reference Port section above).
 
 The `wolfanim.cfg` miss surfaced during Phase 1's smoke is a SEPARATE blocker for `escape1` gameplay. It's game-side asset/path issue, not renderer. Likely a config path defaults to `player/wolfanim.cfg` and the stock asset for "skel" doesn't ship one. Classify as standalone M9.5 if needed once Phase 3 lands.
+
+## Phase 3a closed 2026-06-13 — MDS loader landed
+
+Phase 3a (MDS loader, NO runtime) landed in 3 commits on `macos-arm64-vulkan` ahead of `adf4c41`:
+
+- `291fb5c` — types in `tr_local.h`: `MOD_MDS` enum, `mdsHeader_t *mds` slot in `model_t`, `SF_MDS` in `surfaceType_t`, forward decls for `R_LoadMDS`/`R_AddAnimSurfaces`/`RB_SurfaceAnim`/`R_GetBoneTag`.
+- `5238b18` — vendor-port `R_LoadMDS` into `code/renderervk/realrtcw_tr_mds.c` (211 LOC verbatim from legacy `tr_model.c:1620-1803` with non-static + `int filesize` signature adaptation).
+- `9aee73a` — wire `R_RegisterMDS` + `{"mds", R_RegisterMDS}` entry in `modelLoaders[]` in `code/renderervk/tr_model.c`.
+
+Plan body: `notes/plans/2026-06-13-m9-phase3-mds-skeletal.md` (Phase 3a = Tasks 1-4).
+
+### Phase 3a smoke verdict — clean unblock for default character
+
+With `+set model "player" +map escape1 +wait 200 +quit`:
+
+- **No `DEFAULT_MODEL failed`** (default character `player` now resolves via `body.mds` → R_LoadMDS).
+- **No `Failed to load legs model`** for the player.
+- **`AAS initialized.` × 2** (escape1 ships 2 AAS files; both load).
+- **Full media-load sequence completes:** collision map → sounds → graphics → BSP → game media → textures → models → weapons → items → inline models → server models → particles → game media done.
+- **`CL_InitCGame: 3.70 seconds`** — cgame fully initializes.
+- **Clean `Server Shutdown (Server quit)`** — NOT `Server crashed` — process exits via `+quit` as designed.
+- Exit code 0, sanitizers clean.
+
+The character will be **invisible in-world** because Phase 3b (`SF_MDS` dispatch, `R_AddAnimSurfaces`, `RB_SurfaceAnim`) hasn't landed yet. That's expected and acceptable for the Phase 3a exit criterion. One downstream NPC fails to load (`doc/head.md3` — unrelated, that character probably ships head as MDC and is not in scope for this gate).
+
+The `wolfanim.cfg` blocker speculated earlier — DID NOT SURFACE for `model=player`. It may have been specific to `model=skel` or to a particular load order. Reclassify: not a confirmed M9.5 blocker on the default path. Watch in Phase 3b smoke.
