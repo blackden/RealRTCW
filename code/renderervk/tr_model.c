@@ -1165,6 +1165,21 @@ int R_LerpTag( orientation_t *tag, const refEntity_t *refent,
 	frac = 1.0f - refent->backlerp;
 
 	model = R_GetModelByHandle( handle );
+
+	/* RealRTCW M9 fix: MDS skeletal tag lookup via bone-frame interpolation.
+	 * Bypasses md3Tag_t start/end lerp path entirely — MDS bones are
+	 * computed per-frame inside R_GetBoneTag via R_CalcBones.
+	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+	if ( model->type == MOD_MDS ) {
+		int retval = R_GetBoneTag( tag, model->mds, startIndex, refent, tagName );
+		if ( retval >= 0 ) {
+			return retval;
+		}
+		AxisClear( tag->axis );
+		VectorClear( tag->origin );
+		return qfalse;
+	}
+
 	if ( !model->md3[0] )
 	{
 		if(model->type == MOD_MDR)

@@ -1215,3 +1215,57 @@ void RB_SurfaceAnim( mdsSurface_t *surface ) {
 #endif
 
 }
+
+/*
+==============
+R_GetBoneTag
+==============
+*/
+int R_GetBoneTag( orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, const refEntity_t *refent, const char *tagName ) {
+
+	int i;
+	mdsTag_t    *pTag;
+	mdsBoneInfo_t *boneInfoList;
+	int boneList[ MDS_MAX_BONES ];
+	int numBones;
+
+	if ( startTagIndex > mds->numTags ) {
+		memset( outTag, 0, sizeof( *outTag ) );
+		return -1;
+	}
+
+	// find the correct tag
+
+	pTag = ( mdsTag_t * )( (byte *)mds + mds->ofsTags );
+
+	pTag += startTagIndex;
+
+	for ( i = startTagIndex; i < mds->numTags; i++, pTag++ ) {
+		if ( !strcmp( pTag->name, tagName ) ) {
+			break;
+		}
+	}
+
+	if ( i >= mds->numTags ) {
+		memset( outTag, 0, sizeof( *outTag ) );
+		return -1;
+	}
+
+	// now build the list of bones we need to calc to get this tag's bone information
+
+	boneInfoList = ( mdsBoneInfo_t * )( (byte *)mds + mds->ofsBones );
+	numBones = 0;
+
+	R_RecursiveBoneListAdd( pTag->boneIndex, boneList, &numBones, boneInfoList );
+
+	// calc the bones
+
+	R_CalcBones( (mdsHeader_t *)mds, refent, boneList, numBones );
+
+	// now extract the orientation for the bone that represents our tag
+
+	memcpy( outTag->axis, bones[ pTag->boneIndex ].matrix, sizeof( outTag->axis ) );
+	VectorCopy( bones[ pTag->boneIndex ].translation, outTag->origin );
+
+	return i;
+}
