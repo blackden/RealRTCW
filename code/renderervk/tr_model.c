@@ -27,6 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int fileSize, const char *name );
 static qboolean R_LoadMDR(model_t *mod, void *buffer, int filesize, const char *name );
+/* RealRTCW M9 fix: MDS skeletal loader lives in realrtcw_tr_mds.c.
+ * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+qboolean R_LoadMDS( model_t *mod, void *buffer, int filesize, const char *name );
 
 /*
 ====================
@@ -159,6 +162,52 @@ static qhandle_t R_RegisterMDR(const char *name, model_t *mod)
 
 /*
 ====================
+R_RegisterMDS
+
+RealRTCW M9 fix: MDS skeletal model registration. Mirror to R_RegisterMDR
+shape (single-LOD wrapper). See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md
+====================
+*/
+static qhandle_t R_RegisterMDS( const char *name, model_t *mod )
+{
+	union {
+		uint32_t *u;
+		void *v;
+	} buf;
+	uint32_t ident;
+	qboolean loaded = qfalse;
+	int filesize;
+
+	filesize = ri.FS_ReadFile( name, &buf.v );
+	if ( !buf.v ) {
+		mod->type = MOD_BAD;
+		return 0;
+	}
+
+	if ( filesize < sizeof( ident ) ) {
+		ri.FS_FreeFile( buf.v );
+		mod->type = MOD_BAD;
+		return 0;
+	}
+
+	ident = LittleLong( *buf.u );
+	if ( ident == MDS_IDENT )
+		loaded = R_LoadMDS( mod, buf.v, filesize, name );
+
+	ri.FS_FreeFile( buf.v );
+
+	if ( !loaded ) {
+		ri.Printf( PRINT_WARNING, "%s: couldn't load %s\n", __func__, name );
+		mod->type = MOD_BAD;
+		return 0;
+	}
+
+	return mod->index;
+}
+
+
+/*
+====================
 R_RegisterIQM
 ====================
 */
@@ -205,7 +254,10 @@ static modelExtToLoaderMap_t modelLoaders[ ] =
 {
 	{ "iqm", R_RegisterIQM },
 	{ "mdr", R_RegisterMDR },
-	{ "md3", R_RegisterMD3 }
+	{ "md3", R_RegisterMD3 },
+	/* RealRTCW M9 fix: MDS skeletal models (RTCW-specific format).
+	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+	{ "mds", R_RegisterMDS },
 };
 
 static int numModelLoaders = ARRAY_LEN(modelLoaders);
