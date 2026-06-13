@@ -1645,6 +1645,11 @@ static void R_AddEntitySurfaces( void ) {
 				case MOD_IQM:
 					R_AddIQMSurfaces( ent );
 					break;
+				/* RealRTCW M9 fix: MDS skeletal dispatch.
+				 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+				case MOD_MDS:
+					R_AddAnimSurfaces( ent );
+					break;
 				case MOD_BRUSH:
 					R_AddBrushModelSurfaces( ent );
 					break;

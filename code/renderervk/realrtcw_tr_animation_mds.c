@@ -302,3 +302,101 @@ static int R_ComputeFogNum( mdsHeader_t *header, trRefEntity_t *ent ) {
 
 	return 0;
 }
+
+/*
+==============
+R_AddAnimSurfaces
+
+RealRTCW M9 fix: ported from legacy code/renderer/tr_animation.c:324.
+Enqueues MDS surfaces into the draw list. Renderervk's R_AddDrawSurf
+takes 4 args (no ATI_TESS_TRUFORM/qboolean tess flag) — adapted accordingly.
+See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md
+==============
+*/
+void R_AddAnimSurfaces( trRefEntity_t *ent ) {
+	mdsHeader_t     *header;
+	mdsSurface_t    *surface;
+	shader_t        *shader = 0;
+	int i, fogNum, cull;
+	qboolean personalModel;
+
+	// don't add third_person objects if not in a portal
+	// RealRTCW M9: renderervk field drift — legacy `!isPortal` → `portalView == PV_NONE`.
+	personalModel = ( ent->e.renderfx & RF_THIRD_PERSON ) && ( tr.viewParms.portalView == PV_NONE );
+
+	header = tr.currentModel->mds;
+
+	//
+	// cull the entire model if merged bounding box of both frames
+	// is outside the view frustum.
+	//
+	cull = R_CullModel( header, ent );
+	if ( cull == CULL_OUT ) {
+		return;
+	}
+
+	//
+	// set up lighting now that we know we aren't culled
+	//
+	if ( !personalModel || r_shadows->integer > 1 ) {
+		R_SetupEntityLighting( &tr.refdef, ent );
+	}
+
+	//
+	// see if we are in a fog volume
+	//
+	fogNum = R_ComputeFogNum( header, ent );
+
+	surface = ( mdsSurface_t * )( (byte *)header + header->ofsSurfaces );
+	for ( i = 0 ; i < header->numSurfaces ; i++ ) {
+		int j;
+
+//----(SA)	blink will change to be an overlay rather than replacing the head texture.
+//		think of it like batman's mask.  the polygons that have eye texture are duplicated
+//		and the 'lids' rendered with polygonoffset over the top of the open eyes.  this gives
+//		minimal overdraw/alpha blending/texture use without breaking the model and causing seams
+		if ( !Q_stricmp( surface->name, "h_blink" ) ) {
+			if ( !( ent->e.renderfx & RF_BLINK ) ) {
+				surface = ( mdsSurface_t * )( (byte *)surface + surface->ofsEnd );
+				continue;
+			}
+		}
+//----(SA)	end
+
+
+		if ( ent->e.customShader ) {
+			shader = R_GetShaderByHandle( ent->e.customShader );
+		} else if ( ent->e.customSkin > 0 && ent->e.customSkin < tr.numSkins ) {
+			skin_t *skin;
+
+			skin = R_GetSkinByHandle( ent->e.customSkin );
+
+			// match the surface name to something in the skin file
+			shader = tr.defaultShader;
+			for ( j = 0 ; j < skin->numSurfaces ; j++ ) {
+				// the names have both been lowercased
+				if ( !strcmp( skin->surfaces[j].name, surface->name ) ) {
+					shader = skin->surfaces[j].shader;
+					break;
+				}
+			}
+
+			if ( shader == tr.defaultShader ) {
+				ri.Printf( PRINT_DEVELOPER, "WARNING: no shader for surface %s in skin %s\n", surface->name, skin->name );
+			} else if ( shader->defaultShader )     {
+				ri.Printf( PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name );
+			}
+		} else {
+			shader = R_GetShaderByHandle( surface->shaderIndex );
+		}
+
+		// don't add third_person objects if not viewing through a portal
+		if ( !personalModel ) {
+			// RealRTCW M9: renderervk R_AddDrawSurf is 4-arg; legacy passed
+			// (qfalse, ATI_TESS_TRUFORM) tail dropped here.
+			R_AddDrawSurf( (void *)surface, shader, fogNum, 0 );
+		}
+
+		surface = ( mdsSurface_t * )( (byte *)surface + surface->ofsEnd );
+	}
+}
