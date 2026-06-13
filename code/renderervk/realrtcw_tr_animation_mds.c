@@ -1038,3 +1038,180 @@ void R_RecursiveBoneListAdd( int bi, int *boneList, int *numBones, mdsBoneInfo_t
 	boneList[ ( *numBones )++ ] = bi;
 
 }
+
+#ifdef DBG_PROFILE_BONES
+#define DBG_SHOWTIME    Com_Printf( "%i: %i, ", di++, ( dt = ri.Milliseconds() ) - ldt ); ldt = dt;
+#else
+#define DBG_SHOWTIME    ;
+#endif
+
+/*
+==============
+RB_SurfaceAnim
+==============
+*/
+void RB_SurfaceAnim( mdsSurface_t *surface ) {
+	int j, k;
+	refEntity_t *refent;
+	int             *boneList;
+	mdsHeader_t     *header;
+
+#ifdef DBG_PROFILE_BONES
+	int di = 0, dt, ldt;
+
+	dt = ri.Milliseconds();
+	ldt = dt;
+#endif
+
+	refent = &backEnd.currentEntity->e;
+	boneList = ( int * )( (byte *)surface + surface->ofsBoneReferences );
+	header = ( mdsHeader_t * )( (byte *)surface + surface->ofsHeader );
+
+	R_CalcBones( header, (const refEntity_t *)refent, boneList, surface->numBoneReferences );
+
+	DBG_SHOWTIME
+
+	//
+	// calculate LOD
+	//
+	// TODO: lerp the radius and origin
+	VectorAdd( refent->origin, frame->localOrigin, vec );
+	lodRadius = frame->radius;
+	lodScale = RB_CalcMDSLod( refent, vec, lodRadius, header->lodBias, header->lodScale );
+
+
+//DBG_SHOWTIME
+
+//----(SA)	modification to allow dead skeletal bodies to go below minlod (experiment)
+	if ( refent->reFlags & REFLAG_DEAD_LOD ) {
+		if ( lodScale < 0.35 ) {   // allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.  worked for the blackguard/infantry as a test though)
+			lodScale = 0.35;
+		}
+		render_count = (int)( (float) surface->numVerts * lodScale );
+
+	} else {
+		render_count = (int)( (float) surface->numVerts * lodScale );
+		if ( render_count < surface->minLod ) {
+			if ( !( refent->reFlags & REFLAG_DEAD_LOD ) ) {
+				render_count = surface->minLod;
+			}
+		}
+	}
+//----(SA)	end
+
+
+	if ( render_count > surface->numVerts ) {
+		render_count = surface->numVerts;
+	}
+
+//DBG_SHOWTIME
+
+	//
+	// setup triangle list
+	//
+	RB_CHECKOVERFLOW( render_count, surface->numTriangles * 3 );
+
+//DBG_SHOWTIME
+
+	collapse_map   = ( int * )( ( byte * )surface + surface->ofsCollapseMap );
+	triangles = ( int * )( (byte *)surface + surface->ofsTriangles );
+	indexes = surface->numTriangles * 3;
+	baseIndex = tess.numIndexes;
+	baseVertex = tess.numVertexes;
+	oldIndexes = baseIndex;
+
+	tess.numVertexes += render_count;
+
+	pIndexes = (glIndex_t *)&tess.indexes[baseIndex];
+
+//DBG_SHOWTIME
+
+	if ( render_count == surface->numVerts ) {
+		for ( j = 0; j < indexes; j++ )
+			pIndexes[j] = triangles[j] + baseVertex;
+		tess.numIndexes += indexes;
+	} else
+	{
+		int *collapseEnd;
+
+		pCollapse = collapse;
+		for ( j = 0; j < render_count; pCollapse++, j++ )
+		{
+			*pCollapse = j;
+		}
+
+		pCollapseMap = &collapse_map[render_count];
+		for ( collapseEnd = collapse + surface->numVerts ; pCollapse < collapseEnd; pCollapse++, pCollapseMap++ )
+		{
+			*pCollapse = collapse[ *pCollapseMap ];
+		}
+
+		for ( j = 0 ; j < indexes ; j += 3 )
+		{
+			p0 = collapse[ *( triangles++ ) ];
+			p1 = collapse[ *( triangles++ ) ];
+			p2 = collapse[ *( triangles++ ) ];
+
+			// FIXME
+			// note:  serious optimization opportunity here,
+			//  by sorting the triangles the following "continue"
+			//  could have been made into a "break" statement.
+			if ( p0 == p1 || p1 == p2 || p2 == p0 ) {
+				continue;
+			}
+
+			*( pIndexes++ ) = baseVertex + p0;
+			*( pIndexes++ ) = baseVertex + p1;
+			*( pIndexes++ ) = baseVertex + p2;
+			tess.numIndexes += 3;
+		}
+
+		baseIndex = tess.numIndexes;
+	}
+
+//DBG_SHOWTIME
+
+	//
+	// deform the vertexes by the lerped bones
+	//
+	numVerts = surface->numVerts;
+	v = ( mdsVertex_t * )( (byte *)surface + surface->ofsVerts );
+	tempVert = ( float * )( tess.xyz + baseVertex );
+	tempNormal = ( float * )( tess.normal + baseVertex );
+	for ( j = 0; j < render_count; j++, tempVert += 4, tempNormal += 4 ) {
+		mdsWeight_t *w;
+
+		VectorClear( tempVert );
+
+		w = v->weights;
+		for ( k = 0 ; k < v->numWeights ; k++, w++ ) {
+			bone = &bones[w->boneIndex];
+			LocalAddScaledMatrixTransformVectorTranslate( w->offset, w->boneWeight, bone->matrix, bone->translation, tempVert );
+		}
+		LocalMatrixTransformVector( v->normal, bones[v->weights[0].boneIndex].matrix, tempNormal );
+
+		/* RealRTCW M9 fix: renderervk's shaderCommands_t (tr_local.h:1607)
+		 * declares texCoords as vec2_t[2][SHADER_MAX_VERTEXES] (stage-major),
+		 * whereas legacy tr_local.h:1654 has vec2_t[SHADER_MAX_VERTEXES][2]
+		 * (vertex-major). Transpose the index order to write into stage-0 of
+		 * the renderervk layout. */
+		tess.texCoords[0][baseVertex + j][0] = v->texCoords[0];
+		tess.texCoords[0][baseVertex + j][1] = v->texCoords[1];
+
+		v = (mdsVertex_t *)&v->weights[v->numWeights];
+	}
+
+	DBG_SHOWTIME
+
+	/* RealRTCW M9 fix: legacy guarded an in-renderer bone debug overlay with
+	 * r_bonesDebug->integer (tr_animation.c:1198-1280); renderervk has no
+	 * such cvar registered (see Task 7 R_CalcBones adaptation). Drop the
+	 * overlay entirely. Vulkan path has no equivalent qglBegin/qglEnd
+	 * immediate-mode debug draw anyway. Phase 4+ could re-add as a vk
+	 * debug-lines pass. */
+
+#ifdef DBG_PROFILE_BONES
+	Com_Printf( "\n" );
+#endif
+
+}

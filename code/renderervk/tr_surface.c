@@ -1442,16 +1442,26 @@ static void RB_SurfaceSkip( void *surf ) {
 }
 
 
+/* RealRTCW M9 fix: rb_surfaceTable[] realigned to current surfaceType_t enum.
+ * Phase 1 added SF_MDC (Phase 2 MDC runtime: RB_SurfaceSkip stub for now);
+ * Phase 3 Task 1 added SF_MDS (Phase 3 Task 8 wired RB_SurfaceAnim here).
+ * Prior commit 6e3bb5d (Phase 1) inserted SF_MDC into the enum without
+ * updating this table, silently shifting MDR/IQM/FLARE/ENTITY to wrong
+ * slots; this commit restores the contract enforced by tr_local.h:667
+ * ("any changes in surfaceType must be mirrored in rb_surfaceTable[]").
+ * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES])( void *) = {
-	(void(*)(void*))RB_SurfaceBad,			// SF_BAD, 
-	(void(*)(void*))RB_SurfaceSkip,			// SF_SKIP, 
+	(void(*)(void*))RB_SurfaceBad,			// SF_BAD,
+	(void(*)(void*))RB_SurfaceSkip,			// SF_SKIP,
 	(void(*)(void*))RB_SurfaceFace,			// SF_FACE,
 	(void(*)(void*))RB_SurfaceGrid,			// SF_GRID,
 	(void(*)(void*))RB_SurfaceTriangles,	// SF_TRIANGLES,
 	(void(*)(void*))RB_SurfacePolychain,	// SF_POLY,
 	(void(*)(void*))RB_SurfaceMesh,			// SF_MD3,
+	(void(*)(void*))RB_SurfaceSkip,			// SF_MDC (Phase 2 runtime — stub for now),
 	(void(*)(void*))RB_MDRSurfaceAnim,		// SF_MDR,
 	(void(*)(void*))RB_IQMSurfaceAnim,		// SF_IQM,
+	(void(*)(void*))RB_SurfaceAnim,			// SF_MDS,
 	(void(*)(void*))RB_SurfaceFlare,		// SF_FLARE,
 	(void(*)(void*))RB_SurfaceEntity		// SF_ENTITY
 };
