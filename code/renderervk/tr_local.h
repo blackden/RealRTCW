@@ -678,6 +678,9 @@ typedef enum {
 	SF_MDC,
 	SF_MDR,
 	SF_IQM,
+	/* RealRTCW M9 fix: MDS skeletal surface tag (Phase 3 loader + runtime).
+	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+	SF_MDS,
 	SF_FLARE,
 	SF_ENTITY,				// beams, rails, lightning, etc that can be determined by entity
 
@@ -969,6 +972,9 @@ typedef enum {
 	/* RealRTCW M9 fix: MDC compressed mesh support.
 	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 	MOD_MDC,
+	/* RealRTCW M9 fix: MDS skeletal mesh support.
+	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+	MOD_MDS,
 } modtype_t;
 
 typedef struct model_s {
@@ -982,6 +988,9 @@ typedef struct model_s {
 	/* RealRTCW M9 fix: MDC compressed mesh slot, parallel to md3[].
 	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 	mdcHeader_t	*mdc[MD3_MAX_LODS];
+	/* RealRTCW M9 fix: MDS skeletal mesh slot, single-LOD pointer.
+	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+	mdsHeader_t	*mds;
 	void	*modelData;			// only if type == (MOD_MDR | MOD_IQM)
 
 	int			 numLods;
@@ -1814,6 +1823,13 @@ qboolean R_LoadIQM (model_t *mod, void *buffer, int filesize, const char *name )
 /* RealRTCW M9 fix: MDC loader forward decl.
  * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 qboolean R_LoadMDC( model_t *mod, int lod, void *buffer, int fileSize, const char *mod_name );
+/* RealRTCW M9 fix: MDS loader and runtime forward decls.
+ * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+qboolean R_LoadMDS( model_t *mod, void *buffer, int filesize, const char *mod_name );
+void R_AddAnimSurfaces( trRefEntity_t *ent );
+void RB_SurfaceAnim( mdsSurface_t *surface );
+int R_GetBoneTag( orientation_t *outTag, mdsHeader_t *mds, int startTagIndex,
+                   const refEntity_t *refent, const char *tagName );
 void R_AddIQMSurfaces( trRefEntity_t *ent );
 void RB_IQMSurfaceAnim( const surfaceType_t *surface );
 int R_IQMLerpTag( orientation_t *tag, iqmData_t *data,
