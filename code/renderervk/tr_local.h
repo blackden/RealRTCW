@@ -1828,6 +1828,10 @@ qboolean R_LoadMDC( model_t *mod, int lod, void *buffer, int fileSize, const cha
 qboolean R_LoadMDS( model_t *mod, void *buffer, int filesize, const char *mod_name );
 void R_AddAnimSurfaces( trRefEntity_t *ent );
 void RB_SurfaceAnim( mdsSurface_t *surface );
+/* RealRTCW M9 fix: MDS LOD computation (file-static helpers live in
+ * realrtcw_tr_animation_mds.c; this one is non-static so future MDS
+ * draw/skinning sites can reuse it). */
+float RB_CalcMDSLod( refEntity_t *refent, vec3_t origin, float radius, float modelBias, float modelScale );
 int R_GetBoneTag( orientation_t *outTag, mdsHeader_t *mds, int startTagIndex,
                    const refEntity_t *refent, const char *tagName );
 void R_AddIQMSurfaces( trRefEntity_t *ent );

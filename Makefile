@@ -2184,7 +2184,8 @@ Q3VKOBJ = \
   $(B)/rendv/vk_vbo.o \
   $(B)/rendv/realrtcw_vk_window_bridge.o \
   $(B)/rendv/realrtcw_tr_mdc.o \
-  $(B)/rendv/realrtcw_tr_mds.o
+  $(B)/rendv/realrtcw_tr_mds.o \
+  $(B)/rendv/realrtcw_tr_animation_mds.o
 
   Q3VKOBJ += $(B)/rendv/sdl_gamma.o
   # γ' migration: sdl_glimp.o moved to Q3OBJ. The Vulkan renderer DLL
