@@ -94,8 +94,9 @@ void vk_re_thunk_Shutdown( int code );
 void vk_re_thunk_AddRefEntityToScene( const void *re_ptr, int intShaderTime );
 void vk_re_thunk_AddPolyToScene( qhandle_t hShader, int numVerts, const void *verts, int num );
 void vk_re_thunk_AddLightToScene( const float *org, float intensity, float r, float g, float b );
-int vk_re_thunk_LerpTag( void *tag, int hModel, int startFrame, int endFrame,
-                         float frac, const char *tagName );
+/* RealRTCW M9.5 fix: reshape to RTCW 4-arg shape — see cl_refvulkan.c. */
+int vk_re_thunk_LerpTag( orientation_t *tag, const refEntity_t *refent,
+                         const char *tagName, int startIndex );
 void vk_re_thunk_DrawStretchRaw( int x, int y, int w, int h, int cols, int rows,
                                  const byte *data, int client, int dirty );
 void vk_re_thunk_UploadCinematic( int w, int h, int cols, int rows,

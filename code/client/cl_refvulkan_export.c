@@ -71,15 +71,14 @@ static void vk_re_wrap_AddLightToScene( const vec3_t org, float intensity, float
  * startIndex dropped — RTCW-only multi-tag iteration extension. RTCW SP
  * cgame doesn't rely on it (verified via cgame asset audit, M3.5 era).
  * If a duplicate-name tag bug appears in gameplay, this is the place. */
+/* RealRTCW M9.5 fix: wrap is now pass-through. vk_re_thunk_LerpTag
+ * was reshaped to RTCW 4-arg shape; no translation needed. The thunk
+ * couldn't transmit MDS torso state (torsoFrame/torsoBacklerp/torsoAxis)
+ * through the old Q3 6-arg path — that gap is what M9.5 closes.
+ * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
 static int vk_re_wrap_LerpTag( orientation_t *tag, const refEntity_t *refent,
                                const char *tagName, int startIndex ) {
-    (void)startIndex;
-    return vk_re_thunk_LerpTag( (void *)tag,
-                                (int)refent->hModel,
-                                refent->oldframe,
-                                refent->frame,
-                                1.0f - refent->backlerp,
-                                tagName );
+    return vk_re_thunk_LerpTag( tag, refent, tagName, startIndex );
 }
 
 /* SMALL DrawStretchRaw / UploadCinematic take `const byte *data`; BIG drops

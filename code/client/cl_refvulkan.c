@@ -608,11 +608,15 @@ void vk_re_thunk_AddLightToScene( const float *org, float intensity, float r, fl
     vk_re_big->AddLightToScene( (vec_t *)org, intensity, r, g, b );
 }
 
-int vk_re_thunk_LerpTag( void *tag, int hModel, int startFrame, int endFrame,
-                         float frac, const char *tagName ) {
-    return vk_re_big->LerpTag( (orientation_t *)tag,
-                               (qhandle_t)hModel,
-                               startFrame, endFrame, frac, tagName );
+int vk_re_thunk_LerpTag( orientation_t *tag, const refEntity_t *refent,
+                         const char *tagName, int startIndex ) {
+    /* RealRTCW M9.5 fix: vtable slot reshape to RTCW 4-arg shape.
+     * Prior thunk took Q3-legacy (qhandle_t, startFrame, endFrame, frac,
+     * tagName) which silently corrupted args from cgame's RTCW 4-arg
+     * call shape (cl_cgame.c:674). All tag attachments were broken
+     * on Vulkan until this commit.
+     * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+    return vk_re_big->LerpTag( tag, refent, tagName, startIndex );
 }
 
 void vk_re_thunk_DrawStretchRaw( int x, int y, int w, int h, int cols, int rows,

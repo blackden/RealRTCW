@@ -109,8 +109,12 @@ typedef struct {
 	int		(*MarkFragments)( int numPoints, const vec3_t *points, const vec3_t projection,
 				   int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer );
 
-	int		(*LerpTag)( orientation_t *tag,  qhandle_t model, int startFrame, int endFrame,
-					 float frac, const char *tagName );
+	/* RealRTCW M9.5 fix: reshape LerpTag slot from Q3-legacy 6-arg to
+	 * RTCW 4-arg shape — cgame trap (cl_cgame.c:674) passes RTCW shape;
+	 * prior Q3 shape silently corrupted args.
+	 * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+	int		(*LerpTag)( orientation_t *tag, const refEntity_t *refent,
+					 const char *tagName, int startIndex );
 	void	(*ModelBounds)( qhandle_t model, vec3_t mins, vec3_t maxs );
 
 #ifdef __USEA3D

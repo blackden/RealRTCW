@@ -1139,13 +1139,30 @@ static md3Tag_t *R_GetAnimTag( mdrHeader_t *mod, int framenum, const char *tagNa
 R_LerpTag
 ================
 */
-int R_LerpTag( orientation_t *tag, qhandle_t handle, int startFrame, int endFrame, 
-					 float frac, const char *tagName ) {
+/* RealRTCW M9.5 fix: reshape from Q3-legacy 6-arg signature to RTCW
+ * 4-arg signature taking refEntity_t. Frame info derived from
+ * refent->oldframe, refent->frame, refent->backlerp. startIndex is
+ * currently used only by the MDS branch (Phase 3 Task 9 — not yet
+ * landed at time of M9.5). MD3/MDR/IQM helpers in renderervk are
+ * Q3-style first-match (no tag cycling).
+ * See notes/decisions/2026-06-13-m9-mds-mdc-loader-gap.md */
+int R_LerpTag( orientation_t *tag, const refEntity_t *refent,
+               const char *tagName, int startIndex ) {
 	md3Tag_t	*start, *end;
 	md3Tag_t	start_space, end_space;
 	int		i;
 	float		frontLerp, backLerp;
 	model_t		*model;
+	qhandle_t	handle;
+	int		startFrame, endFrame;
+	float		frac;
+
+	(void)startIndex;	/* used only by MDS branch — Phase 3 Task 9 */
+
+	handle = refent->hModel;
+	startFrame = refent->oldframe;
+	endFrame = refent->frame;
+	frac = 1.0f - refent->backlerp;
 
 	model = R_GetModelByHandle( handle );
 	if ( !model->md3[0] )
