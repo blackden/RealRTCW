@@ -85,12 +85,8 @@ static qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 			loaded = R_LoadMD3( mod, mod->numLods, buf.v, fileSize, name );
 		}
 		else if ( ident == MDC_IDENT ) {
-			/* RealRTCW M9 fix: dispatch MDC compressed meshes to vendor-ported loader.
-			 * See realrtcw_tr_mdc.c. */
+			/* RealRTCW M9 fix: dispatch MDC compressed meshes to vendor-ported loader. */
 			loaded = R_LoadMDC( mod, mod->numLods, buf.v, fileSize, name );
-			if ( loaded ) {
-				mod->type = MOD_MDC;
-			}
 		}
 		else {
 			ri.Printf( PRINT_WARNING, "%s: unknown fileid for %s\n", __func__, name );
